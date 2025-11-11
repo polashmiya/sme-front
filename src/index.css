@@ -1,0 +1,66 @@
+/* eslint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { @apply bg-gray-50 text-gray-800 antialiased; overflow: hidden; }
+
+.app-shell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas:
+    'sidebar header'
+    'sidebar main';
+  height: 100vh; /* fixed layout height; internal areas manage scroll */
+}
+
+.sidebar-area { grid-area: sidebar; }
+.header-area { grid-area: header; }
+.main-area { grid-area: main; }
+
+/* Scrollbar styling */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.table-base {
+  /* Full outer border and inner cell borders */
+  @apply w-full text-sm border border-gray-300 border-collapse;
+}
+.table-base th {
+  @apply bg-gray-100 font-medium text-gray-700 px-3 py-2 border border-gray-300 text-left;
+}
+.table-base td {
+  @apply px-3 py-1.5 border border-gray-200 align-middle;
+}
+.table-base tr:hover {
+  @apply bg-gray-50;
+}
+
+.page-title {
+  @apply text-xl font-semibold tracking-tight mb-4 flex items-center gap-2;
+}
+
+.card {
+  @apply bg-white shadow-sm rounded-lg border border-gray-200 p-4;
+}
+
+.btn-primary {
+  @apply inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-white text-sm font-medium hover:bg-blue-600 active:bg-blue-700 transition-colors;
+}
+
+.btn-outline {
+  @apply inline-flex items-center gap-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 active:bg-gray-200 transition-colors;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
