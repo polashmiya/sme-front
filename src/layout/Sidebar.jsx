@@ -33,7 +33,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleSidebar } from '../features/ui/uiSlice'
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 
 const sections = [
   {
@@ -116,7 +116,9 @@ export default function Sidebar() {
       className="sidebar-area bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 h-full overflow-hidden"
     >
       <div className="flex items-center justify-between px-4 h-header border-b border-gray-700">
-        <span className="font-semibold tracking-wide text-sm">{open ? t('appName') : 'SME'}</span>
+        <NavLink to="/" className="font-semibold tracking-wide text-sm focus:outline-none">
+          {open ? t('appName') : 'SME'}
+        </NavLink>
         <button onClick={() => dispatch(toggleSidebar())} className="text-gray-300 hover:text-white" aria-label="Toggle sidebar">
           {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
         </button>
@@ -133,38 +135,124 @@ export default function Sidebar() {
   )
 }
 
+
 function SidebarSection({ section, open, t, expanded, onToggle }) {
   const Icon = section.icon
   const hasChildren = !!section.children
+  const [hovered, setHovered] = useState(false)
+  const [submenuStyle, setSubmenuStyle] = useState({})
+  const sectionRef = useRef(null)
+  useEffect(() => {
+    if (hovered && sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect()
+      setSubmenuStyle({
+        position: 'fixed',
+        left: rect.right + 2,
+        top: rect.top,
+        zIndex: 1000,
+        minWidth: 180,
+      })
+    }
+  }, [hovered])
+
+  // No children: just render the icon and label (if open)
   if (!hasChildren) {
+    // Collapsed: match icon size, spacing, and alignment with submenu icons
+    if (!open) {
+      return (
+        <div className="relative flex justify-center" style={{ width: '100%' }}>
+          <NavLink
+            to={section.path}
+            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 text-gray-300 hover:bg-gray-800 hover:text-white ${isActive ? 'bg-gray-800 text-white' : ''}`}
+            style={{ minWidth: 48, minHeight: 48 }}
+            end
+          >
+            <Icon size={22} />
+          </NavLink>
+        </div>
+      )
+    }
+    // Expanded: show icon and label
     return (
       <NavLink to={section.path} className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-sm ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`} end>
         <Icon size={18} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
       </NavLink>
     )
   }
-  const isOpen = expanded === section.key && open
+
+  // Expanded sidebar: show normal dropdown
+  if (open) {
+    const isOpen = expanded === section.key && open
+    return (
+      <div>
+        <button type="button" onClick={() => onToggle(section.key)} className="w-full px-4 py-2 flex items-center justify-between text-xs uppercase tracking-wide text-gray-400 hover:text-white">
+          <span className="flex items-center gap-2">
+            <Icon size={16} /> {open && <span>{t(`menu.${section.key}`)}</span>}
+          </span>
+          {open && <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
+        </button>
+        {isOpen && (
+          <div className="pb-1">
+            {section.children.map(child => {
+              const ChildIcon = child.icon || ChevronRight
+              return (
+                <NavLink key={child.key} to={child.path} className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px] ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}>
+                  <ChildIcon size={14} />
+                  {open && <span>{t(child.key)}</span>}
+                </NavLink>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Collapsed sidebar: show icon, and on hover show floating submenu (aligned with icon)
+
   return (
-    <div>
-      <button type="button" onClick={() => onToggle(section.key)} className="w-full px-4 py-2 flex items-center justify-between text-xs uppercase tracking-wide text-gray-400 hover:text-white">
-        <span className="flex items-center gap-2">
-          <Icon size={16} /> {open && <span>{t(`menu.${section.key}`)}</span>}
-        </span>
-        {open && <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
+    <div
+      ref={sectionRef}
+      className="relative flex justify-center"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ width: '100%' }}
+    >
+      <button
+        type="button"
+        className="flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 text-gray-300 hover:bg-gray-800 hover:text-white"
+        style={{ minWidth: 48, minHeight: 48 }}
+      >
+        <Icon size={22} />
       </button>
-      {isOpen && (
-        <div className="pb-1">
-          {section.children.map(child => {
-            const ChildIcon = child.icon || ChevronRight
-            return (
-              <NavLink key={child.key} to={child.path} className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px] ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}>
-                <ChildIcon size={14} />
-                {open && <span>{t(child.key)}</span>}
-              </NavLink>
-            )
-          })}
-        </div>
-      )}
+      <div
+        style={{
+          ...submenuStyle,
+          pointerEvents: hovered ? 'auto' : 'none',
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? 'translateY(0px)' : 'translateY(10px)',
+          transition: 'opacity 0.18s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1)',
+        }}
+        className="bg-gray-900 border border-gray-700 rounded-md shadow-lg py-2 absolute"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {section.children && section.children.map(child => {
+          const ChildIcon = child.icon || ChevronRight
+          return (
+            <NavLink
+              key={child.key}
+              to={child.path}
+              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}
+              style={{ minWidth: 160 }}
+              onClick={() => setHovered(false)}
+            >
+              <ChildIcon size={16} />
+              <span>{t(child.key)}</span>
+            </NavLink>
+          )
+        })}
+      </div>
     </div>
   )
 }
