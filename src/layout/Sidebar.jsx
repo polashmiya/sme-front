@@ -97,23 +97,24 @@ export default function Sidebar() {
   const open = useSelector(s => s.ui.sidebarOpen)
   const dispatch = useDispatch()
   const location = useLocation()
-
-  // Determine which section should be expanded based on current route
-  const defaultExpanded = useMemo(() => {
+  const [expanded, setExpanded] = useState(() => {
     const match = sections.find(sec => sec.children?.some(ch => location.pathname.startsWith(ch.path)))
     return match?.key || null
+  })
+  useEffect(() => {
+    const match = sections.find(sec => sec.children?.some(ch => location.pathname.startsWith(ch.path)))
+    setExpanded(match?.key || null)
   }, [location.pathname])
-  const [expanded, setExpanded] = useState(defaultExpanded)
 
   const toggle = (key) => {
     setExpanded(prev => (prev === key ? null : key))
   }
 
+  // Smooth width transition and content clipping
   return (
-    <motion.aside
-      initial={{ width: 0 }}
-      animate={{ width: open ? 260 : 64 }}
-      className="sidebar-area bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 h-full overflow-hidden"
+    <aside
+      className="sidebar-area bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 h-full overflow-hidden transition-all duration-300"
+      style={{ width: open ? 260 : 64, minWidth: open ? 260 : 64, maxWidth: open ? 260 : 64 }}
     >
       <div className="flex items-center justify-between px-4 h-header border-b border-gray-700">
         <NavLink to="/" className="font-semibold tracking-wide text-sm focus:outline-none">
@@ -123,15 +124,23 @@ export default function Sidebar() {
           {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
         </button>
       </div>
-      <nav className="flex-1 overflow-y-auto py-2 min-h-0">
-        {sections.map(sec => (
-          <div key={sec.key} className="mb-1">
-            <SidebarSection section={sec} open={open} t={t} expanded={expanded} onToggle={toggle} />
-          </div>
-        ))}
+      <nav
+        className="flex-1 py-2 min-h-0 overflow-hidden"
+        style={{
+          overflowY: open ? 'auto' : 'hidden',
+          transition: 'overflow 0.3s',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {sections.map(sec => (
+            <div key={sec.key} className="mb-1">
+              <SidebarSection section={sec} open={open} t={t} expanded={expanded} onToggle={toggle} />
+            </div>
+          ))}
+        </div>
       </nav>
       <div className="text-xs text-gray-400 px-4 py-3 border-t border-gray-700">v0.1.0</div>
-    </motion.aside>
+    </aside>
   )
 }
 
