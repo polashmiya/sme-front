@@ -1,7 +1,9 @@
+
 import { useState, useMemo } from 'react'
 import PurchaseHeader from '../components/PurchaseHeader'
 import { Link } from 'react-router-dom'
 import { Search, Plus, Eye, Pencil, Printer, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Dummy Data
 const STATUSES = ['Draft','Approved','Partially Received','Completed']
@@ -19,6 +21,7 @@ const rows = Array.from({ length: 57 }).map((_,i)=> ({
 }))
 
 export default function PurchaseOrderLanding() {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [supplier, setSupplier] = useState('')
   const [status, setStatus] = useState('')
@@ -44,37 +47,37 @@ export default function PurchaseOrderLanding() {
   return (
     <div className="flex flex-col">
       <PurchaseHeader
-        title="Purchase Orders"
-        right={<RightHeader search={search} setSearch={setSearch} />}
+        title={t('purchase.order')}
+        right={<RightHeader search={search} setSearch={setSearch} t={t} />}
       />
 
       {/* Filters */}
       <div className="card mb-4">
         <div className="grid md:grid-cols-5 gap-4 text-sm">
           <div className="flex flex-col">
-            <label htmlFor="supplier" className="font-medium mb-1">Supplier</label>
+            <label htmlFor="supplier" className="font-medium mb-1">{t('purchase.dash.filters.supplier')}</label>
             <select id="supplier" value={supplier} onChange={e=>{setSupplier(e.target.value); setPage(1)}} className="border border-gray-300 rounded px-2 py-1">
-              <option value="">All</option>
+              <option value="">{t('common.all', 'All')}</option>
               {SUPPLIERS.map(s=> <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="status" className="font-medium mb-1">Status</label>
+            <label htmlFor="status" className="font-medium mb-1">{t('common.status', 'Status')}</label>
             <select id="status" value={status} onChange={e=>{setStatus(e.target.value); setPage(1)}} className="border border-gray-300 rounded px-2 py-1">
-              <option value="">All</option>
+              <option value="">{t('common.all', 'All')}</option>
               {STATUSES.map(s=> <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div className="flex flex-col">
-            <label htmlFor="fromDate" className="font-medium mb-1">From Date</label>
+            <label htmlFor="fromDate" className="font-medium mb-1">{t('purchase.dash.filters.dateRange', 'From Date')}</label>
             <input id="fromDate" type="date" value={fromDate} onChange={e=>{setFromDate(e.target.value); setPage(1)}} className="border border-gray-300 rounded px-2 py-1" />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="toDate" className="font-medium mb-1">To Date</label>
+            <label htmlFor="toDate" className="font-medium mb-1">{t('purchase.dash.filters.dateRange', 'To Date')}</label>
             <input id="toDate" type="date" value={toDate} onChange={e=>{setToDate(e.target.value); setPage(1)}} className="border border-gray-300 rounded px-2 py-1" />
           </div>
           <div className="flex flex-col justify-end">
-            <button onClick={()=>{setSearch('');setSupplier('');setStatus('');setFromDate('');setToDate('');setPage(1)}} className="btn-outline text-xs">Reset Filters</button>
+            <button onClick={()=>{setSearch('');setSupplier('');setStatus('');setFromDate('');setToDate('');setPage(1)}} className="btn-outline text-xs">{t('common.reset', 'Reset Filters')}</button>
           </div>
         </div>
       </div>
@@ -84,15 +87,15 @@ export default function PurchaseOrderLanding() {
         <table className="table-base w-full border border-gray-300">
           <thead>
             <tr className="bg-gray-100 text-xs uppercase text-gray-600">
-              <Th>PO No</Th>
-              <Th>Supplier Name</Th>
-              <Th>PO Date</Th>
-              <Th>Expected Delivery Date</Th>
-              <Th>Total Amount</Th>
-              <Th>Status</Th>
-              <Th>Created By</Th>
-              <Th>Created Date</Th>
-              <Th>Actions</Th>
+              <Th>{t('purchase.order', 'PO No')}</Th>
+              <Th>{t('purchase.dash.filters.supplier', 'Supplier Name')}</Th>
+              <Th>{t('purchase.dash.filters.dateRange', 'PO Date')}</Th>
+              <Th>{t('purchase.dash.filters.dateRange', 'Expected Delivery Date')}</Th>
+              <Th style={{textAlign:"right"}}>{t('purchase.dash.kpis.totalAmount', 'Total Amount')}</Th>
+              <Th>{t('common.status', 'Status')}</Th>
+              <Th>{t('common.createdBy', 'Created By')}</Th>
+              <Th>{t('common.createdDate', 'Created Date')}</Th>
+              <Th style={{textAlign:"center"}}>{t('common.actions', 'Actions')}</Th>
             </tr>
           </thead>
           <tbody className="text-sm">
@@ -106,19 +109,19 @@ export default function PurchaseOrderLanding() {
                 <Td><StatusBadge status={r.status} /></Td>
                 <Td>{r.createdBy}</Td>
                 <Td>{formatDateTime(r.createdDate)}</Td>
-                <Td>
-                  <div className="flex items-center gap-2">
-                    <Link to={`/purchase/order/${r.poNo}`} className="icon-btn" title="View"><Eye size={16} /></Link>
-                    <Link to={`/purchase/order/${r.poNo}/edit`} className="icon-btn" title="Edit"><Pencil size={16} /></Link>
-                    <button className="icon-btn" title="Print"><Printer size={16} /></button>
-                    <button className="icon-btn text-red-600" title="Delete"><Trash2 size={16} /></button>
+                <Td style={{textAlign:"center"}}>
+                  <div className="flex gap-2 justify-center">
+                    <Link to={`/purchase/order/${r.poNo}`} className="icon-btn" title={t('common.view', 'View')}><Eye size={16} /></Link>
+                    <Link to={`/purchase/order/${r.poNo}/edit`} className="icon-btn" title={t('common.edit', 'Edit')}><Pencil size={16} /></Link>
+                    <button className="icon-btn" title={t('common.print', 'Print')}><Printer size={16} /></button>
+                    <button className="icon-btn text-red-600" title={t('common.delete', 'Delete')}><Trash2 size={16} /></button>
                   </div>
                 </Td>
               </tr>
             ))}
             {pageRows.length === 0 && (
               <tr>
-                <Td colSpan={9} className="text-center py-10 text-gray-500">No purchase orders found.</Td>
+                <Td colSpan={9} className="text-center py-10 text-gray-500">{t('purchase.dash.lists.recentPOs', 'No purchase orders found.')}</Td>
               </tr>
             )}
           </tbody>
@@ -127,31 +130,31 @@ export default function PurchaseOrderLanding() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between mt-4 text-sm">
-        <span className="text-gray-600">Showing {(page-1)*pageSize + 1} - {Math.min(page*pageSize, filtered.length)} of {filtered.length}</span>
+        <span className="text-gray-600">{t('common.showing', 'Showing')} {(page-1)*pageSize + 1} - {Math.min(page*pageSize, filtered.length)} {t('common.of', 'of')} {filtered.length}</span>
         <div className="flex items-center gap-2">
-          <button disabled={page===1} onClick={()=> setPage(p=> p-1)} className="btn-outline px-2 py-1 disabled:opacity-40">Prev</button>
+          <button disabled={page===1} onClick={()=> setPage(p=> p-1)} className="btn-outline px-2 py-1 disabled:opacity-40">{t('common.prev', 'Prev')}</button>
           <span>{page} / {totalPages}</span>
-          <button disabled={page===totalPages} onClick={()=> setPage(p=> p+1)} className="btn-outline px-2 py-1 disabled:opacity-40">Next</button>
+          <button disabled={page===totalPages} onClick={()=> setPage(p=> p+1)} className="btn-outline px-2 py-1 disabled:opacity-40">{t('common.next', 'Next')}</button>
         </div>
       </div>
     </div>
   )
 }
 
-function RightHeader({ search, setSearch }) {
+function RightHeader({ search, setSearch, t }) {
   return (
     <div className="flex items-center gap-2">
       <div className="relative">
         <Search size={14} className="absolute left-2 top-2.5 text-gray-400" />
-        <input value={search} onChange={e=>{setSearch(e.target.value)}} placeholder="Search PO or Supplier" className="pl-7 pr-2 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 w-56" />
+        <input value={search} onChange={e=>{setSearch(e.target.value)}} placeholder={t('common.search', 'Search PO or Supplier')} className="pl-7 pr-2 py-2 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 w-56" />
       </div>
-      <Link to="/purchase/order/create" className="btn-primary flex items-center gap-1 text-sm"><Plus size={14} /> Create New Purchase Order</Link>
+      <Link to="/purchase/order/create" className="btn-primary flex items-center gap-1 text-sm"><Plus size={14} /> {t('purchase.dash.actions.createPO', 'Create New Purchase Order')}</Link>
     </div>
   )
 }
 
-function Th({ children }) { return <th className="text-left px-3 py-2 font-medium border border-gray-300">{children}</th> }
-function Td({ children, className='', colSpan }) { return <td colSpan={colSpan} className={`px-3 py-2 border border-gray-200 ${className}`}>{children}</td> }
+function Th({ children ,style}) { return <th  style={style} className="text-left px-3 py-2 font-medium border border-gray-300">{children}</th> }
+function Td({ children,style }) { return <td style={style} className="px-3 py-2 border border-gray-200">{children}</td> }
 
 function formatDate(d) { return d.toISOString().split('T')[0] }
 function formatDateTime(d) { return d.toISOString().replace('T',' ').slice(0,16) }
