@@ -6,6 +6,15 @@ import AccountPages from '../pages/account'
 import InventoryPages from '../pages/inventory'
 import ConfigurationPages from '../pages/configuration'
 import ApprovalPage from '../pages/ApprovalPage'
+import PurchaseOrderApproval from '../pages/approval/PurchaseOrderApproval'
+import PurchasePaymentApproval from '../pages/approval/PurchasePaymentApproval'
+import PurchaseReturnApproval from '../pages/approval/PurchaseReturnApproval'
+import SalesOrderApproval from '../pages/approval/SalesOrderApproval'
+import SalesCollectionApproval from '../pages/approval/SalesCollectionApproval'
+import SalesReturnApproval from '../pages/approval/SalesReturnApproval'
+import AccountJournalApproval from '../pages/approval/AccountJournalApproval'
+import ExpenseAdvanceApproval from '../pages/approval/ExpenseAdvanceApproval'
+import StockAdjustmentApproval from '../pages/approval/StockAdjustmentApproval'
 import SignInPage from '../pages/auth/SignInPage'
 import SignUpPage from '../pages/auth/SignUpPage'
 import Protected from './Protected'
@@ -25,6 +34,15 @@ export default function AppRoutes() {
           {InventoryPages}
           {ConfigurationPages}
           <Route path="/approval" element={<ApprovalPage />} />
+          <Route path="/approval/purchase-order" element={<PurchaseOrderApproval />} />
+          <Route path="/approval/purchase-payment" element={<PurchasePaymentApproval />} />
+          <Route path="/approval/purchase-return" element={<PurchaseReturnApproval />} />
+          <Route path="/approval/sales-order" element={<SalesOrderApproval />} />
+          <Route path="/approval/sales-collection" element={<SalesCollectionApproval />} />
+          <Route path="/approval/sales-return" element={<SalesReturnApproval />} />
+          <Route path="/approval/account-journal" element={<AccountJournalApproval />} />
+          <Route path="/approval/expense-advance" element={<ExpenseAdvanceApproval />} />
+          <Route path="/approval/stock-adjustment" element={<StockAdjustmentApproval />} />
         </Route>
       </Route>
     </Routes>
