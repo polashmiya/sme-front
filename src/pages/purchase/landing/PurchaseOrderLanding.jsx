@@ -105,7 +105,7 @@ export default function PurchaseOrderLanding() {
                 <Td>{r.supplier}</Td>
                 <Td>{formatDate(r.poDate)}</Td>
                 <Td>{formatDate(r.expectedDate)}</Td>
-                <Td className="text-right">৳ {r.totalAmount.toLocaleString()}</Td>
+                <Td style={{textAlign:"right"}}>৳ {r.totalAmount.toLocaleString()}</Td>
                 <Td><StatusBadge status={r.status} /></Td>
                 <Td>{r.createdBy}</Td>
                 <Td>{formatDateTime(r.createdDate)}</Td>
