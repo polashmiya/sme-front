@@ -30,10 +30,8 @@ import {
   Tag,
 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleSidebar } from '../features/ui/uiSlice'
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { toggleSidebar, toggleSidebarWhite } from '../features/ui/uiSlice'
+import { useState, useRef, useEffect } from 'react'
 
 const sections = [
   {
@@ -95,6 +93,7 @@ const sections = [
 export default function Sidebar() {
   const { t } = useTranslation()
   const open = useSelector(s => s.ui.sidebarOpen)
+  const sidebarWhite = useSelector(s => s.ui.sidebarWhite)
   const dispatch = useDispatch()
   const location = useLocation()
   const [expanded, setExpanded] = useState(() => {
@@ -113,16 +112,31 @@ export default function Sidebar() {
   // Smooth width transition and content clipping
   return (
     <aside
-      className="sidebar-area bg-sidebar text-gray-100 flex flex-col border-r border-gray-800 h-full overflow-hidden transition-all duration-300"
+      className={`sidebar-area flex flex-col border-r h-full overflow-hidden transition-all duration-300 ${sidebarWhite ? 'bg-white text-gray-900 border-gray-200' : 'bg-sidebar text-gray-100 border-gray-800'}`}
       style={{ width: open ? 260 : 64, minWidth: open ? 260 : 64, maxWidth: open ? 260 : 64 }}
     >
-      <div className="flex items-center justify-between px-4 h-header border-b border-gray-700">
+      {/* Header: only show color toggle in header if expanded */}
+      <div className={`flex items-center justify-between px-4 h-header border-b ${sidebarWhite ? 'border-gray-200' : 'border-gray-700'}`}>
         <NavLink to="/" className="font-semibold tracking-wide text-sm focus:outline-none">
           {open ? t('appName') : 'SME'}
         </NavLink>
-        <button onClick={() => dispatch(toggleSidebar())} className="text-gray-300 hover:text-white" aria-label="Toggle sidebar">
-          {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-        </button>
+        <div className="flex gap-1 items-center">
+          {open && (
+            <button
+              onClick={() => dispatch(toggleSidebarWhite())}
+              className={`rounded p-1 transition-colors duration-150 ${sidebarWhite ? 'text-gray-700 hover:bg-gray-200' : 'bg-gray-900 text-gray-200 hover:bg-gray-800'}`}
+              aria-label="Toggle sidebar color"
+              title={sidebarWhite ? 'Switch to dark sidebar' : 'Switch to white sidebar'}
+              style={{ marginRight: 4, background: sidebarWhite ? 'transparent' : undefined }}
+            >
+              {/* Color toggle icon: simple circle */}
+              <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 8, background: sidebarWhite ? '#fff' : '#0f172a', border: '1.5px solid #cbd5e1' }} />
+            </button>
+          )}
+          <button onClick={() => dispatch(toggleSidebar())} className={`${sidebarWhite ? 'text-gray-500 hover:text-gray-800' : 'text-gray-300 hover:text-white'}`} aria-label="Toggle sidebar">
+            {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+          </button>
+        </div>
       </div>
       <nav
         className="flex-1 py-2 min-h-0 overflow-hidden"
@@ -134,18 +148,32 @@ export default function Sidebar() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {sections.map(sec => (
             <div key={sec.key} className="mb-1">
-              <SidebarSection section={sec} open={open} t={t} expanded={expanded} onToggle={toggle} />
+              <SidebarSection section={sec} open={open} t={t} expanded={expanded} onToggle={toggle} sidebarWhite={sidebarWhite} />
             </div>
           ))}
         </div>
       </nav>
-      <div className="text-xs text-gray-400 px-4 py-3 border-t border-gray-700">v0.1.0</div>
+      {/* Bottom: show color toggle here if collapsed */}
+      {!open && (
+        <div className="flex flex-col items-center py-3 border-t w-full" style={{ borderColor: sidebarWhite ? '#e5e7eb' : '#374151' }}>
+          <button
+            onClick={() => dispatch(toggleSidebarWhite())}
+            className={`rounded p-1 transition-colors duration-150 ${sidebarWhite ? 'text-gray-700 hover:bg-gray-200' : 'bg-gray-900 text-gray-200 hover:bg-gray-800'}`}
+            aria-label="Toggle sidebar color"
+            title={sidebarWhite ? 'Switch to dark sidebar' : 'Switch to white sidebar'}
+            style={{ marginBottom: 2, background: sidebarWhite ? 'transparent' : undefined }}
+          >
+            <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 8, background: sidebarWhite ? '#fff' : '#0f172a', border: '1.5px solid #cbd5e1' }} />
+          </button>
+        </div>
+      )}
+      <div className={`text-xs px-4 py-3 border-t ${sidebarWhite ? 'text-gray-400 border-gray-200' : 'text-gray-400 border-gray-700'}`}>v0.1.0</div>
     </aside>
   )
 }
 
 
-function SidebarSection({ section, open, t, expanded, onToggle }) {
+function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) {
   const Icon = section.icon
   const hasChildren = !!section.children
   const [hovered, setHovered] = useState(false)
@@ -172,7 +200,7 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
         <div className="relative flex justify-center" style={{ width: '100%' }}>
           <NavLink
             to={section.path}
-            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 text-gray-300 hover:bg-gray-800 hover:text-white ${isActive ? 'bg-gray-800 text-white' : ''}`}
+            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} ${isActive ? (sidebarWhite ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-white') : ''}`}
             style={{ minWidth: 48, minHeight: 48 }}
             end
           >
@@ -183,7 +211,11 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
     }
     // Expanded: show icon and label
     return (
-      <NavLink to={section.path} className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-sm ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`} end>
+      <NavLink
+        to={section.path}
+        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-sm ${isActive ? (sidebarWhite ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-white') : (sidebarWhite ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+        end
+      >
         <Icon size={18} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
       </NavLink>
     )
@@ -194,7 +226,11 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
     const isOpen = expanded === section.key && open
     return (
       <div>
-        <button type="button" onClick={() => onToggle(section.key)} className="w-full px-4 py-2 flex items-center justify-between text-xs uppercase tracking-wide text-gray-400 hover:text-white">
+        <button
+          type="button"
+          onClick={() => onToggle(section.key)}
+          className={`w-full px-4 py-2 flex items-center justify-between text-xs uppercase tracking-wide ${sidebarWhite ? 'text-gray-500 hover:text-gray-900' : 'text-gray-400 hover:text-white'}`}
+        >
           <span className="flex items-center gap-2">
             <Icon size={16} /> {open && <span>{t(`menu.${section.key}`)}</span>}
           </span>
@@ -205,7 +241,11 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
             {section.children.map(child => {
               const ChildIcon = child.icon || ChevronRight
               return (
-                <NavLink key={child.key} to={child.path} className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px] ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}>
+                <NavLink
+                  key={child.key}
+                  to={child.path}
+                  className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px] ${isActive ? (sidebarWhite ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-white') : (sidebarWhite ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+                >
                   <ChildIcon size={14} />
                   {open && <span>{t(child.key)}</span>}
                 </NavLink>
@@ -229,7 +269,7 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
     >
       <button
         type="button"
-        className="flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 text-gray-300 hover:bg-gray-800 hover:text-white"
+        className={`flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}
         style={{ minWidth: 48, minHeight: 48 }}
       >
         <Icon size={22} />
@@ -242,7 +282,7 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
           transform: hovered ? 'translateY(0px)' : 'translateY(10px)',
           transition: 'opacity 0.18s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1)',
         }}
-        className="bg-gray-900 border border-gray-700 rounded-md shadow-lg py-2 absolute"
+        className={`${sidebarWhite ? 'bg-white border border-gray-200' : 'bg-gray-900 border border-gray-700'} rounded-md shadow-lg py-2 absolute`}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
@@ -252,7 +292,7 @@ function SidebarSection({ section, open, t, expanded, onToggle }) {
             <NavLink
               key={child.key}
               to={child.path}
-              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap ${isActive ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}
+              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap ${isActive ? (sidebarWhite ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-white') : (sidebarWhite ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white')}`}
               style={{ minWidth: 160 }}
               onClick={() => setHovered(false)}
             >
