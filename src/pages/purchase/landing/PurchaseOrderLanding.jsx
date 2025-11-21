@@ -169,6 +169,7 @@ export default function PurchaseOrderLanding() {
 
       <Table
         columns={[
+          {title: t("common.sl", "SL"), dataIndex: "sl" ,render: (_ , __, i) => ( (page -1) * pageSize) + i + 1 , textAlign:"center"},
           { title: t("purchase.order", "PO No"), dataIndex: "poNo" },
           {
             title: t("purchase.dash.filters.supplier", "Supplier Name"),
@@ -217,23 +218,23 @@ export default function PurchaseOrderLanding() {
                   className="icon-btn"
                   title={t("common.view", "View")}
                 >
-                  <Eye size={16} />
+                  <Eye size={14} />
                 </Link>
                 <Link
                   to={`/purchase/order/${row.poNo}/edit`}
                   className="icon-btn"
                   title={t("common.edit", "Edit")}
                 >
-                  <Pencil size={16} />
+                  <Pencil size={14} />
                 </Link>
                 <button className="icon-btn" title={t("common.print", "Print")}>
-                  <Printer size={16} />
+                  <Printer size={14} />
                 </button>
                 <button
                   className="icon-btn text-red-600"
                   title={t("common.delete", "Delete")}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             ),
@@ -281,8 +282,7 @@ function StatusBadge({ status }) {
   };
   return (
     <span
-      className={`text-[11px] rounded-md border ${colors[status]}`}
-      style={{padding:"4px"}}
+      className={`text-[11px] p-1 border ${colors[status]}`}
     >
       {status}
     </span>
