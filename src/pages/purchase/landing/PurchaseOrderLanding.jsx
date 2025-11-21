@@ -191,7 +191,7 @@ export default function PurchaseOrderLanding() {
             title: t("purchase.dash.kpis.totalAmount", "Total Amount"),
             dataIndex: "totalAmount",
             render: (amt) => `৳ ${amt.toFixed(2).toLocaleString()}`,
-            className: "text-right",
+            textAlign:"right"
           },
           {
             title: t("common.status", "Status"),
@@ -237,7 +237,7 @@ export default function PurchaseOrderLanding() {
                 </button>
               </div>
             ),
-            className: "text-center",
+            textAlign:"center"
           },
         ]}
         data={pageRows}
@@ -281,7 +281,8 @@ function StatusBadge({ status }) {
   };
   return (
     <span
-      className={`text-[11px] px-2 py-1 rounded-md border ${colors[status]}`}
+      className={`text-[11px] rounded-md border ${colors[status]}`}
+      style={{padding:"4px"}}
     >
       {status}
     </span>
