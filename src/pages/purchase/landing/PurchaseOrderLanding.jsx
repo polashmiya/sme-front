@@ -2,14 +2,10 @@ import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Eye, Pencil, Printer, Trash2, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import Header from "../../../common/Header";
-import SearchInput from "../../../common/SearchInput";
+import CommonLandingLayout from "../../../common/CommonLandingLayout";
 import Dropdown from "../../../common/Dropdown";
 import Input from "../../../common/Input";
 import Button from "../../../common/Button";
-import Table from "../../../common/Table";
-import Pagination from "../../../common/Pagination";
-import Card from "../../../common/Card";
 
 // Dummy Data
 const STATUSES = ["Draft", "Approved", "Partially Received", "Completed"];
@@ -52,236 +48,231 @@ export default function PurchaseOrderLanding() {
     });
   }, [search, supplier, status, fromDate, toDate]);
 
-  // const totalPages = Math.ceil(filtered.length / pageSize)
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  return (
-    <div>
-      <Header
-        title={t("purchase.order")}
-        right={
-          <div className="flex gap-2">
-            <SearchInput
-              value={search}
-              onChange={setSearch}
-              onClear={() => setSearch("")}
-              placeholder={t("common.search", "Search PO or Supplier")}
-            />{" "}
-            <Link to="/purchase/order/create">
-              <Button
-                variant="primary"
-                className="flex items-center gap-1 text-sm"
-              >
-                <Plus size={14} />{" "}
-                {t(
-                  "purchase.dash.actions.createPO",
-                  "Create New Purchase Order"
-                )}
-              </Button>
-            </Link>
-          </div>
-        }
-      />
+  // Header buttons
+  const headerButtons = [
+    {
+      variant: "primary",
+      className: "flex items-center gap-1 text-sm",
+      children: (
+        <>
+          <Plus size={14} /> {t("purchase.dash.actions.createPO", "Create New Purchase Order")}
+        </>
+      ),
+      as: Link,
+      to: "/purchase/order/create",
+    },
+  ];
 
-      {/* Filters */}
-      <Card>
-        <div className="grid md:grid-cols-5 gap-4 text-sm">
-          <div>
-            <Dropdown
-              label={t("purchase.dash.filters.supplier")}
-              options={[
-                { label: t("common.all", "All"), value: "" },
-                ...SUPPLIERS.map((s) => ({ label: s, value: s })),
-              ]}
-              value={
-                supplier
-                  ? { label: supplier, value: supplier }
-                  : { label: t("common.all", "All"), value: "" }
-              }
-              onChange={(opt) => {
-                setSupplier(opt.value);
-                setPage(1);
-              }}
-              placeholder={t("purchase.dash.filters.supplier")}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Dropdown
-              label={t("common.status", "Status")}
-              options={[
-                { label: t("common.all", "All"), value: "" },
-                ...STATUSES.map((s) => ({ label: s, value: s })),
-              ]}
-              value={
-                status
-                  ? { label: status, value: status }
-                  : { label: t("common.all", "All"), value: "" }
-              }
-              onChange={(opt) => {
-                setStatus(opt.value);
-                setPage(1);
-              }}
-              placeholder={t("common.status", "Status")}
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Input
-              type="date"
-              value={fromDate}
-              onChange={(e) => {
-                setFromDate(e.target.value);
-                setPage(1);
-              }}
-              label={t("purchase.dash.filters.dateRange", "From Date")}
-            />
-          </div>
-          <div>
-            <Input
-              type="date"
-              value={toDate}
-              onChange={(e) => {
-                setToDate(e.target.value);
-                setPage(1);
-              }}
-              label={t("purchase.dash.filters.dateRange", "To Date")}
-            />
-          </div>
-          <div className="flex flex-col justify-end">
-            <Button
-              variant="outline"
-              className="text-xs"
-              onClick={() => {
-                setSearch("");
-                setSupplier("");
-                setStatus("");
-                setFromDate("");
-                setToDate("");
-                setPage(1);
-              }}
-            >
-              {t("common.reset", "Reset Filters")}
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      <Table
-        columns={[
-          {title: t("common.sl", "SL"), dataIndex: "sl" ,render: (_ , __, i) => ( (page -1) * pageSize) + i + 1 , textAlign:"center"},
-          { title: t("purchase.order", "PO No"), dataIndex: "poNo" },
-          {
-            title: t("purchase.dash.filters.supplier", "Supplier Name"),
-            dataIndex: "supplier",
-          },
-          {
-            title: t("purchase.dash.filters.dateRange", "PO Date"),
-            dataIndex: "poDate",
-            render: (d) => formatDate(d),
-          },
-          {
-            title: t(
-              "purchase.dash.filters.dateRange",
-              "Expected Delivery Date"
-            ),
-            dataIndex: "expectedDate",
-            render: (d) => formatDate(d),
-          },
-          {
-            title: t("purchase.dash.kpis.totalAmount", "Total Amount"),
-            dataIndex: "totalAmount",
-            render: (amt) => `৳ ${amt.toFixed(2).toLocaleString()}`,
-            textAlign:"right"
-          },
-          {
-            title: t("common.status", "Status"),
-            dataIndex: "status",
-            render: (s) => <StatusBadge status={s} />,
-          },
-          {
-            title: t("common.createdBy", "Created By"),
-            dataIndex: "createdBy",
-          },
-          {
-            title: t("common.createdDate", "Created Date"),
-            dataIndex: "createdDate",
-            render: (d) => formatDateTime(d),
-          },
-          {
-            title: t("common.actions", "Actions"),
-            dataIndex: "actions",
-            render: (_, row) => (
-              <div className="flex gap-2 justify-center">
-                <Link
-                  to={`/purchase/order/${row.poNo}`}
-                  className="icon-btn"
-                  title={t("common.view", "View")}
-                >
-                  <Eye size={14} />
-                </Link>
-                <Link
-                  to={`/purchase/order/${row.poNo}/edit`}
-                  className="icon-btn"
-                  title={t("common.edit", "Edit")}
-                >
-                  <Pencil size={14} />
-                </Link>
-                <button className="icon-btn" title={t("common.print", "Print")}>
-                  <Printer size={14} />
-                </button>
-                <button
-                  className="icon-btn text-red-600"
-                  title={t("common.delete", "Delete")}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ),
-            textAlign:"center"
-          },
-        ]}
-        data={pageRows}
-        emptyText={t(
-          "purchase.dash.lists.recentPOs",
-          "No purchase orders found."
-        )}
-      />
-
-      {/* Pagination */}
-        <Pagination
-          current={page}
-          total={filtered.length}
-          pageSize={pageSize}
-          onChange={setPage}
-          onPageSizeChange={size => {
-            setPageSize(size);
+  // Filter section
+  const FilterSection = () => (
+    <div className="grid md:grid-cols-5 gap-4 text-sm">
+      <div>
+        <Dropdown
+          label={t("purchase.dash.filters.supplier")}
+          options={[
+            { label: t("common.all", "All"), value: "" },
+            ...SUPPLIERS.map((s) => ({ label: s, value: s })),
+          ]}
+          value={
+            supplier
+              ? { label: supplier, value: supplier }
+              : { label: t("common.all", "All"), value: "" }
+          }
+          onChange={(opt) => {
+            setSupplier(opt.value);
             setPage(1);
           }}
+          placeholder={t("purchase.dash.filters.supplier")}
+          className="w-full"
         />
+      </div>
+      <div>
+        <Dropdown
+          label={t("common.status", "Status")}
+          options={[
+            { label: t("common.all", "All"), value: "" },
+            ...STATUSES.map((s) => ({ label: s, value: s })),
+          ]}
+          value={
+            status
+              ? { label: status, value: status }
+              : { label: t("common.all", "All"), value: "" }
+          }
+          onChange={(opt) => {
+            setStatus(opt.value);
+            setPage(1);
+          }}
+          placeholder={t("common.status", "Status")}
+          className="w-full"
+        />
+      </div>
+      <div>
+        <Input
+          type="date"
+          value={fromDate}
+          onChange={(e) => {
+            setFromDate(e.target.value);
+            setPage(1);
+          }}
+          label={t("purchase.dash.filters.dateRange", "From Date")}
+        />
+      </div>
+      <div>
+        <Input
+          type="date"
+          value={toDate}
+          onChange={(e) => {
+            setToDate(e.target.value);
+            setPage(1);
+          }}
+          label={t("purchase.dash.filters.dateRange", "To Date")}
+        />
+      </div>
+      <div className="flex flex-col justify-end">
+        <Button
+          variant="outline"
+          className="text-xs"
+          onClick={() => {
+            setSearch("");
+            setSupplier("");
+            setStatus("");
+            setFromDate("");
+            setToDate("");
+            setPage(1);
+          }}
+        >
+          {t("common.reset", "Reset Filters")}
+        </Button>
+      </div>
     </div>
   );
-}
 
-function formatDate(d) {
-  return d.toISOString().split("T")[0];
-}
-function formatDateTime(d) {
-  return d.toISOString().replace("T", " ").slice(0, 16);
-}
+  // Table columns
+  function formatDate(d) {
+    return d.toISOString().split("T")[0];
+  }
+  function formatDateTime(d) {
+    return d.toISOString().replace("T", " ").slice(0, 16);
+  }
+  function StatusBadge({ status }) {
+    const colors = {
+      Draft: "bg-gray-100 text-gray-700 border-gray-200",
+      Approved: "bg-blue-100 text-blue-700 border-blue-200",
+      "Partially Received": "bg-yellow-100 text-yellow-700 border-yellow-200",
+      Completed: "bg-green-100 text-green-700 border-green-200",
+    };
+    return (
+      <span className={`text-[11px] p-1 border ${colors[status]}`}>{status}</span>
+    );
+  }
 
-function StatusBadge({ status }) {
-  const colors = {
-    Draft: "bg-gray-100 text-gray-700 border-gray-200",
-    Approved: "bg-blue-100 text-blue-700 border-blue-200",
-    "Partially Received": "bg-yellow-100 text-yellow-700 border-yellow-200",
-    Completed: "bg-green-100 text-green-700 border-green-200",
+  const tableColumns = [
+    {
+      title: t("common.sl", "SL"),
+      dataIndex: "sl",
+      render: (_, __, i) => (page - 1) * pageSize + i + 1,
+      textAlign: "center",
+    },
+    { title: t("purchase.order", "PO No"), dataIndex: "poNo" },
+    {
+      title: t("purchase.dash.filters.supplier", "Supplier Name"),
+      dataIndex: "supplier",
+    },
+    {
+      title: t("purchase.dash.filters.dateRange", "PO Date"),
+      dataIndex: "poDate",
+      render: (d) => formatDate(d),
+    },
+    {
+      title: t("purchase.dash.filters.dateRange", "Expected Delivery Date"),
+      dataIndex: "expectedDate",
+      render: (d) => formatDate(d),
+    },
+    {
+      title: t("purchase.dash.kpis.totalAmount", "Total Amount"),
+      dataIndex: "totalAmount",
+      render: (amt) => `৳ ${amt.toFixed(2).toLocaleString()}`,
+      textAlign: "right",
+    },
+    {
+      title: t("common.status", "Status"),
+      dataIndex: "status",
+      render: (s) => <StatusBadge status={s} />,
+    },
+    {
+      title: t("common.createdBy", "Created By"),
+      dataIndex: "createdBy",
+    },
+    {
+      title: t("common.createdDate", "Created Date"),
+      dataIndex: "createdDate",
+      render: (d) => formatDateTime(d),
+    },
+    {
+      title: t("common.actions", "Actions"),
+      dataIndex: "actions",
+      render: (_, row) => (
+        <div className="flex gap-2 justify-center">
+          <Link
+            to={`/purchase/order/${row.poNo}`}
+            className="icon-btn"
+            title={t("common.view", "View")}
+          >
+            <Eye size={14} />
+          </Link>
+          <Link
+            to={`/purchase/order/${row.poNo}/edit`}
+            className="icon-btn"
+            title={t("common.edit", "Edit")}
+          >
+            <Pencil size={14} />
+          </Link>
+          <button className="icon-btn" title={t("common.print", "Print")}>
+            <Printer size={14} />
+          </button>
+          <button
+            className="icon-btn text-red-600"
+            title={t("common.delete", "Delete")}
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      ),
+      textAlign: "center",
+    },
+  ];
+
+  // Table actions (none for now)
+  const tableActions = [];
+
+  // Pagination props
+  const pagination = {
+    current: page,
+    total: filtered.length,
+    pageSize,
+    onChange: setPage,
+    onPageSizeChange: (size) => {
+      setPageSize(size);
+      setPage(1);
+    },
+    showTotal: true,
+    pageSizeOptions: [10, 20, 50, 100, 500, 1000],
   };
+
   return (
-    <span
-      className={`text-[11px] p-1 border ${colors[status]}`}
-    >
-      {status}
-    </span>
+    <CommonLandingLayout
+      title={t("purchase.order")}
+      headerButtons={headerButtons}
+      showSearch={true}
+      onSearch={setSearch}
+      searchPlaceholder={t("common.search", "Search PO or Supplier")}
+      filters={FilterSection}
+      tableColumns={tableColumns}
+      tableData={pageRows}
+      tableActions={tableActions}
+      pagination={pagination}
+    />
   );
 }
