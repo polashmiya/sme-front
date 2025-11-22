@@ -1,15 +1,17 @@
 import React from 'react';
 
 const Table = ({ columns = [], data = [], className = '', rowKey = (row, i) => i, emptyText = 'No data', ...props }) => (
-  <div className={`overflow-x-auto ${className}`}>
-    <table className="min-w-full bg-white border rounded shadow-sm" {...props}>
-      <thead>
+  <div className={`bg-white border-r overflow-x-auto overflow-y-auto relative ${className}`} style={{maxHeight: 'calc(100vh - 320px)'}}>
+    <table className="w-full shadow-sm" {...props}>
+  <thead className="sticky top-0 z-20" style={{background: '#f9fafb'}}>
         <tr>
           {columns.map(col => (
             <th key={col.key || col.dataIndex} className="border border-gray-300 bg-gray-50 text-left font-semibold text-gray-700" style={{
               fontSize:"13px",
               textAlign: col.textAlign??"left",
-              padding:"6px"
+              padding:"6px",
+              background: '#f9fafb',
+              borderColor: '#e5e7eb',
             }} >
               {col.title}
             </th>

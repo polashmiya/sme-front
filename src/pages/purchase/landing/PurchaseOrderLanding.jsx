@@ -34,7 +34,7 @@ export default function PurchaseOrderLanding() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -84,7 +84,7 @@ export default function PurchaseOrderLanding() {
       />
 
       {/* Filters */}
-      <Card className="mb-1">
+      <Card>
         <div className="grid md:grid-cols-5 gap-4 text-sm">
           <div>
             <Dropdown
@@ -249,19 +249,16 @@ export default function PurchaseOrderLanding() {
       />
 
       {/* Pagination */}
-      <div className="flex items-center justify-between mt-2 text-sm">
-        <span className="text-gray-600">
-          {t("common.showing", "Showing")} {(page - 1) * pageSize + 1} -{" "}
-          {Math.min(page * pageSize, filtered.length)} {t("common.of", "of")}{" "}
-          {filtered.length}
-        </span>
         <Pagination
           current={page}
           total={filtered.length}
           pageSize={pageSize}
           onChange={setPage}
+          onPageSizeChange={size => {
+            setPageSize(size);
+            setPage(1);
+          }}
         />
-      </div>
     </div>
   );
 }
