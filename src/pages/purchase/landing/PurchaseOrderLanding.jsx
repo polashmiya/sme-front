@@ -21,7 +21,23 @@ const rows = Array.from({ length: 1000 }).map((_, i) => ({
   createdBy: "User " + ((i % 5) + 1),
   createdDate: new Date(2025, 0, (i % 28) + 1, 10, i % 55),
 }));
-
+function formatDate(d) {
+  return d.toISOString().split("T")[0];
+}
+function formatDateTime(d) {
+  return d.toISOString().replace("T", " ").slice(0, 16);
+}
+function StatusBadge({ status }) {
+  const colors = {
+    Draft: "bg-gray-100 text-gray-700 border-gray-200",
+    Approved: "bg-blue-100 text-blue-700 border-blue-200",
+    "Partially Received": "bg-yellow-100 text-yellow-700 border-yellow-200",
+    Completed: "bg-green-100 text-green-700 border-green-200",
+  };
+  return (
+    <span className={`text-[11px] p-1 border ${colors[status]}`}>{status}</span>
+  );
+}
 export default function PurchaseOrderLanding() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
@@ -50,14 +66,14 @@ export default function PurchaseOrderLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  // Header buttons
   const headerButtons = [
     {
       variant: "primary",
       className: "flex items-center gap-1 text-sm",
       children: (
         <>
-          <Plus size={14} /> {t("purchase.dash.actions.createPO", "Create New Purchase Order")}
+          <Plus size={14} />{" "}
+          {t("purchase.dash.actions.createPO", "Create New Purchase Order")}
         </>
       ),
       as: Link,
@@ -65,7 +81,6 @@ export default function PurchaseOrderLanding() {
     },
   ];
 
-  // Filter section
   const FilterSection = () => (
     <div className="grid md:grid-cols-5 gap-4 text-sm">
       <div>
@@ -149,25 +164,6 @@ export default function PurchaseOrderLanding() {
     </div>
   );
 
-  // Table columns
-  function formatDate(d) {
-    return d.toISOString().split("T")[0];
-  }
-  function formatDateTime(d) {
-    return d.toISOString().replace("T", " ").slice(0, 16);
-  }
-  function StatusBadge({ status }) {
-    const colors = {
-      Draft: "bg-gray-100 text-gray-700 border-gray-200",
-      Approved: "bg-blue-100 text-blue-700 border-blue-200",
-      "Partially Received": "bg-yellow-100 text-yellow-700 border-yellow-200",
-      Completed: "bg-green-100 text-green-700 border-green-200",
-    };
-    return (
-      <span className={`text-[11px] p-1 border ${colors[status]}`}>{status}</span>
-    );
-  }
-
   const tableColumns = [
     {
       title: t("common.sl", "SL"),
@@ -244,10 +240,6 @@ export default function PurchaseOrderLanding() {
     },
   ];
 
-  // Table actions (none for now)
-  const tableActions = [];
-
-  // Pagination props
   const pagination = {
     current: page,
     total: filtered.length,
@@ -271,7 +263,6 @@ export default function PurchaseOrderLanding() {
       filters={FilterSection}
       tableColumns={tableColumns}
       tableData={pageRows}
-      tableActions={tableActions}
       pagination={pagination}
     />
   );

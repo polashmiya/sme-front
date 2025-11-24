@@ -12,8 +12,7 @@ export default function LayoutShell() {
     <div className="app-shell " style={{ gridTemplateColumns: `${sidebarWidth}px 1fr` }}>
       <Sidebar />
       <Header />
-      <main className="main-area p-6 space-y-6 overflow-y-auto"><Outlet /></main>
-      {/* ChatBot floating at bottom right */}
+      <main className="main-area p-3 space-y-3 overflow-y-auto"><Outlet /></main>
       <div style={{ position: 'fixed', bottom: 32, right: 32, zIndex: 1000 }}>
         <ChatBot />
       </div>
