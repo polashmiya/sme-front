@@ -1,11 +1,19 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { Eye, Pencil, Printer, Trash2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import Button from "../../../common/Button";
 import CommonLandingLayout from "../../../common/CommonLandingLayout";
 import Dropdown from "../../../common/Dropdown";
+import {
+  PDelete,
+  PEdit,
+  PPrint,
+  PView
+} from "../../../common/Icons";
 import Input from "../../../common/Input";
-import Button from "../../../common/Button";
+import StatusBadge from "../../../common/StatusBadge";
+import { formatDate, formatDateTime } from "../../../common/utils";
 
 // Dummy Data
 const STATUSES = ["Draft", "Approved", "Partially Received", "Completed"];
@@ -21,23 +29,7 @@ const rows = Array.from({ length: 1000 }).map((_, i) => ({
   createdBy: "User " + ((i % 5) + 1),
   createdDate: new Date(2025, 0, (i % 28) + 1, 10, i % 55),
 }));
-function formatDate(d) {
-  return d.toISOString().split("T")[0];
-}
-function formatDateTime(d) {
-  return d.toISOString().replace("T", " ").slice(0, 16);
-}
-function StatusBadge({ status }) {
-  const colors = {
-    Draft: "bg-gray-100 text-gray-700 border-gray-200",
-    Approved: "bg-blue-100 text-blue-700 border-blue-200",
-    "Partially Received": "bg-yellow-100 text-yellow-700 border-yellow-200",
-    Completed: "bg-green-100 text-green-700 border-green-200",
-  };
-  return (
-    <span className={`text-[11px] p-1 border ${colors[status]}`}>{status}</span>
-  );
-}
+
 export default function PurchaseOrderLanding() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
@@ -209,31 +201,12 @@ export default function PurchaseOrderLanding() {
     {
       title: t("common.actions", "Actions"),
       dataIndex: "actions",
-      render: (_, row) => (
+      render: () => (
         <div className="flex gap-2 justify-center">
-          <Link
-            to={`/purchase/order/${row.poNo}`}
-            className="icon-btn"
-            title={t("common.view", "View")}
-          >
-            <Eye size={14} />
-          </Link>
-          <Link
-            to={`/purchase/order/${row.poNo}/edit`}
-            className="icon-btn"
-            title={t("common.edit", "Edit")}
-          >
-            <Pencil size={14} />
-          </Link>
-          <button className="icon-btn" title={t("common.print", "Print")}>
-            <Printer size={14} />
-          </button>
-          <button
-            className="icon-btn text-red-600"
-            title={t("common.delete", "Delete")}
-          >
-            <Trash2 size={14} />
-          </button>
+          <PView />
+          <PEdit />
+          <PPrint />
+          <PDelete />
         </div>
       ),
       textAlign: "center",
