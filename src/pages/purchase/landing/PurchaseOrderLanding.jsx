@@ -38,7 +38,7 @@ export default function PurchaseOrderLanding() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -223,7 +223,7 @@ export default function PurchaseOrderLanding() {
       setPage(1);
     },
     showTotal: true,
-    pageSizeOptions: [10, 20, 50, 100, 500, 1000],
+    pageSizeOptions: [10,20, 50, 100, 500, 1000],
   };
 
   return (
