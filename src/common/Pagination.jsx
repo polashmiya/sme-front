@@ -42,8 +42,8 @@ const Pagination = ({
   return pages;
 };
   return (
-    <div className={`flex items-center justify-center gap-2 mt-3 ${className}`}>
-      <label className="flex items-center gap-1">
+    <div className={`flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-3 ${className}`}>
+      <label className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start mb-2 sm:mb-0">
         <span className="text-sm text-gray-600">Rows per page:</span>
         <select
           className="border rounded px-2 py-1 text-sm"
@@ -57,41 +57,43 @@ const Pagination = ({
           ))}
         </select>
       </label>
-      <button
-        className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
-        onClick={() => handleClick(current - 1)}
-        disabled={current === 1}
-      >
-        &lt;
-      </button>
-      {getPages().map((page, idx) =>
-  typeof page === "string" ? (
-    <span key={`ellipsis-${idx}`} className="px-2">...</span>
-  ) : (
-    <button
-      key={`page-${idx}`}
-      className={`px-3 py-1 rounded border ${
-        Number(current) === page ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-100"
-      }`}
-      onClick={() => handleClick(page)}  
-      disabled={Number(current) === page}
-    >
-      {page}
-    </button>
-  )
-)}
-      <button
-        className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
-        onClick={() => handleClick(current + 1)}
-        disabled={current === totalPages}
-      >
-        &gt;
-      </button>
-      {showTotal && (
-        <span className="ml-4 text-sm text-gray-600">
-          Showing {(current - 1) * pageSize + 1} - {Math.min(current * pageSize, total)} of {total}
-        </span>
-      )}
+      <div className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start flex-wrap">
+        <button
+          className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => handleClick(current - 1)}
+          disabled={current === 1}
+        >
+          &lt;
+        </button>
+        {getPages().map((page, idx) =>
+          typeof page === "string" ? (
+            <span key={`ellipsis-${idx}`} className="px-2">...</span>
+          ) : (
+            <button
+              key={`page-${idx}`}
+              className={`px-3 py-1 rounded border ${
+                Number(current) === page ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-100"
+              }`}
+              onClick={() => handleClick(page)}  
+              disabled={Number(current) === page}
+            >
+              {page}
+            </button>
+          )
+        )}
+        <button
+          className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+          onClick={() => handleClick(current + 1)}
+          disabled={current === totalPages}
+        >
+          &gt;
+        </button>
+        {showTotal && (
+          <span className="ml-4 text-sm text-gray-600">
+            Showing {(current - 1) * pageSize + 1} - {Math.min(current * pageSize, total)} of {total}
+          </span>
+        )}
+      </div>
     </div>
   );
 };
