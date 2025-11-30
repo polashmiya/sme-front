@@ -21,7 +21,7 @@ export default function Header() {
             className="font-bold text-lg tracking-wide cursor-pointer"
             onClick={() => navigate('/')}
           >
-            SME
+            <span className="text-blue-600">Core</span>lium
           </span>
         )}
       </div>

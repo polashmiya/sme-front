@@ -118,7 +118,11 @@ export default function Sidebar() {
       {/* Header: only show color toggle in header if expanded */}
       <div className={`flex items-center justify-between px-4 h-header border-b ${sidebarWhite ? 'border-gray-200' : 'border-gray-700'}`}>
         <NavLink to="/" className="font-semibold tracking-wide text-sm focus:outline-none">
-          {open ? t('appName') : 'SME'}
+          {open ? (
+            <span dangerouslySetInnerHTML={{ __html: t('appName') }} />
+          ) : (
+            'SME'
+          )}
         </NavLink>
         <div className="flex gap-1 items-center">
           {open && (
