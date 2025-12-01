@@ -35,10 +35,6 @@ export default function DashboardPage() {
   const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-6">
-      {/* Filters Row */}
-      <div className="flex flex-wrap items-center gap-3">
-        <FilterSelect label={t('dashboard.filters.dateRange')} options={[t('dashboard.filters.today'), t('dashboard.filters.thisWeek'), t('dashboard.filters.thisMonth'), t('dashboard.filters.last3Months'), t('dashboard.filters.thisYear')]} />
-      </div>
       {/* KPI Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
   {kpiData().map((k,i)=>(

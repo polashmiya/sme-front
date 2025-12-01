@@ -34,22 +34,6 @@ export default function AccountDashboardPage() {
   const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-6">
-      {/* Filters & Quick Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3 text-sm">
-          <Filter label={t('account.dash.filters.dateRange')} />
-          <Filter label={t('account.dash.filters.branch')} />
-          <Filter label={t('account.dash.filters.accountType')} />
-          <Filter label={t('account.dash.filters.category')} />
-        </div>
-        <div className="flex items-center gap-2">
-          <Link to="/account/journal" className="btn-primary"><CirclePlus size={16} /> {t('account.dash.actions.addJournal')}</Link>
-          <Link to="/account/expense" className="btn-outline">{t('account.dash.actions.addExpense')}</Link>
-          <Link to="/sales/collection" className="btn-outline">{t('account.dash.actions.recordCollection')}</Link>
-          <Link to="/purchase/payment" className="btn-outline">{t('account.dash.actions.recordPayment')}</Link>
-        </div>
-      </div>
-
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((k,i)=>(

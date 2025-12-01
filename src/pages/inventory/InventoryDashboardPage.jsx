@@ -41,22 +41,6 @@ export default function InventoryDashboardPage() {
   const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-6">
-      {/* Filters & Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          <Filter label={t('inventory.dash.filters.dateRange')} />
-          <Filter label={t('inventory.dash.filters.warehouse')} />
-          <Filter label={t('inventory.dash.filters.category')} />
-          <Filter label={t('inventory.dash.filters.itemType')} />
-          <Filter label={t('inventory.dash.filters.supplier')} />
-        </div>
-        <div className="flex items-center gap-2">
-          <Link to="/inventory/adjustment" className="btn-primary"><Wrench size={16} /> {t('inventory.dash.actions.adjustStock')}</Link>
-          <Link to="/configuration/item-profile" className="btn-outline"><CirclePlus size={16} /> {t('inventory.dash.actions.addItem')}</Link>
-          <Link to="/inventory/transfer" className="btn-outline"><MoveHorizontal size={16} /> {t('inventory.dash.actions.transferStock')}</Link>
-          <Link to="/inventory/reports" className="btn-outline"><FileBarChart size={16} /> {t('inventory.dash.actions.stockReport')}</Link>
-        </div>
-      </div>
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
