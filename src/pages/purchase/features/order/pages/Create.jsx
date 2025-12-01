@@ -6,8 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import { Trash2 } from "lucide-react";
+import FormHeader from "../../../../../components/FormHeader";
 
-import FormHeader from "../../../components/FormHeader";
 
 const schema = yup
   .object({
@@ -24,7 +24,7 @@ const DUMMY_ITEMS = [
   { id: 3, name: "Item C", rate: 500 },
 ];
 
-export default function PurchaseOrderForm() {
+export default function PurchaseOrderCreate() {
   const {
     register,
     handleSubmit,

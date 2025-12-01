@@ -1,8 +1,8 @@
 import { Route } from 'react-router-dom'
 import SectionScaffold from '../shared/SectionScaffold'
-import PurchaseDashboardPage from './PurchaseDashboardPage'
-import PurchaseOrderLanding from './landing/PurchaseOrderLanding'
-import PurchaseOrderForm from './form/PurchaseOrderForm'
+import PurchaseDashboardPage from './features/dashboard/PurchaseDashboardPage'
+import PurchaseOrderLanding from './features/order/pages/Landing'
+import PurchaseOrderForm from './features/order/pages/Create'
 
 const pages = [
   { key: 'purchase.dashboard', path: '/purchase/dashboard', component: <PurchaseDashboardPage /> },
