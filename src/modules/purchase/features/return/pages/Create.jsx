@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Trash2 } from "lucide-react";
-import FormHeader from "../../../../../components/FormHeader";
+import CommonCreateLayout from "../../../../../components/CommonCreateLayout";
 
 const schema = yup
   .object({
@@ -84,89 +84,63 @@ export default function PurchaseReturnCreate() {
   };
 
   return (
-    <div className="flex flex-col">
-      <FormHeader title="Create Purchase Return" right={null} />
-      <form onSubmit={handleSubmit(onSubmit)} className="card space-y-4">
-        <div className="grid md:grid-cols-3 gap-4 text-sm">
-          <div className="flex flex-col">
-            <label htmlFor="poNo" className="font-medium mb-1">PO No</label>
-            <input id="poNo" type="text" {...register("poNo")} className="border border-gray-300 rounded px-2 py-1" />
-            {errors.poNo && <span className="text-red-600 text-xs mt-1">{errors.poNo.message}</span>}
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="supplier" className="font-medium mb-1">Supplier</label>
-            <select id="supplier" {...register("supplier")} className="border border-gray-300 rounded px-2 py-1">
-              <option value="">Select supplier</option>
-              <option>Supplier A</option>
-              <option>Supplier B</option>
-              <option>Supplier C</option>
-            </select>
-            {errors.supplier && <span className="text-red-600 text-xs mt-1">{errors.supplier.message}</span>}
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="returnDate" className="font-medium mb-1">Return Date</label>
-            <input id="returnDate" type="date" {...register("returnDate")} className="border border-gray-300 rounded px-2 py-1" />
-            {errors.returnDate && <span className="text-red-600 text-xs mt-1">{errors.returnDate.message}</span>}
-          </div>
+    <CommonCreateLayout
+      title="Create Purchase Return"
+      onSubmit={handleSubmit(onSubmit)}
+      onCancel={() => { reset(); setItems([{ itemId: 1, qty: 1, rate: DUMMY_ITEMS[0].rate }]); }}
+      submitLabel="Save Return"
+      itemsTitle="Items"
+      onAddLine={handleAddLine}
+      itemsColumns={[
+        { key: 'item', title: 'Item', className: 'text-left px-3 py-2', dataIndex: 'itemId', render: (value, row) => (
+          <select value={row.itemId} onChange={(e) => handleItemChange(row._idx, 'itemId', e.target.value)} className="border border-gray-300 rounded px-2 py-1">
+            {DUMMY_ITEMS.map((item) => (
+              <option key={item.id} value={item.id}>{item.name}</option>
+            ))}
+          </select>
+        ) },
+        { key: 'qty', title: 'Qty', className: 'text-right px-3 py-2', dataIndex: 'qty', render: (value, row) => (
+          <input type="number" min="1" value={row.qty} onChange={(e) => handleItemChange(row._idx, 'qty', e.target.value)} className="border border-gray-300 rounded px-2 py-1 w-16 text-right" />
+        ) },
+        { key: 'rate', title: 'Rate', className: 'text-right px-3 py-2', dataIndex: 'rate', render: (value, row) => (
+          <input type="number" min="0" value={row.rate} onChange={(e) => handleItemChange(row._idx, 'rate', e.target.value)} className="border border-gray-300 rounded px-2 py-1 w-20 text-right" />
+        ) },
+        { key: 'total', title: 'Total', className: 'text-right px-3 py-2', dataIndex: 'total', render: (_, row) => lineTotal(row) },
+        { key: 'action', title: 'Action', className: 'text-center px-3 py-2', dataIndex: 'action', render: (_, row) => (
+          <button type="button" className="text-red-600 p-1" onClick={() => handleRemoveLine(row._idx)} disabled={items.length === 1} title="Delete">
+            <Trash2 size={16} />
+          </button>
+        ) },
+      ]}
+      itemsData={items.map((r, idx) => ({ ...r, _idx: idx }))}
+      itemsFooter={
+        <div className="flex justify-end mt-2 text-sm">
+          <div className="font-semibold">Grand Total:&nbsp;{grandTotal}</div>
         </div>
-
-        <div className="border rounded-lg p-3">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold">Items</h3>
-            <button type="button" className="btn-outline text-xs" onClick={handleAddLine}>+ Add Line</button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full table-base border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100 text-xs uppercase text-gray-600">
-                  <th style={{textAlign:'left'}} className="px-3 py-2 border border-gray-300">Item</th>
-                  <th style={{textAlign:'right'}} className="px-3 py-2 border border-gray-300">Qty</th>
-                  <th style={{textAlign:'right'}} className="px-3 py-2 border border-gray-300">Rate</th>
-                  <th style={{textAlign:'right'}} className="px-3 py-2 border border-gray-300">Total</th>
-                  <th style={{textAlign:'center'}} className="px-3 py-2 border border-gray-300">Action</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {items.map((row, idx) => (
-                  <tr key={idx}>
-                    <td className="px-3 py-2 border border-gray-200">
-                      <select value={row.itemId} onChange={(e) => handleItemChange(idx, "itemId", e.target.value)} className="border border-gray-300 rounded px-2 py-1">
-                        {DUMMY_ITEMS.map((item) => (
-                          <option key={item.id} value={item.id}>{item.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-3 py-2 border border-gray-200 text-right">
-                      <input type="number" min="1" value={row.qty} onChange={(e) => handleItemChange(idx, "qty", e.target.value)} className="border border-gray-300 rounded px-2 py-1 w-16 text-right" />
-                    </td>
-                    <td className="px-3 py-2 border border-gray-200 text-right">
-                      <input type="number" min="0" value={row.rate} onChange={(e) => handleItemChange(idx, "rate", e.target.value)} className="border border-gray-300 rounded px-2 py-1 w-20 text-right" />
-                    </td>
-                    <td className="px-3 py-2 border border-gray-200 text-right">{lineTotal(row)}</td>
-                    <td className="px-3 py-2 border border-gray-200 text-center">
-                      <button type="button" className="text-red-600 p-1" onClick={() => handleRemoveLine(idx)} disabled={items.length === 1} title="Delete">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colSpan={3} className="text-right font-semibold px-3 py-2">Grand Total</td>
-                  <td className="text-right font-semibold px-3 py-2">{grandTotal}</td>
-                  <td></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+      }
+    >
+      <div className="grid md:grid-cols-3 gap-4 text-sm">
+        <div className="flex flex-col">
+          <label htmlFor="poNo" className="font-medium mb-1">PO No</label>
+          <input id="poNo" type="text" {...register("poNo")} className="border border-gray-300 rounded px-2 py-1" />
+          {errors.poNo && <span className="text-red-600 text-xs mt-1">{errors.poNo.message}</span>}
         </div>
-
-        <div className="flex items-center justify-end gap-2">
-          <button type="button" className="btn-outline" onClick={() => { reset(); setItems([{ itemId: 1, qty: 1, rate: DUMMY_ITEMS[0].rate }]); }}>Cancel</button>
-          <button type="submit" className="btn-primary">Save Return</button>
+        <div className="flex flex-col">
+          <label htmlFor="supplier" className="font-medium mb-1">Supplier</label>
+          <select id="supplier" {...register("supplier")} className="border border-gray-300 rounded px-2 py-1">
+            <option value="">Select supplier</option>
+            <option>Supplier A</option>
+            <option>Supplier B</option>
+            <option>Supplier C</option>
+          </select>
+          {errors.supplier && <span className="text-red-600 text-xs mt-1">{errors.supplier.message}</span>}
         </div>
-      </form>
-    </div>
+        <div className="flex flex-col">
+          <label htmlFor="returnDate" className="font-medium mb-1">Return Date</label>
+          <input id="returnDate" type="date" {...register("returnDate")} className="border border-gray-300 rounded px-2 py-1" />
+          {errors.returnDate && <span className="text-red-600 text-xs mt-1">{errors.returnDate.message}</span>}
+        </div>
+      </div>
+    </CommonCreateLayout>
   );
 }
