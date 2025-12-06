@@ -51,7 +51,7 @@ const CommonLandingLayout = ({
                 />
               )}
               {headerButtons.map((btn) => (
-                <Button key={btn.label || btn.id} {...btn} className="w-full sm:w-auto" />
+                <Button key={btn.label || btn.id} {...btn} className="w-full sm:w-auto"  />
               ))}
             </div>
           }

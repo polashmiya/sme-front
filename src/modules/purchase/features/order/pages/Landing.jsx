@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../../../../common/Button";
 import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
 import Dropdown from "../../../../../common/Dropdown";
@@ -32,6 +32,7 @@ const rows = Array.from({ length: 1000 }).map((_, i) => ({
 
 export default function PurchaseOrderLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [supplier, setSupplier] = useState("");
   const [status, setStatus] = useState("");
@@ -70,6 +71,9 @@ export default function PurchaseOrderLanding() {
       ),
       as: Link,
       to: "/purchase/order/create",
+      onClick: () => {
+        navigate("/purchase/order/create");
+      },
     },
   ];
 
