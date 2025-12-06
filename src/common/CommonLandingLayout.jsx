@@ -59,7 +59,7 @@ const CommonLandingLayout = ({
       </div>
 
       {filters && (
-        <div ref={filterRef} className="w-full sm:px-0 mt-2">
+        <div ref={filterRef} className="w-full sm:px-0 mt-2 " style={{marginBottom:"2px"}}>
           <Card className="w-full">
             <div className="sm:hidden flex justify-between items-center mb-2">
               <span className="font-semibold text-base">Filters</span>

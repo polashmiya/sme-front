@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Table = ({ columns = [], data = [], className = '', rowKey = (row, i) => i, emptyText = 'No data', maxHeight, ...props }) => (
-  <div className={`bg-white border-r overflow-x-auto overflow-y-auto relative ${className}`} style={{maxHeight: maxHeight ? maxHeight: 'calc(100vh - 320px)'}}>
+  <div className={`bg-white border-r overflow-x-auto overflow-y-auto relative ${className}`} style={{maxHeight: maxHeight ? maxHeight: 'calc(100vh - 320px)',marginTop:"0px"}}>
     <table className="w-full shadow-sm" {...props}>
   <thead className="sticky top-0 z-20" style={{background: '#f9fafb'}}>
         <tr>

@@ -25,7 +25,7 @@ import {
   Cell,
 } from "recharts";
 import { Link } from "react-router-dom";
-import { HeaderWithOutCard } from "../../common/Header";
+import { HeaderWithOutCard } from "../../../../common/Header";
 import { useNavigate } from "react-router-dom";
 
 const COLORS = [

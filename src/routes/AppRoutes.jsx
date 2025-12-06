@@ -1,28 +1,28 @@
 import { Routes, Route } from "react-router-dom";
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../modules/DashboardPage";
 import MoreMenusPage from "../common/MoreMenusPage";
 import PurchaseSubMenuPage from "../common/PurchaseSubMenuPage";
 import SalesSubMenuPage from "../common/SalesSubMenuPage";
 import AccountSubMenuPage from "../common/AccountSubMenuPage";
 import InventorySubMenuPage from "../common/InventorySubMenuPage";
 import ConfigurationSubMenuPage from "../common/ConfigurationSubMenuPage";
-import PurchasePages from "../pages/purchase/PurchasePages";
-import SalesPages from "../pages/sales/SalesPages";
-import AccountPages from "../pages/account";
-import InventoryPages from "../pages/inventory";
-import ConfigurationPages from "../pages/configuration";
-import ApprovalPage from "../pages/ApprovalPage";
-import PurchaseOrderApproval from "../pages/approval/PurchaseOrderApproval";
-import PurchasePaymentApproval from "../pages/approval/PurchasePaymentApproval";
-import PurchaseReturnApproval from "../pages/approval/PurchaseReturnApproval";
-import SalesOrderApproval from "../pages/approval/SalesOrderApproval";
-import SalesCollectionApproval from "../pages/approval/SalesCollectionApproval";
-import SalesReturnApproval from "../pages/approval/SalesReturnApproval";
-import AccountJournalApproval from "../pages/approval/AccountJournalApproval";
-import ExpenseAdvanceApproval from "../pages/approval/ExpenseAdvanceApproval";
-import StockAdjustmentApproval from "../pages/approval/StockAdjustmentApproval";
-import SignInPage from "../pages/auth/SignInPage";
-import SignUpPage from "../pages/auth/SignUpPage";
+import PurchasePages from "../modules/purchase/PurchasePages";
+import SalesPages from "../modules/sales/SalesPages";
+// import AccountPages from "../pages/account";
+// import InventoryPages from "../pages/inventory";
+// import ConfigurationPages from "../pages/configuration";
+import ApprovalPage from "../modules/ApprovalPage";
+import PurchaseOrderApproval from "../modules/approval/PurchaseOrderApproval";
+import PurchasePaymentApproval from "../modules/approval/PurchasePaymentApproval";
+import PurchaseReturnApproval from "../modules/approval/PurchaseReturnApproval";
+import SalesOrderApproval from "../modules/approval/SalesOrderApproval";
+import SalesCollectionApproval from "../modules/approval/SalesCollectionApproval";
+import SalesReturnApproval from "../modules/approval/SalesReturnApproval";
+import AccountJournalApproval from "../modules/approval/AccountJournalApproval";
+import ExpenseAdvanceApproval from "../modules/approval/ExpenseAdvanceApproval";
+import StockAdjustmentApproval from "../modules/approval/StockAdjustmentApproval";
+import SignInPage from "../modules/auth/SignInPage";
+import SignUpPage from "../modules/auth/SignUpPage";
 import Protected from "./Protected";
 import LayoutShell from "../layout/LayoutShell";
 
@@ -43,9 +43,9 @@ export default function AppRoutes() {
           <Route path="/configuration" element={<ConfigurationSubMenuPage />} />
           {PurchasePages}
           {SalesPages}
-          {AccountPages}
-          {InventoryPages}
-          {ConfigurationPages}
+          {/* {AccountPages} */}
+          {/* {InventoryPages} */}
+          {/* {ConfigurationPages} */}
           <Route path="/approval" element={<ApprovalPage />} />
           <Route
             path="/approval/purchase-order"

@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom'
 import SectionScaffold from '../shared/SectionScaffold'
-import SalesDashboardPage from './SalesDashboardPage'
+import SalesDashboardPage from './features/dashboard/SalesDashboardPage'
 
 const pages = [
   { key: 'sales.dashboard', path: '/sales/dashboard' },
