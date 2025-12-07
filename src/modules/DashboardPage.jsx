@@ -80,177 +80,176 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   return (
     <>
-    <HeaderWithOutCard
+      <HeaderWithOutCard
         title={t("dashboard.title", { defaultValue: "Dashboard" })}
         onBack={undefined}
       />
-    <div className="flex flex-col gap-6">
-      
-      {/* KPI Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {kpiData().map((k, i) => (
-          <motion.div
-            key={k.key}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="card flex flex-col gap-1"
-          >
-            <div className="flex items-center gap-2 text-xs font-medium text-gray-600">
-              <k.icon size={16} className="text-blue-600" />{" "}
-              {t(`dashboard.kpis.${k.key}`)}
-            </div>
-            <div className="text-xl font-semibold">{k.value}</div>
-          </motion.div>
-        ))}
+      <div className="flex flex-col gap-6">
+        {/* KPI Grid */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {kpiData().map((k, i) => (
+            <motion.div
+              key={k.key}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="card flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-600">
+                <k.icon size={16} className="text-blue-600" />{" "}
+                {t(`dashboard.kpis.${k.key}`)}
+              </div>
+              <div className="text-xl font-semibold">{k.value}</div>
+            </motion.div>
+          ))}
+        </div>
+        {/* Charts Section */}
+        <div className="grid xl:grid-cols-3 gap-6">
+          <ChartCard title={t("dashboard.charts.salesVsPurchase")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={salesPurchaseTrend}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="sales" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="purchase" fill="#16a34a" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+          <ChartCard title={t("dashboard.charts.topSellingItems")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={topItems} layout="vertical">
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={80} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#9333ea" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+          <ChartCard title={t("dashboard.charts.topCustomers")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={topCustomers}
+                  dataKey="value"
+                  innerRadius={40}
+                  outerRadius={70}
+                  paddingAngle={2}
+                >
+                  {topCustomers.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartCard>
+          <ChartCard title={t("dashboard.charts.topSuppliers")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={topSuppliers} layout="vertical">
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={80} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#ea580c" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+          <ChartCard title={t("dashboard.charts.expenseBreakdown")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={expenseBreakdown}
+                  dataKey="value"
+                  outerRadius={70}
+                  paddingAngle={3}
+                >
+                  {expenseBreakdown.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartCard>
+          <ChartCard title={t("dashboard.charts.cashFlow")}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={cashFlowTrend}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="inflow" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="outflow" fill="#dc2626" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </div>
+        {/* Lists & Alerts */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <ListCard
+            title={t("dashboard.lists.pendingApprovals")}
+            icon={<AlertTriangle size={16} className="text-yellow-600" />}
+            items={[
+              {
+                id: "PO-1001",
+                label: "PO-1001 - Supplier X - ৳ 9,500",
+                to: "/approval",
+              },
+              {
+                id: "SO-1023",
+                label: "SO-1023 - Customer A - ৳ 12,000",
+                to: "/approval",
+              },
+              {
+                id: "PO-1002",
+                label: "PO-1002 - Supplier Y - ৳ 7,200",
+                to: "/approval",
+              },
+            ]}
+          />
+          <ListCard
+            title={t("dashboard.lists.recentInvoices")}
+            icon={<FileText size={16} className="text-blue-600" />}
+            items={[
+              {
+                id: "INV-3001",
+                label: "INV-3001 - Customer B - ৳ 15,400",
+                to: "/sales/order",
+              },
+              {
+                id: "INV-3002",
+                label: "INV-3002 - Customer C - ৳ 11,200",
+                to: "/sales/order",
+              },
+              {
+                id: "INV-3003",
+                label: "INV-3003 - Customer D - ৳ 9,800",
+                to: "/sales/order",
+              },
+            ]}
+          />
+          <ListCard
+            title={t("dashboard.lists.lowStock")}
+            icon={<Package size={16} className="text-red-600" />}
+            items={[
+              {
+                id: "ITM-1",
+                label: "Item A (10 pcs left)",
+                to: "/inventory/adjustment",
+              },
+              {
+                id: "ITM-2",
+                label: "Item B (5 pcs left)",
+                to: "/inventory/adjustment",
+              },
+              {
+                id: "ITM-3",
+                label: "Item C (2 pcs left)",
+                to: "/inventory/adjustment",
+              },
+            ]}
+          />
+        </div>
       </div>
-      {/* Charts Section */}
-      <div className="grid xl:grid-cols-3 gap-6">
-        <ChartCard title={t("dashboard.charts.salesVsPurchase")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={salesPurchaseTrend}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="sales" fill="#2563eb" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="purchase" fill="#16a34a" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-        <ChartCard title={t("dashboard.charts.topSellingItems")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topItems} layout="vertical">
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={80} />
-              <Tooltip />
-              <Bar dataKey="value" fill="#9333ea" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-        <ChartCard title={t("dashboard.charts.topCustomers")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={topCustomers}
-                dataKey="value"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={2}
-              >
-                {topCustomers.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-        <ChartCard title={t("dashboard.charts.topSuppliers")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topSuppliers} layout="vertical">
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={80} />
-              <Tooltip />
-              <Bar dataKey="value" fill="#ea580c" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-        <ChartCard title={t("dashboard.charts.expenseBreakdown")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={expenseBreakdown}
-                dataKey="value"
-                outerRadius={70}
-                paddingAngle={3}
-              >
-                {expenseBreakdown.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-        <ChartCard title={t("dashboard.charts.cashFlow")}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={cashFlowTrend}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="inflow" fill="#2563eb" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="outflow" fill="#dc2626" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-      {/* Lists & Alerts */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <ListCard
-          title={t("dashboard.lists.pendingApprovals")}
-          icon={<AlertTriangle size={16} className="text-yellow-600" />}
-          items={[
-            {
-              id: "PO-1001",
-              label: "PO-1001 - Supplier X - ৳ 9,500",
-              to: "/approval",
-            },
-            {
-              id: "SO-1023",
-              label: "SO-1023 - Customer A - ৳ 12,000",
-              to: "/approval",
-            },
-            {
-              id: "PO-1002",
-              label: "PO-1002 - Supplier Y - ৳ 7,200",
-              to: "/approval",
-            },
-          ]}
-        />
-        <ListCard
-          title={t("dashboard.lists.recentInvoices")}
-          icon={<FileText size={16} className="text-blue-600" />}
-          items={[
-            {
-              id: "INV-3001",
-              label: "INV-3001 - Customer B - ৳ 15,400",
-              to: "/sales/order",
-            },
-            {
-              id: "INV-3002",
-              label: "INV-3002 - Customer C - ৳ 11,200",
-              to: "/sales/order",
-            },
-            {
-              id: "INV-3003",
-              label: "INV-3003 - Customer D - ৳ 9,800",
-              to: "/sales/order",
-            },
-          ]}
-        />
-        <ListCard
-          title={t("dashboard.lists.lowStock")}
-          icon={<Package size={16} className="text-red-600" />}
-          items={[
-            {
-              id: "ITM-1",
-              label: "Item A (10 pcs left)",
-              to: "/inventory/adjustment",
-            },
-            {
-              id: "ITM-2",
-              label: "Item B (5 pcs left)",
-              to: "/inventory/adjustment",
-            },
-            {
-              id: "ITM-3",
-              label: "Item C (2 pcs left)",
-              to: "/inventory/adjustment",
-            },
-          ]}
-        />
-      </div>
-    </div>
     </>
   );
 }
