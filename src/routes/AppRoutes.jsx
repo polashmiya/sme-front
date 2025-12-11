@@ -9,6 +9,7 @@ import ConfigurationSubMenuPage from "../common/ConfigurationSubMenuPage";
 import PurchasePages from "../modules/purchase/PurchasePages";
 import SalesPages from "../modules/sales/SalesPages";
 import AccountPages from "../modules/account/AccountPages";
+import ConfigurationPages from "../modules/configuration/ConfigurationPages";
 import InventoryPages from "../modules/inventory/InventoryPages";
 // import AccountPages from "../pages/account";
 // import InventoryPages from "../pages/inventory";
@@ -46,8 +47,8 @@ export default function AppRoutes() {
           {PurchasePages}
           {SalesPages}
           {AccountPages}
+          {ConfigurationPages}
           {InventoryPages}
-          {/* {ConfigurationPages} */}
           <Route path="/approval" element={<ApprovalPage />} />
           <Route
             path="/approval/purchase-order"
