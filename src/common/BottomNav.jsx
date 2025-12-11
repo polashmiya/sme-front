@@ -16,7 +16,6 @@ const MORE_MENUS = [
 ];
 
 export default function BottomNav() {
-  // const location = useLocation();
   const navigate = useNavigate();
 
   // Only show on mobile
@@ -42,7 +41,7 @@ export default function BottomNav() {
             key={menu.key}
             to={menu.path}
             className={({ isActive }) => `flex flex-col items-center text-xs px-2 py-1 focus:outline-none ${isActive ? 'text-blue-600' : 'text-gray-500'}`}
-            end
+            end={menu.key === 'dashboard'}
           >
             <Icon size={22} />
             <span>{menu.label}</span>
