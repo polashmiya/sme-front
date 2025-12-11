@@ -22,7 +22,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { HeaderWithOutCard } from "../common/Header";
+import { HeaderWithOutCard } from "../common/components/Header";
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
 const salesPurchaseTrend = months.map((m) => ({

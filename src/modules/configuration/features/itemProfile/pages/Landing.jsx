@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Input from "../../../../../common/Input";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Input from "../../../../../common/components/Input";
 
 const rows = Array.from({ length: 300 }).map((_, i) => ({
   id: i + 1,

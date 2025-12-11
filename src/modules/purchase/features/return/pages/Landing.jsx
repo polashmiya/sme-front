@@ -2,12 +2,12 @@ import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import Button from "../../../../../common/Button";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Dropdown from "../../../../../common/Dropdown";
-import { PDelete, PEdit, PPrint, PView } from "../../../../../common/Icons";
-import Input from "../../../../../common/Input";
-import StatusBadge from "../../../../../common/StatusBadge";
+import Button from "../../../../../common/components/Button";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
+import { PDelete, PEdit, PPrint, PView } from "../../../../../common/components/Icons";
+import Input from "../../../../../common/components/Input";
+import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
 
 const STATUSES = ["Draft", "Approved", "Completed"];

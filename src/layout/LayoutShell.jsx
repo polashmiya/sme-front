@@ -1,11 +1,11 @@
 import React from 'react';
 import Sidebar from './Sidebar'
 import Header from './Header'
-import ChatBot from '../common/ChatBot';
+import ChatBot from '../common/components/ChatBot';
 
 import { Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import BottomNav from '../common/BottomNav';
+import BottomNav from '../common/components/BottomNav';
 
 export default function LayoutShell() {
   const open = useSelector(s => s.ui.sidebarOpen)

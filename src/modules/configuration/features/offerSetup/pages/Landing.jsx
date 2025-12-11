@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Dropdown from "../../../../../common/Dropdown";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
 
 const TYPES = ["Discount", "BuyXGetY", "Bundle"];
 const rows = Array.from({ length: 150 }).map((_, i) => ({

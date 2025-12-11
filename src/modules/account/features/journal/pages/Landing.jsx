@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Input from "../../../../../common/Input";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Input from "../../../../../common/components/Input";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "../../../../../common/utils";
 

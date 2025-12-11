@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import Table from '../../components/Table'
+import Table from '../../common/components/Table'
 import { useRef } from 'react'
 import { useReactToPrint } from 'react-to-print'
 

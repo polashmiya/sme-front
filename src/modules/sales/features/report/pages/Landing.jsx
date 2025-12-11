@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
-import Dropdown from "../../../../../common/Dropdown";
-import Input from "../../../../../common/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
+import Input from "../../../../../common/components/Input";
 import { formatDate } from "../../../../../common/utils";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
 
 const REPORT_TYPES = ["Summary", "By Customer", "By Item"];
 const rows = Array.from({ length: 50 }).map((_, i) => ({

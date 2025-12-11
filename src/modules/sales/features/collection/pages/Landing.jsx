@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Dropdown from "../../../../../common/Dropdown";
-import Input from "../../../../../common/Input";
-import StatusBadge from "../../../../../common/StatusBadge";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
+import Input from "../../../../../common/components/Input";
+import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate } from "../../../../../common/utils";
 
 const STATUSES = ["Pending", "Partially Collected", "Collected", "Overdue"];

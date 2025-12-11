@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Dropdown from "../../../../../common/Dropdown";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
 
 const STATUSES = ["Pending", "Approved", "Paid"];
 const EMPLOYEES = ["Alice", "Bob", "Charlie", "David"];

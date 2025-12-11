@@ -36,7 +36,7 @@ import {
   Area,
 } from "recharts";
 import { Link, useNavigate } from "react-router-dom";
-import { HeaderWithOutCard } from "../../../../common/Header";
+import { HeaderWithOutCard } from "../../../../common/components/Header";
 
 // Mock Data Generators
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];

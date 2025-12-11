@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import CommonCreateLayout from "../../../../../components/CommonCreateLayout";
-import FormHeader from "../../../../../components/FormHeader";
-import Input from "../../../../../common/Input";
-import Dropdown from "../../../../../common/Dropdown";
-import Button from "../../../../../common/Button";
+import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
+import FormHeader from "../../../../../common/components/FormHeader";
+import Input from "../../../../../common/components/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
+import Button from "../../../../../common/components/Button";
 
 const CUSTOMERS = ["Customer A", "Customer B", "Customer C", "Customer D"];
 

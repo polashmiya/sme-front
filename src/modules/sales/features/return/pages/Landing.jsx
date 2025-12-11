@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Dropdown from "../../../../../common/Dropdown";
-import Input from "../../../../../common/Input";
-import StatusBadge from "../../../../../common/StatusBadge";
+import Dropdown from "../../../../../common/components/Dropdown";
+import Input from "../../../../../common/components/Input";
+import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate } from "../../../../../common/utils";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
 
 const STATUSES = ["Pending", "Approved", "Processed"];
 const rows = Array.from({ length: 120 }).map((_, i) => ({

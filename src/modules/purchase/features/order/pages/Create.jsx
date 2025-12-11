@@ -6,8 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import { Trash2 } from "lucide-react";
-import CommonCreateLayout from "../../../../../components/CommonCreateLayout";
-import Dropdown from "../../../../../common/Dropdown";
+import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
 
 
 const schema = yup

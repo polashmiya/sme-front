@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import CommonLandingLayout from "../../../../../common/CommonLandingLayout";
-import Dropdown from "../../../../../common/Dropdown";
+import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
+import Dropdown from "../../../../../common/components/Dropdown";
 import { useTranslation } from "react-i18next";
 
 const TYPES = ["Asset", "Liability", "Equity", "Income", "Expense"];

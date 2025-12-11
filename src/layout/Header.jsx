@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import LanguageSwitcher from "../common/components/LanguageSwitcher";
 import { signOut } from "../auth/authSlice";
 
 export default function Header() {

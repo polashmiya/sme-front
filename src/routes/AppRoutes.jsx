@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import DashboardPage from "../modules/DashboardPage";
-import MoreMenusPage from "../common/MoreMenusPage";
-import PurchaseSubMenuPage from "../common/PurchaseSubMenuPage";
-import SalesSubMenuPage from "../common/SalesSubMenuPage";
-import AccountSubMenuPage from "../common/AccountSubMenuPage";
-import InventorySubMenuPage from "../common/InventorySubMenuPage";
-import ConfigurationSubMenuPage from "../common/ConfigurationSubMenuPage";
+import MoreMenusPage from "../common/components/MoreMenusPage";
+import PurchaseSubMenuPage from "../common/components/PurchaseSubMenuPage";
+import SalesSubMenuPage from "../common/components/SalesSubMenuPage";
+import AccountSubMenuPage from "../common/components/AccountSubMenuPage";
+import InventorySubMenuPage from "../common/components/InventorySubMenuPage";
+import ConfigurationSubMenuPage from "../common/components/ConfigurationSubMenuPage";
 import PurchasePages from "../modules/purchase/PurchasePages";
 import SalesPages from "../modules/sales/SalesPages";
 import AccountPages from "../modules/account/AccountPages";

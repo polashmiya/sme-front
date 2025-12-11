@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import CommonCreateLayout from "../../../../../components/CommonCreateLayout";
+import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
 
 const schema = yup
   .object({

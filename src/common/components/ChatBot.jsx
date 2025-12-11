@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import './ChatBot.css';
+import '../ChatBot.css';
 import { GoogleGenAI } from '@google/genai';
 import { X } from 'lucide-react';
 
