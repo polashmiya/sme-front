@@ -30,8 +30,8 @@ import {
   Tag,
 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleSidebar, toggleSidebarWhite } from '../features/ui/uiSlice'
 import { useState, useRef, useEffect } from 'react'
+import { toggleSidebar, toggleSidebarWhite } from '../ui/uiSlice'
 
 const sections = [
   {

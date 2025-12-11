@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import { signOut } from "../features/auth/authSlice";
+import { signOut } from "../auth/authSlice";
 
 export default function Header() {
   const { t } = useTranslation();

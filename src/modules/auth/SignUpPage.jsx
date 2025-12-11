@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch } from 'react-redux'
-import { signUp } from '../../features/auth/authSlice'
 import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { signUp } from '../../auth/authSlice'
 
 const schema = yup.object({
   name: yup.string().required(),
