@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Input from "../../../../../common/components/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
   id: i + 1,
@@ -9,6 +9,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
   name: `Item ${i + 1}`,
   standardPrice: Math.floor(Math.random() * 900) + 100,
 }));
+const SKUS = Array.from({ length: 50 }).map((_, i)=> `SKU-${1000 + i}`);
 
 export default function StandardPriceLanding() {
   const { t } = useTranslation();
@@ -30,7 +31,13 @@ export default function StandardPriceLanding() {
   const FilterSection = () => (
     <div className="grid md:grid-cols-3 gap-4 text-sm">
       <div>
-        <Input label={t("configuration.standardPrice.sku", "SKU")} value={sku} onChange={(e)=>{ setSku(e.target.value); setPage(1); }} />
+        <Dropdown
+          label={t("configuration.standardPrice.sku", "SKU")}
+          options={[{ label: t("common.all","All"), value: "" }, ...SKUS.map(s=>({label:s, value:s}))]}
+          value={sku ? { label: sku, value: sku } : { label: t("common.all","All"), value: "" }}
+          onChange={(opt)=>{ setSku(opt.value); setPage(1); }}
+          className="w-full"
+        />
       </div>
       <div className="flex flex-col justify-end">
         <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setSku(""); setPage(1); }}>

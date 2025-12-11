@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Input from "../../../../../common/components/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
+const DEPARTMENTS = ["Sales", "Purchase", "Accounts", "Inventory", "HR", "IT"];
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
   id: i + 1,
   empId: `EMP-${1000 + i}`,
   name: `Employee ${i + 1}`,
-  department: ["Sales", "Purchase", "Accounts", "Inventory"][i % 4],
+  department: DEPARTMENTS[i % DEPARTMENTS.length],
   phone: `017${Math.floor(10000000 + Math.random() * 89999999)}`,
 }));
 
@@ -31,7 +32,13 @@ export default function EmployeeLanding() {
   const FilterSection = () => (
     <div className="grid md:grid-cols-3 gap-4 text-sm">
       <div>
-        <Input label={t("configuration.employee.department", "Department")} value={department} onChange={(e)=>{ setDepartment(e.target.value); setPage(1); }} />
+        <Dropdown
+          label={t("configuration.employee.department", "Department")}
+          options={[{ label: t("common.all", "All"), value: "" }, ...DEPARTMENTS.map(d=>({label:d, value:d}))]}
+          value={department ? { label: department, value: department } : { label: t("common.all","All"), value: "" }}
+          onChange={(opt)=>{ setDepartment(opt.value); setPage(1); }}
+          className="w-full"
+        />
       </div>
       <div className="flex flex-col justify-end">
         <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setDepartment(""); setPage(1); }}>

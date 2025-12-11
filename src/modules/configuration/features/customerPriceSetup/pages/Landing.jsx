@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Input from "../../../../../common/components/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
   id: i + 1,
@@ -9,6 +9,8 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
   sku: `SKU-${1000 + i}`,
   price: Math.floor(Math.random() * 900) + 100,
 }));
+const CUSTOMERS = Array.from({ length: 20 }).map((_, i)=> `Customer ${i+1}`);
+const SKUS = Array.from({ length: 20 }).map((_, i)=> `SKU-${1000 + i}`);
 
 export default function CustomerPriceLanding() {
   const { t } = useTranslation();
@@ -30,7 +32,13 @@ export default function CustomerPriceLanding() {
   const FilterSection = () => (
     <div className="grid md:grid-cols-3 gap-4 text-sm">
       <div>
-        <Input label={t("configuration.customerPrice.customer", "Customer")} value={customer} onChange={(e)=>{ setCustomer(e.target.value); setPage(1); }} />
+        <Dropdown
+          label={t("configuration.customerPrice.customer", "Customer")}
+          options={[{ label: t("common.all","All"), value: "" }, ...CUSTOMERS.map(c=>({label:c, value:c}))]}
+          value={customer ? { label: customer, value: customer } : { label: t("common.all","All"), value: "" }}
+          onChange={(opt)=>{ setCustomer(opt.value); setPage(1); }}
+          className="w-full"
+        />
       </div>
       <div className="flex flex-col justify-end">
         <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setCustomer(""); setPage(1); }}>

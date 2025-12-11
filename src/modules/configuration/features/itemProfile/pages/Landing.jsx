@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Input from "../../../../../common/components/Input";
+import Dropdown from "../../../../../common/components/Dropdown";
+const CATEGORIES = ["Raw", "Finished", "Consumables", "Packaging", "Spare Parts"];
 
 const rows = Array.from({ length: 300 }).map((_, i) => ({
   id: i + 1,
   sku: `SKU-${1000 + i}`,
   name: `Item ${i + 1}`,
-  category: ["Raw", "Finished", "Consumables", "Packaging"][i % 4],
+  category: CATEGORIES[i % CATEGORIES.length],
 }));
 
 export default function ItemProfileLanding() {
@@ -30,7 +31,13 @@ export default function ItemProfileLanding() {
   const FilterSection = () => (
     <div className="grid md:grid-cols-3 gap-4 text-sm">
       <div>
-        <Input label={t("configuration.item.category", "Category")} value={category} onChange={(e)=>{ setCategory(e.target.value); setPage(1); }} />
+        <Dropdown
+          label={t("configuration.item.category", "Category")}
+          options={[{ label: t("common.all","All"), value: "" }, ...CATEGORIES.map(c=>({label:c, value:c}))]}
+          value={category ? { label: category, value: category } : { label: t("common.all","All"), value: "" }}
+          onChange={(opt)=>{ setCategory(opt.value); setPage(1); }}
+          className="w-full"
+        />
       </div>
       <div className="flex flex-col justify-end">
         <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setCategory(""); setPage(1); }}>
