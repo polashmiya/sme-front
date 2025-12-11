@@ -2,9 +2,9 @@ import { Route } from 'react-router-dom'
 import AccountDashboardPage from './features/dashboard/AccountDashboardPage'
 import ChartOfAccountsLanding from './features/chartOfAccounts/pages/Landing'
 import AccountingJournalLanding from './features/journal/pages/Landing'
-import ExpenseAdvanceLanding from './features/expenseAndAdvance/pages/Landing'
 import FinancialReportLanding from './features/financialReport/pages/Landing'
 import OtherReportLanding from './features/otherReport/pages/Landing'
+import ExpenseAdvanceLanding from './features/ExpenseAndAdvance/pages/Landing'
 
 const pages = [
   { key: 'account.dashboard', path: '/account/dashboard', component: <AccountDashboardPage /> },
