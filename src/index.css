@@ -78,7 +78,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-white text-sm font-medium hover:bg-blue-600 active:bg-blue-700 transition-colors;
+  @apply inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-white text-sm font-medium hover:bg-primary/90 active:bg-primary/80 transition-colors;
 }
 
 .btn-outline {

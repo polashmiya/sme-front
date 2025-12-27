@@ -11,7 +11,7 @@ const Toast = ({ message, type = 'info', open, onClose, duration = 3000 }) => {
   if (!open) return null;
 
   const color = {
-    info: 'bg-blue-600',
+    info: 'bg-primary',
     success: 'bg-green-600',
     error: 'bg-red-600',
     warning: 'bg-yellow-500 text-gray-900',

@@ -50,12 +50,12 @@ function ChatBot() {
     <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="19" cy="19" r="19" fill="url(#paint0_linear_1_2)"/>
       <path d="M12 15C12 13.3431 13.3431 12 15 12H23C24.6569 12 26 13.3431 26 15V23C26 24.6569 24.6569 26 23 26H15C13.3431 26 12 24.6569 12 23V15Z" fill="white"/>
-      <circle cx="16" cy="19" r="1.5" fill="#6366f1"/>
-      <circle cx="19" cy="19" r="1.5" fill="#6366f1"/>
-      <circle cx="22" cy="19" r="1.5" fill="#6366f1"/>
+      <circle cx="16" cy="19" r="1.5" fill="#8C57FF"/>
+      <circle cx="19" cy="19" r="1.5" fill="#8C57FF"/>
+      <circle cx="22" cy="19" r="1.5" fill="#8C57FF"/>
       <defs>
         <linearGradient id="paint0_linear_1_2" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#6366f1"/>
+          <stop stopColor="#8C57FF"/>
           <stop offset="1" stopColor="#06b6d4"/>
         </linearGradient>
       </defs>

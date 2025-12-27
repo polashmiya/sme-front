@@ -8,7 +8,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2563eb',
+          DEFAULT: '#8C57FF',
           foreground: '#ffffff',
         },
         muted: {

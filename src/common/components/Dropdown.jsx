@@ -39,7 +39,7 @@ const Dropdown = ({ label, options = [], value, onChange, placeholder = 'Select.
       {label && <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>}
       <button
         type="button"
-        className="w-full px-2 border rounded bg-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-between items-center"
+        className="w-full px-2 border rounded bg-white text-left focus:outline-none focus:ring-2 focus:ring-primary/50 flex justify-between items-center"
         style={{ height: '30px' }}
         onClick={() => setOpen((o) => !o)}
       >
@@ -64,7 +64,7 @@ const Dropdown = ({ label, options = [], value, onChange, placeholder = 'Select.
             {filtered.map(option => (
               <li
                 key={option.value}
-                className={`px-4 py-2 cursor-pointer hover:bg-blue-100 ${value && value.value === option.value ? 'bg-blue-50 font-semibold' : ''}`}
+                className={`px-4 py-2 cursor-pointer hover:bg-primary/10 ${value && value.value === option.value ? 'bg-primary/5 font-semibold' : ''}`}
                 onClick={() => handleSelect(option)}
               >
                 {renderOption ? renderOption(option) : option.label}

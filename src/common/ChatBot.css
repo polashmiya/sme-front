@@ -11,7 +11,7 @@
 }
 
 .chatbot-header {
-  background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #8C57FF 0%, #06b6d4 100%);
   color: #fff;
   padding: 18px;
   font-size: 1.2rem;
@@ -119,11 +119,11 @@
 }
 
 .chatbot-input:focus {
-  border-color: #6366f1;
+  border-color: #8C57FF;
 }
 
 .chatbot-send-btn {
-  background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #8C57FF 0%, #06b6d4 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -218,7 +218,7 @@
   width: 8px;
   height: 8px;
   margin-right: 4px;
-  background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #8C57FF 0%, #06b6d4 100%);
   border-radius: 50%;
   opacity: 0.7;
   animation: loader-bounce 1s infinite alternate;
@@ -240,7 +240,7 @@
   width: 28px;
   height: 28px;
   border: 3px solid #e0e7ef;
-  border-top: 3px solid #6366f1;
+  border-top: 3px solid #8C57FF;
   border-radius: 50%;
   animation: loader-spin 0.8s linear infinite;
   margin-right: 8px;
@@ -261,7 +261,7 @@
   display: block;
   width: 8px;
   height: 8px;
-  background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, #8C57FF 0%, #06b6d4 100%);
   border-radius: 50%;
   opacity: 0.6;
   animation: typing-bounce 1.2s infinite;

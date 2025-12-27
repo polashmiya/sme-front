@@ -72,7 +72,7 @@ const Pagination = ({
             <button
               key={`page-${idx}`}
               className={`px-3 py-1 rounded border ${
-                Number(current) === page ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-100"
+                Number(current) === page ? "bg-primary text-white" : "bg-white hover:bg-gray-100"
               }`}
               onClick={() => handleClick(page)}  
               disabled={Number(current) === page}

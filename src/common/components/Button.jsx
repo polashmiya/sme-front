@@ -1,7 +1,7 @@
 import React from 'react';
 
 const VARIANTS = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700',
+  primary: 'bg-primary text-white hover:bg-primary/90 active:bg-primary/80',
   secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
   danger: 'bg-red-600 text-white hover:bg-red-700',
   outline: 'bg-white border border-gray-300 text-gray-800 hover:bg-gray-50',
@@ -16,7 +16,7 @@ const Button = ({
   ...props
 }) => (
   <button
-    className={`px-4 rounded font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${VARIANTS[variant] || VARIANTS.primary} ${className} ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+    className={`px-4 rounded font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 transition ${VARIANTS[variant] || VARIANTS.primary} ${className} ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
     style={{ height: '30px' }}
     disabled={disabled || loading}
     {...props}

@@ -24,7 +24,7 @@ export default function Header() {
             className="font-bold text-lg tracking-wide cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <span className="text-blue-600">Core</span>lium
+            <span style={{ color: '#8C57FF' }}>Core</span>lium
           </span>
         )}
       </div>
@@ -32,10 +32,12 @@ export default function Header() {
         <LanguageSwitcher />
         {/* <button className="btn-outline"><User size={16} /> Admin</button> */}
         <button
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100"
+          className="flex items-center justify-center w-9 h-9 rounded-full"
+          style={{ backgroundColor: '#F3EDFF' }}
           onClick={() => setShowUser((v) => !v)}
         >
-          <User size={22} className="text-blue-600" />
+          {/* <User size={22} className="text-blue-600" /> */}
+                  <User size={22} style={{ color: '#8C57FF' }} />
         </button>
         {showUser && (
           <div className="absolute right-4 top-14 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50 min-w-[180px] flex flex-col items-center">

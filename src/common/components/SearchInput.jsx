@@ -4,7 +4,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
   <div className={`relative w-full ${className}`}>
     <input
       type="text"
-      className="w-full px-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+      className="w-full px-4 border rounded focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
       style={{ height: '30px' }}
       placeholder={placeholder}
       value={value}

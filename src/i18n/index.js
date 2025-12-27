@@ -5,7 +5,7 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 const resources = {
   en: {
     translation: {
-      appName: '<span style="color:#2563eb;font-weight:bold;">CORE</span>LIUM ERP',
+      appName: '<span style="color:#8C57FF;font-weight:bold;">CORE</span>LIUM ERP',
       dashboard: {
         filters: {
           dateRange: 'Date Range',

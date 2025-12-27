@@ -9,12 +9,12 @@ import { motion } from 'framer-motion';
 const approvalModules = [
   {
     key: 'purchase',
-    icon: <ShoppingCart className="text-blue-500" size={32} />, // Purchase
+    icon: <ShoppingCart style={{ color: '#8C57FF' }} size={32} />, // Purchase
     title: { en: 'Purchase', bn: 'ক্রয়' },
     types: [
       {
         key: 'order',
-        icon: <FileText className="text-blue-400" size={28} />,
+        icon: <FileText style={{ color: '#8C57FF' }} size={28} />,
         label: { en: 'Purchase Order', bn: 'ক্রয় অর্ডার' },
         count: 312,
       },
@@ -45,7 +45,7 @@ const approvalModules = [
       },
       {
         key: 'collection',
-        icon: <DollarSign className="text-blue-400" size={28} />,
+        icon: <DollarSign style={{ color: '#8C57FF' }} size={28} />,
         label: { en: 'Sales Collection', bn: 'বিক্রয় কালেকশন' },
         count: 289,
       },
@@ -130,7 +130,7 @@ export default function ApprovalPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50 px-2 py-2">
+    <div className="min-h-screen w-full bg-gradient-to-br from-primary/5 via-white to-purple-50 px-2 py-2">
       <h1 className="page-title mb-6 flex items-center justify-center drop-shadow-lg">{t('menu.approval')}</h1>
       <div className="flex flex-col gap-8">
         {approvalModules.map((module, mIdx) => (

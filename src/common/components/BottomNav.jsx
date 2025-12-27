@@ -40,7 +40,7 @@ export default function BottomNav() {
           <NavLink
             key={menu.key}
             to={menu.path}
-            className={({ isActive }) => `flex flex-col items-center text-xs px-2 py-1 focus:outline-none ${isActive ? 'text-blue-600' : 'text-gray-500'}`}
+            className={({ isActive }) => `flex flex-col items-center text-xs px-2 py-1 focus:outline-none ${isActive ? ' text-[#9B6DFF]' : 'text-gray-500'}`}
             end={menu.key === 'dashboard'}
           >
             <Icon size={22} />

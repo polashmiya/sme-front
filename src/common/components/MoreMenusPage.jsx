@@ -18,12 +18,12 @@ export default function MoreMenusPage() {
           return (
             <button
               key={menu.key}
-              className="w-full flex items-center gap-4 px-4 py-5 rounded-2xl border border-gray-200 shadow-md bg-white hover:bg-blue-50 focus:outline-none transition-all"
+              className="w-full flex items-center gap-4 px-4 py-5 rounded-2xl border border-gray-200 shadow-md bg-white hover:bg-primary/5 focus:outline-none transition-all"
               style={{ minWidth: 0 }}
               onClick={() => navigate(menu.path)}
             >
-              <span className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100">
-                <Icon size={28} className="text-blue-600" />
+              <span className="flex items-center justify-center w-12 h-12 rounded-xl" style={{ backgroundColor: '#F3EDFF' }}>
+                <Icon size={28} style={{ color: '#8C57FF' }} />
               </span>
               <span className="text-base font-semibold text-gray-800 text-left">{menu.label}</span>
             </button>

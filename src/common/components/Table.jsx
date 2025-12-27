@@ -25,7 +25,7 @@ const Table = ({ columns = [], data = [], className = '', rowKey = (row, i) => i
           </tr>
         ) : (
           data.map((row, i) => (
-            <tr key={rowKey(row, i)} className="hover:bg-blue-50">
+            <tr key={rowKey(row, i)} className="hover:bg-primary/5">
               {columns.map(col => (
                 <td key={col.key || col.dataIndex} className="border border-gray-200 text-gray-700" style={{
                   fontSize:"13px",

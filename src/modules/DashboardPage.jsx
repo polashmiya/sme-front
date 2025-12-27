@@ -96,7 +96,7 @@ export default function DashboardPage() {
               className="card flex flex-col gap-1"
             >
               <div className="flex items-center gap-2 text-xs font-medium text-gray-600">
-                <k.icon size={16} className="text-blue-600" />{" "}
+                <k.icon size={16} style={{ color: '#8C57FF' }} />{" "}
                 {t(`dashboard.kpis.${k.key}`)}
               </div>
               <div className="text-xl font-semibold">{k.value}</div>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
           />
           <ListCard
             title={t("dashboard.lists.recentInvoices")}
-            icon={<FileText size={16} className="text-blue-600" />}
+            icon={<FileText size={16} style={{ color: '#8C57FF' }} />}
             items={[
               {
                 id: "INV-3001",
