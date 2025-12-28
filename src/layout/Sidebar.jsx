@@ -76,7 +76,7 @@ const sections = [
   },
   {
     key: 'configuration', icon: Settings, children: [
-      { key: 'configuration.employee', path: '/configuration/employee', icon: Users },
+      { key: 'configuration.employee.employee', path: '/configuration/employee', icon: Users },
       { key: 'configuration.itemProfile', path: '/configuration/item-profile', icon: Package },
       { key: 'configuration.customerProfile', path: '/configuration/customer-profile', icon: UserRound },
       { key: 'configuration.supplierProfile', path: '/configuration/supplier-profile', icon: Building2 },

@@ -254,13 +254,18 @@ const resources = {
         }
       },
       configuration: {
-        employee: 'Employee',
+        // employee: 'Employee',
         itemProfile: 'Item Profile',
         customerProfile: 'Customer Profile',
         supplierProfile: 'Supplier Profile',
         offerSetup: 'Offer Setup',
         customerPrice: 'Customer Price Setup',
         standardPrice: 'Standard Price Setup',
+        employee: {
+          employee: 'Employee',
+          addEmployee: 'Add Employee',
+          department: 'Department',
+        }
       },
     },
   },
@@ -515,13 +520,17 @@ const resources = {
         }
       },
       configuration: {
-        employee: 'এমপ্লয়ি',
         itemProfile: 'আইটেম প্রোফাইল',
         customerProfile: 'কাস্টমার প্রোফাইল',
         supplierProfile: 'সাপ্লায়ার প্রোফাইল',
         offerSetup: 'অফার সেটআপ',
         customerPrice: 'কাস্টমার প্রাইস সেটআপ',
         standardPrice: 'স্ট্যান্ডার্ড প্রাইস সেটআপ',
+        employee: {
+          employee: 'এমপ্লয়ি',
+          addEmployee: 'এমপ্লয়ি যোগ করুন',
+          department: 'ডিপার্টমেন্ট',
+        }
       },
     },
   },

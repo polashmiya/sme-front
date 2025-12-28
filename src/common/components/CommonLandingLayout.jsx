@@ -62,7 +62,9 @@ const CommonLandingLayout = ({
                   key={btn.label || btn.id}
                   {...btn}
                   className="w-full sm:w-auto"
-                />
+                >
+                  {btn.label}
+                </Button>
               ))}
             </div>
           }

@@ -1,28 +1,43 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
-const DEPARTMENTS = ["Sales", "Purchase", "Accounts", "Inventory", "HR", "IT"];
+import Dropdown from "../../../../../common/ant/Dropdown";
+import Button from "../../../../../common/ant/Button";
+import { useNavigate } from "react-router-dom";
+const DEPARTMENTS = [
+  { label: "HR", value: "HR" },
+  { label: "IT", value: "IT" },
+  { label: "Finance", value: "Finance" },
+  { label: "Marketing", value: "Marketing" },
+  { label: "Operations", value: "Operations" },
+  { label: "Sales", value: "Sales" },
+];
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
   id: i + 1,
   empId: `EMP-${1000 + i}`,
   name: `Employee ${i + 1}`,
-  department: DEPARTMENTS[i % DEPARTMENTS.length],
+  department: DEPARTMENTS[i % DEPARTMENTS.length]?.label,
   phone: `017${Math.floor(10000000 + Math.random() * 89999999)}`,
 }));
 
 export default function EmployeeLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState({ label: t("common.all", "All"), value: "All" });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
-      if (search && !r.name.toLowerCase().includes(search.toLowerCase()) && !r.empId.toLowerCase().includes(search.toLowerCase())) return false;
-      if (department && r.department !== department) return false;
+      if (
+        search &&
+        !r.name.toLowerCase().includes(search.toLowerCase()) &&
+        !r.empId.toLowerCase().includes(search.toLowerCase())
+      )
+        return false;
+      if (department && department.value !== "All" && r.department !== department.label) return false;
       return true;
     });
   }, [search, department]);
@@ -34,25 +49,49 @@ export default function EmployeeLanding() {
       <div>
         <Dropdown
           label={t("configuration.employee.department", "Department")}
-          options={[{ label: t("common.all", "All"), value: "" }, ...DEPARTMENTS.map(d=>({label:d, value:d}))]}
-          value={department ? { label: department, value: department } : { label: t("common.all","All"), value: "" }}
-          onChange={(opt)=>{ setDepartment(opt.value); setPage(1); }}
+          options={[
+            { label: t("common.all", "All"), value: "All" },
+            ...DEPARTMENTS,
+          ]}
+          value={department}
+          onChange={(opt) => {
+            console.log(opt);
+            setDepartment(opt);
+            setPage(1);
+          }}
           className="w-full"
         />
       </div>
-      <div className="flex flex-col justify-end">
-        <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setDepartment(""); setPage(1); }}>
-          {t("common.reset", "Reset Filters")}
-        </button>
+      <div className="grid items-end">
+        <Button
+          type="default"
+          onClick={() => {
+            setDepartment({ label: t("common.all", "All"), value: 0 });
+            setSearch("");
+            setPage(1);
+          }}
+        >
+          {t("common.reset", "Reset")}
+        </Button>
       </div>
     </div>
   );
 
   const tableColumns = [
-    { title: t("common.sl", "SL"), render: (_, __, i)=> (page - 1) * pageSize + i + 1, textAlign: "center" },
-    { title: t("configuration.employee.empId", "Employee ID"), dataIndex: "empId" },
+    {
+      title: t("common.sl", "SL"),
+      render: (_, __, i) => (page - 1) * pageSize + i + 1,
+      textAlign: "center",
+    },
+    {
+      title: t("configuration.employee.empId", "Employee ID"),
+      dataIndex: "empId",
+    },
     { title: t("common.name", "Name"), dataIndex: "name" },
-    { title: t("configuration.employee.department", "Department"), dataIndex: "department" },
+    {
+      title: t("configuration.employee.department", "Department"),
+      dataIndex: "department",
+    },
     { title: t("common.phone", "Phone"), dataIndex: "phone" },
   ];
 
@@ -61,15 +100,26 @@ export default function EmployeeLanding() {
     total: filtered.length,
     pageSize,
     onChange: setPage,
-    onPageSizeChange: (size)=> { setPageSize(size); setPage(1); },
+    onPageSizeChange: (size) => {
+      setPageSize(size);
+      setPage(1);
+    },
     showTotal: true,
     pageSizeOptions: [10, 20, 50, 100],
   };
 
   return (
     <CommonLandingLayout
-      title={t("configuration.employee", "Employee")}
-      headerButtons={[]}
+      title={t("configuration.employee.employee", "Employee")}
+      headerButtons={[
+        {
+          label: t("configuration.employee.addEmployee", "Add Employee"),
+          type: "primary",
+          onClick: () => {
+            navigate("/configuration/employee/add");
+          },
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search name or ID")}
