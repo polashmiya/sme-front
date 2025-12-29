@@ -1,48 +1,52 @@
-
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import CommonCreateLayout from '../../../../../common/components/CommonCreateLayout';
-import FormInput from '../../../../../common/ant/FormInput';
-import FormDropdown from '../../../../../common/ant/FormDropdown';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
+import FormInput from "../../../../../common/ant/FormInput";
+import FormDropdown from "../../../../../common/ant/FormDropdown";
 
 const designationOptions = [
-  { label: 'Manager', value: 'manager' },
-  { label: 'Developer', value: 'developer' },
-  { label: 'Designer', value: 'designer' },
-  { label: 'HR', value: 'hr' },
+  { label: "Manager", value: "manager" },
+  { label: "Developer", value: "developer" },
+  { label: "Designer", value: "designer" },
+  { label: "HR", value: "hr" },
 ];
 const departmentOptions = [
-  { label: 'IT', value: 'it' },
-  { label: 'Finance', value: 'finance' },
-  { label: 'Marketing', value: 'marketing' },
-  { label: 'Operations', value: 'operations' },
+  { label: "IT", value: "it" },
+  { label: "Finance", value: "finance" },
+  { label: "Marketing", value: "marketing" },
+  { label: "Operations", value: "operations" },
 ];
 
 const schema = yup.object({
-  employeeCode: yup.string().required('Employee Code is required'),
-  employeeName: yup.string().required('Employee Name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
+  employeeCode: yup.string().required("Employee Code is required"),
+  employeeName: yup.string().required("Employee Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
   phone: yup
     .string()
-    .matches(/^\d{10}$/,'Phone must be 10 digits')
-    .required('Phone is required'),
-  designation: yup.string().required('Designation is required'),
-  department: yup.string().required('Department is required'),
-  joiningDate: yup.string().required('Joining Date is required'),
+    .matches(/^\d{10}$/, "Phone must be 10 digits")
+    .required("Phone is required"),
+  designation: yup.string().required("Designation is required"),
+  department: yup.string().required("Department is required"),
+  joiningDate: yup.string().required("Joining Date is required"),
 });
 
 export default function EmployeeCreate() {
-  const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      employeeCode: '',
-      employeeName: '',
-      email: '',
-      phone: '',
-      designation: '',
-      department: '',
-      joiningDate: '',
+      employeeCode: "",
+      employeeName: "",
+      email: "",
+      phone: "",
+      designation: "",
+      department: "",
+      joiningDate: "",
     },
   });
 
