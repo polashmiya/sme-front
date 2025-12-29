@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
 import Card from "./Card";
 import Header from "./Header";
@@ -36,11 +37,16 @@ const CommonLandingLayout = ({
   }, [headerButtons, showSearch, filters, pagination]);
 
   return (
-    <div
-      className="common-landing-layout flex flex-col h-full min-h-screen bg-white sm:bg-transparent sm:h-auto sm:min-h-0"
-      style={{ height: `calc(100vh - 64px - 24px)`, overflow: "hidden" }}
-    >
-      <div ref={headerRef} className="flex flex-col gap-2 pt-2 sm:px-0 sm:pt-0">
+    <AnimatePresence>
+      <motion.div
+        className="common-landing-layout flex flex-col h-full min-h-screen bg-white sm:bg-transparent sm:h-auto sm:min-h-0"
+        style={{ height: `calc(100vh - 64px - 24px)`, overflow: "hidden" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+      >
+        <div ref={headerRef} className="flex flex-col gap-2 pt-2 sm:px-0 sm:pt-0">
         <Header
           title={title}
           onBack={
@@ -71,13 +77,13 @@ const CommonLandingLayout = ({
         />
       </div>
 
-      {filters && (
-        <div
-          ref={filterRef}
-          className="w-full sm:px-0 mt-2 "
-          style={{ marginBottom: "2px" }}
-        >
-          <Card className="w-full">
+        {filters && (
+          <div
+            ref={filterRef}
+            className="w-full sm:px-0 mt-2 "
+            style={{ marginBottom: "2px" }}
+          >
+            <Card className="w-full">
             <div className="sm:hidden flex justify-between items-center mb-2">
               <span className="font-semibold text-base">Filters</span>
               <button
@@ -173,7 +179,8 @@ const CommonLandingLayout = ({
           />
         </div>
       )}
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

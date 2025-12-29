@@ -1,4 +1,5 @@
 import FormHeader from "./FormHeader";
+import { motion, AnimatePresence } from "framer-motion";
 import Table from "./Table";
 
 export default function CommonCreateLayout({
@@ -48,41 +49,49 @@ export default function CommonCreateLayout({
   );
 
   return (
-    <div className="flex flex-col">
-      <FormHeader title={title} right={headerRightContent} />
-      <form onSubmit={onSubmit} className={className}>
-        {/* Top fields/content */}
-        {children}
+    <AnimatePresence>
+      <motion.div
+        className="flex flex-col"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+      >
+        <FormHeader title={title} right={headerRightContent} />
+        <form onSubmit={onSubmit} className={className}>
+          {/* Top fields/content */}
+          {children}
 
-        {/* Optional items section */}
-        {(itemsColumns && itemsData) || itemsTable ? (
-          <div className="border rounded-lg p-3">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold">{itemsTitle}</h3>
-              {onAddLine ? (
-                <button
-                  type="button"
-                  className="btn-outline text-xs"
-                  onClick={onAddLine}
-                >
-                  {addButtonLabel}
-                </button>
-              ) : null}
+          {/* Optional items section */}
+          {(itemsColumns && itemsData) || itemsTable ? (
+            <div className="border rounded-lg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold">{itemsTitle}</h3>
+                {onAddLine ? (
+                  <button
+                    type="button"
+                    className="btn-outline text-xs"
+                    onClick={onAddLine}
+                  >
+                    {addButtonLabel}
+                  </button>
+                ) : null}
+              </div>
+                {itemsColumns && itemsData ? (
+                  <Table columns={itemsColumns} data={itemsData} />
+                ) : (
+                  itemsTable
+                )}
+                {itemsFooter}
             </div>
-              {itemsColumns && itemsData ? (
-                <Table columns={itemsColumns} data={itemsData} />
-              ) : (
-                itemsTable
-              )}
-              {itemsFooter}
-          </div>
-        ) : null}
+          ) : null}
 
-        {/* Footer actions (optional) */}
-        {!hideActions && actionsPosition !== "header" && (
-          <div className="flex items-center justify-end gap-2">{actionButtons}</div>
-        )}
-      </form>
-    </div>
+          {/* Footer actions (optional) */}
+          {!hideActions && actionsPosition !== "header" && (
+            <div className="flex items-center justify-end gap-2">{actionButtons}</div>
+          )}
+        </form>
+      </motion.div>
+    </AnimatePresence>
   );
 }
