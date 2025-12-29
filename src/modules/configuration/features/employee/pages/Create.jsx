@@ -4,6 +4,7 @@ import * as yup from "yup";
 import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
 import FormInput from "../../../../../common/ant/FormInput";
 import FormDropdown from "../../../../../common/ant/FormDropdown";
+import FormCheckbox from "../../../../../common/ant/FormCheckbox";
 
 const designationOptions = [
   { label: "Manager", value: "manager" },
@@ -29,13 +30,27 @@ const schema = yup.object({
   designation: yup.string().required("Designation is required"),
   department: yup.string().required("Department is required"),
   joiningDate: yup.string().required("Joining Date is required"),
+  isUser: yup.boolean(),
+  password: yup.string().when('isUser', {
+    is: true,
+    then: schema => schema.required('Password is required').min(6, 'Password must be at least 6 characters'),
+    otherwise: schema => schema.notRequired(),
+  }),
+  confirmPassword: yup.string().when('isUser', {
+    is: true,
+    then: schema => schema.required('Confirm Password is required').oneOf([yup.ref('password')], 'Passwords must match'),
+    otherwise: schema => schema.notRequired(),
+  }),
 });
 
 export default function EmployeeCreate() {
+
+  // Removed unused showPassword state
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
@@ -47,8 +62,13 @@ export default function EmployeeCreate() {
       designation: "",
       department: "",
       joiningDate: "",
+      isUser: false,
+      password: "",
+      confirmPassword: "",
     },
   });
+
+  const isUser = watch('isUser');
 
   const onSubmit = (data) => {
     // handle create logic here
@@ -64,6 +84,7 @@ export default function EmployeeCreate() {
       onCancel={() => reset()}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      
         <FormInput
           name="employeeCode"
           control={control}
@@ -112,6 +133,30 @@ export default function EmployeeCreate() {
           label="Joining Date"
           type="date"
         />
+          <FormCheckbox
+            name="isUser"
+            control={control}
+            label="Create User Account"
+            className="pt-6"
+          />
+        {isUser && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormInput
+              name="password"
+              control={control}
+              label="Password"
+              type="password"
+              placeholder="Enter password"
+            />
+            <FormInput
+              name="confirmPassword"
+              control={control}
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm password"
+            />
+          </div>
+        )}
       </div>
     </CommonCreateLayout>
   );
