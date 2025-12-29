@@ -11,9 +11,6 @@ import SalesPages from "../modules/sales/SalesPages";
 import AccountPages from "../modules/account/AccountPages";
 import ConfigurationPages from "../modules/configuration/ConfigurationPages";
 import InventoryPages from "../modules/inventory/InventoryPages";
-// import AccountPages from "../pages/account";
-// import InventoryPages from "../pages/inventory";
-// import ConfigurationPages from "../pages/configuration";
 import ApprovalPage from "../modules/ApprovalPage";
 import PurchaseOrderApproval from "../modules/approval/PurchaseOrderApproval";
 import PurchasePaymentApproval from "../modules/approval/PurchasePaymentApproval";
@@ -37,9 +34,7 @@ export default function AppRoutes() {
       <Route element={<Protected />}>
         <Route element={<LayoutShell />}>
           <Route path="/" element={<DashboardPage />} />
-          {/* Mobile Purchase SubMenu route */}
           <Route path="/purchase" element={<PurchaseSubMenuPage />} />
-          {/* Mobile Sales SubMenu route */}
           <Route path="/sales" element={<SalesSubMenuPage />} />
           <Route path="/account" element={<AccountSubMenuPage />} />
           <Route path="/inventory" element={<InventorySubMenuPage />} />
@@ -86,7 +81,6 @@ export default function AppRoutes() {
             path="/approval/stock-adjustment"
             element={<StockAdjustmentApproval />}
           />
-          {/* Mobile More Menus route */}
           <Route path="/more-menus" element={<MoreMenusPage />} />
         </Route>
       </Route>

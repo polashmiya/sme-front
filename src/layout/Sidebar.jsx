@@ -208,7 +208,7 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
             style={{ minWidth: 48, minHeight: 48 }}
             end
           >
-            <Icon size={22} />
+            <Icon size={18} />
           </NavLink>
         </div>
       )
@@ -217,10 +217,10 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
     return (
       <NavLink
         to={section.path}
-        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-sm${isActive ? 'text-[#9B6DFF]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-[13px]${isActive ? 'text-[#9B6DFF]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
         end
       >
-        <Icon size={18} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
+        <Icon size={16} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
       </NavLink>
     )
   }
