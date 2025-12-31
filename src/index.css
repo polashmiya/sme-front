@@ -6,7 +6,7 @@
 
 /* declare the primary color */
 :root {
-  --primary: 'rgb(22 163 74)'; /* Tailwind's blue-500 */
+  --primary-color: rgb(22 163 74);
 }
 
 html, body, #root {

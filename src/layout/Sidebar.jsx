@@ -32,7 +32,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useRef, useEffect } from 'react'
 import { toggleSidebar, toggleSidebarWhite } from '../ui/uiSlice'
-
 const sections = [
   {
     key: 'dashboard', icon: LayoutDashboard, path: '/',
@@ -204,7 +203,7 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
         <div className="relative flex justify-center" style={{ width: '100%' }}>
           <NavLink
             to={section.path}
-            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}${isActive ? 'text-[#9B6DFF]' : ''}`}
+            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}${isActive ? ' text-[var(--primary-color)]' : ''}`}
             style={{ minWidth: 48, minHeight: 48 }}
             end
           >
@@ -217,7 +216,7 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
     return (
       <NavLink
         to={section.path}
-        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-[13px]${isActive ? 'text-[#9B6DFF]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-[13px]${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
         end
       >
         <Icon size={16} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
@@ -248,7 +247,7 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
                 <NavLink
                   key={child.key}
                   to={child.path}
-                  className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px]${isActive ? ' text-[#9B6DFF]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+                  className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px]${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
                 >
                   <ChildIcon size={14} />
                   {open && <span>{t(child.key)}</span>}
@@ -296,7 +295,7 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
             <NavLink
               key={child.key}
               to={child.path}
-              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap${isActive ? ' text-[#9B6DFF]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
               style={{ minWidth: 160 }}
               onClick={() => setHovered(false)}
             >
