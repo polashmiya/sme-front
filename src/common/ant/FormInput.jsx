@@ -10,7 +10,7 @@ import Input from './Input';
  * - onChange: custom onChange handler (optional)
  * - ...inputProps: all other Input props
  */
-const FormInput = ({ name, control, label, onChange, ...inputProps }) => (
+const FormInput = ({ name, control, label, onChange, inputClassName, ...inputProps }) => (
   <div>
     {label && <label className="text-sm font-medium">{label}</label>}
     <Controller
@@ -20,6 +20,7 @@ const FormInput = ({ name, control, label, onChange, ...inputProps }) => (
         <Input
           {...field}
           {...inputProps}
+          className={inputClassName}
           error={fieldState.error?.message}
           onChange={e => {
             field.onChange(e);

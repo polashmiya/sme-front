@@ -4,6 +4,11 @@
 @tailwind utilities;
 
 
+/* declare the primary color */
+:root {
+  --primary: 'rgb(22 163 74)'; /* Tailwind's blue-500 */
+}
+
 html, body, #root {
   height: 100%;
   width: 100vw;
@@ -14,6 +19,7 @@ body {
   overflow-x: hidden;
   width: 100vw;
 }
+
 
 
 .app-shell {
@@ -78,7 +84,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-white text-sm font-medium hover:bg-primary/90 active:bg-primary/80 transition-colors;
+  @apply inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-white text-sm font-medium hover:bg-primary/80 active:bg-primary/70 transition-colors shadow-sm focus:outline-none border-none;
 }
 
 .btn-outline {

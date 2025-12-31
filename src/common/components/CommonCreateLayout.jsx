@@ -1,6 +1,7 @@
 import FormHeader from "./FormHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import Table from "./Table";
+import Button from "../ant/Button";
 
 export default function CommonCreateLayout({
   title,
@@ -30,14 +31,14 @@ export default function CommonCreateLayout({
   const actionButtons = (
     <div className="flex items-center gap-2">
       {onCancel && (
-        <button type="button" className="btn-outline" onClick={onCancel}>
+        <Button type="button" className="btn-outline" onClick={onCancel}>
           {cancelLabel}
-        </button>
+        </Button>
       )}
       {actionsRight}
-      <button type="submit" className="btn-primary" disabled={submitDisabled}>
+      <Button type="submit" className="btn-primary" disabled={submitDisabled}>
         {submitLabel}
-      </button>
+      </Button>
     </div>
   );
 
@@ -68,13 +69,13 @@ export default function CommonCreateLayout({
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-semibold">{itemsTitle}</h3>
                 {onAddLine ? (
-                  <button
+                  <Button
                     type="button"
                     className="btn-outline text-xs"
                     onClick={onAddLine}
                   >
                     {addButtonLabel}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
                 {itemsColumns && itemsData ? (

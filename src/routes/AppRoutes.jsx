@@ -30,7 +30,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth/sign-in" element={<SignInPage />} />
-      <Route path="/auth/sign-up" element={<SignUpPage />} />
+      {/* <Route path="/auth/sign-up" element={<SignUpPage />} /> */}
       <Route element={<Protected />}>
         <Route element={<LayoutShell />}>
           <Route path="/" element={<DashboardPage />} />

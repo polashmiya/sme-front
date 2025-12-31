@@ -39,6 +39,7 @@ const Input = ({
       value={value}
       onChange={onChange}
       status={error ? 'error' : ''}
+    
       {...rest}
     />
     {error && (

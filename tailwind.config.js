@@ -8,11 +8,11 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#8C57FF',
+          DEFAULT: 'rgb(22 163 74)',
           foreground: '#ffffff',
         },
         muted: {
-          DEFAULT: '#f3f4f6',
+          DEFAULT: '#6b7280',
           foreground: '#6b7280',
         },
         sidebar: '#0f172a',
