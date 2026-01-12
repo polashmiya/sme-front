@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
+import { useNavigate } from "react-router-dom";
 const CATEGORIES = ["Local", "Import", "Distributor"];
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
@@ -14,6 +15,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
 
 export default function SupplierProfileLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
@@ -29,24 +31,17 @@ export default function SupplierProfileLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("configuration.supplier.category", "Category")}
-          options={[{ label: t("common.all","All"), value: "" }, ...CATEGORIES.map(c=>({label:c, value:c}))]}
-          value={category ? { label: category, value: category } : { label: t("common.all","All"), value: "" }}
-          onChange={(opt)=>{ setCategory(opt.value); setPage(1); }}
-          className="w-full"
-        />
-      </div>
-      <div className="flex flex-col justify-end">
-        <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setCategory(""); setPage(1); }}>
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { category };
+    const setValue = (name, value) => {
+      if (name === 'category') { setCategory(value?.value || value || ''); setPage(1); }
+    };
+    const fields = [
+      { ddl: { name: 'category', label: t('configuration.supplier.category','Category'), options: [{ label: t('common.all','All'), value: '' }, ...CATEGORIES.map(c=>({label:c,value:c}))] } },
+      { button: { label: t('common.reset','Reset Filters'),className:"mt-6", variant: 'outline', onClick: ()=>{ setSearch(''); setCategory(''); setPage(1); } } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i)=> (page - 1) * pageSize + i + 1, textAlign: "center" },
@@ -69,7 +64,13 @@ export default function SupplierProfileLanding() {
   return (
     <CommonLandingLayout
       title={t("configuration.supplierProfile", "Supplier Profile")}
-      headerButtons={[]}
+      headerButtons={[
+        {
+          label: t("configuration.supplierProfile.addSupplier", "Add Supplier"),
+          type: "primary",
+          onClick: () => navigate("/configuration/supplier-profile/add"),
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search supplier or code")}

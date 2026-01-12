@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
+import { useNavigate } from "react-router-dom";
 
 const TYPES = ["Discount", "BuyXGetY", "Bundle"];
 const rows = Array.from({ length: 150 }).map((_, i) => ({
@@ -14,6 +15,7 @@ const rows = Array.from({ length: 150 }).map((_, i) => ({
 
 export default function OfferSetupLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [page, setPage] = useState(1);
@@ -29,18 +31,17 @@ export default function OfferSetupLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Dropdown label={t("configuration.offer.type", "Type")} options={[{ label: t("common.all", "All"), value: "" }, ...TYPES.map(s=>({label:s, value:s}))]} value={type ? {label:type,value:type}:{label:t("common.all","All"),value:""}} onChange={(opt)=>{ setType(opt.value); setPage(1); }} />
-      </div>
-      <div className="flex flex-col justify-end">
-        <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setType(""); setPage(1); }}>
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { type };
+    const setValue = (name, value) => {
+      if (name === 'type') { setType(value?.value || value || ''); setPage(1); }
+    };
+    const fields = [
+      { ddl: { name: 'type', label: t('configuration.offer.type','Type'), options: [{ label: t('common.all','All'), value: '' }, ...TYPES.map(s=>({label:s,value:s}))] } },
+      { button: { label: t('common.reset','Reset Filters'),className:"mt-6", variant: 'outline', onClick: ()=>{ setSearch(''); setType(''); setPage(1); } } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i)=> (page - 1) * pageSize + i + 1, textAlign: "center" },
@@ -63,7 +64,13 @@ export default function OfferSetupLanding() {
   return (
     <CommonLandingLayout
       title={t("configuration.offerSetup", "Offer Setup")}
-      headerButtons={[]}
+      headerButtons={[
+        {
+          label: t("configuration.offerSetup.addOffer", "Add Offer"),
+          type: "primary",
+          onClick: () => navigate("/configuration/offer-setup/add"),
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search offer or ID")}

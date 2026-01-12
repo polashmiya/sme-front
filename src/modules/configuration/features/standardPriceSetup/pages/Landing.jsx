@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
+import { useNavigate } from "react-router-dom";
 
 const rows = Array.from({ length: 200 }).map((_, i) => ({
   id: i + 1,
@@ -13,6 +14,7 @@ const SKUS = Array.from({ length: 50 }).map((_, i)=> `SKU-${1000 + i}`);
 
 export default function StandardPriceLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [sku, setSku] = useState("");
   const [page, setPage] = useState(1);
@@ -28,24 +30,17 @@ export default function StandardPriceLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("configuration.standardPrice.sku", "SKU")}
-          options={[{ label: t("common.all","All"), value: "" }, ...SKUS.map(s=>({label:s, value:s}))]}
-          value={sku ? { label: sku, value: sku } : { label: t("common.all","All"), value: "" }}
-          onChange={(opt)=>{ setSku(opt.value); setPage(1); }}
-          className="w-full"
-        />
-      </div>
-      <div className="flex flex-col justify-end">
-        <button type="button" className="btn-outline text-xs" onClick={()=>{ setSearch(""); setSku(""); setPage(1); }}>
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { sku };
+    const setValue = (name, value) => {
+      if (name === 'sku') { setSku(value?.value || value || ''); setPage(1); }
+    };
+    const fields = [
+      { ddl: { name: 'sku', label: t('configuration.standardPrice.sku','SKU'), options: [{ label: t('common.all','All'), value: '' }, ...SKUS.map(s=>({label:s,value:s}))] } },
+      { button: { label: t('common.reset','Reset Filters'),className:"mt-6", variant: 'outline', onClick: ()=>{ setSearch(''); setSku(''); setPage(1); } } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i)=> (page - 1) * pageSize + i + 1, textAlign: "center" },
@@ -67,7 +62,13 @@ export default function StandardPriceLanding() {
   return (
     <CommonLandingLayout
       title={t("configuration.standardPrice", "Standard Price")}
-      headerButtons={[]}
+      headerButtons={[
+        {
+          label: t("configuration.standardPrice.addStandardPrice", "Add Standard Price"),
+          type: "primary",
+          onClick: () => navigate("/configuration/standard-price/add"),
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search item or SKU")}
