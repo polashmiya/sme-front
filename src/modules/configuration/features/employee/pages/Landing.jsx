@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/ant/Dropdown";
-import Button from "../../../../../common/ant/Button";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 import { useNavigate } from "react-router-dom";
 const DEPARTMENTS = [
   { label: "HR", value: "HR" },
@@ -44,38 +43,40 @@ export default function EmployeeLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("configuration.employee.department", "Department")}
-          options={[
-            { label: t("common.all", "All"), value: "All" },
-            ...DEPARTMENTS,
-          ]}
-          value={department}
-          onChange={(opt) => {
-            console.log(opt);
-            setDepartment(opt);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-      <div className="grid items-end">
-        <Button
-          type="default"
-          onClick={() => {
-            setDepartment({ label: t("common.all", "All"), value: 0 });
+  const FilterSection = () => {
+    const values = { department };
+    const setValue = (name, value) => {
+      if (name === "department") {
+        setDepartment(value);
+        setPage(1);
+      }
+    };
+
+    const fields = [
+      {
+        ddl: {
+          name: "department",
+          label: t("configuration.employee.department", "Department"),
+          options: [{ label: t("common.all", "All"), value: "All" }, ...DEPARTMENTS],
+        },
+      },
+      {
+        button: {
+          label: t("common.reset", "Reset"),
+          type: "button",
+          onClick: () => {
+            setDepartment({ label: t("common.all", "All"), value: "All" });
             setSearch("");
             setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset")}
-        </Button>
-      </div>
-    </div>
-  );
+          },
+          variant: "outline",
+          className: "mt-6",
+        },
+      },
+    ];
+
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     {
