@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
+import { useNavigate } from "react-router-dom";
 
 const STATUSES = ["Draft", "Approved", "Cancelled"];
 const WAREHOUSES = ["WH1", "WH2", "WH3"];
@@ -24,6 +24,7 @@ const rows = Array.from({ length: 300 }).map((_, i) => ({
 
 export default function StockAdjustmentLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [warehouse, setWarehouse] = useState("");
   const [status, setStatus] = useState("");
@@ -52,85 +53,34 @@ export default function StockAdjustmentLanding() {
 
   const headerButtons = [
     {
-      variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} /> {t("inventory.adjustment.create", "New Adjustment")}
-        </>
-      ),
-      onClick: () => {},
+      label: t("inventory.adjustment.create", "Add Stock Adjustment"),
+      type: "primary",
+      onClick: () => navigate("/inventory/adjustment/add"),
     },
   ];
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-5 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("inventory.adjustment.warehouse", "Warehouse")}
-          options={[{ label: t("common.all", "All"), value: "" }, ...WAREHOUSES.map((s) => ({ label: s, value: s }))]}
-          value={warehouse ? { label: warehouse, value: warehouse } : { label: t("common.all", "All"), value: "" }}
-          onChange={(opt) => {
-            setWarehouse(opt.value);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Dropdown
-          label={t("common.status", "Status")}
-          options={[{ label: t("common.all", "All"), value: "" }, ...STATUSES.map((s) => ({ label: s, value: s }))]}
-          value={status ? { label: status, value: status } : { label: t("common.all", "All"), value: "" }}
-          onChange={(opt) => {
-            setStatus(opt.value);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <input
-          type="date"
-          className="input"
-          value={fromDate}
-          onChange={(e) => {
-            setFromDate(e.target.value);
-            setPage(1);
-          }}
-        />
-        <div className="text-xs text-gray-600 mt-1">{t("common.fromDate", "From Date")}</div>
-      </div>
-      <div>
-        <input
-          type="date"
-          className="input"
-          value={toDate}
-          onChange={(e) => {
-            setToDate(e.target.value);
-            setPage(1);
-          }}
-        />
-        <div className="text-xs text-gray-600 mt-1">{t("common.toDate", "To Date")}</div>
-      </div>
-      <div className="flex flex-col justify-end">
-        <button
-          type="button"
-          className="btn-outline text-xs"
-          onClick={() => {
-            setSearch("");
-            setWarehouse("");
-            setStatus("");
-            setFromDate("");
-            setToDate("");
-            setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { warehouse, status, fromDate, toDate };
+    const setValue = (name, value) => {
+      switch (name) {
+        case 'warehouse': setWarehouse(value?.value || value || ''); break;
+        case 'status': setStatus(value?.value || value || ''); break;
+        case 'fromDate': setFromDate(value || ''); break;
+        case 'toDate': setToDate(value || ''); break;
+        default: break;
+      }
+      setPage(1);
+    };
+    const fields = [
+      { ddl: { name: 'warehouse', label: t('inventory.adjustment.warehouse','Warehouse'), options: [{ label: t('common.all','All'), value: '' }, ...WAREHOUSES.map(s=>({label:s,value:s}))] } },
+      { ddl: { name: 'status', label: t('common.status','Status'), options: [{ label: t('common.all','All'), value: '' }, ...STATUSES.map(s=>({label:s,value:s}))] } },
+      { input: { name: 'fromDate', label: t('common.fromDate','From Date'), type: 'date', value: fromDate } },
+      { input: { name: 'toDate', label: t('common.toDate','To Date'), type: 'date', value: toDate } },
+      { button: { label: t('common.reset','Reset Filters'),className:"mt-6", variant: 'outline', onClick: ()=>{ setSearch(''); setWarehouse(''); setStatus(''); setFromDate(''); setToDate(''); setPage(1); } } },
+    ];
+    // For non-RHF usage, Fields reads from `values` and uses `setValue(name, value)`
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },
