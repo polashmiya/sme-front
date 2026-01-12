@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const TYPES = ["Asset", "Liability", "Equity", "Income", "Expense"];
 const rows = Array.from({ length: 200 }).map((_, i) => {
@@ -15,6 +15,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => {
 
 export default function ChartOfAccountsLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [page, setPage] = useState(1);
@@ -37,36 +38,22 @@ export default function ChartOfAccountsLanding() {
 
   const headerButtons = [
     {
-      variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} /> {t("account.coa.create", "New Ledger")}
-        </>
-      ),
-      onClick: () => {},
+      label: t("account.coa.create", "Add Ledger"),
+      type: "primary",
+      onClick: () => navigate("/account/coa/add"),
     },
   ];
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("account.coa.type", "Type")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...TYPES.map((s) => ({ label: s, value: s })),
-          ]}
-          value={type ? { label: type, value: type } : { label: t("common.all", "All"), value: "" }}
-          onChange={(opt) => {
-            setType(opt.value);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { type };
+    const setValue = (name, value) => {
+      if (name === 'type') { setType(value?.value || value || ''); setPage(1); }
+    };
+    const fields = [
+      { ddl: { name: 'type', label: t('account.coa.type','Type'), options: [{ label: t('common.all','All'), value: '' }, ...TYPES.map(s=>({label:s,value:s}))] } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },

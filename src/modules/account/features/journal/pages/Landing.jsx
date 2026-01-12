@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Input from "../../../../../common/components/Input";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "../../../../../common/utils";
+import { useNavigate } from "react-router-dom";
 
 const rows = Array.from({ length: 300 }).map((_, i) => ({
   id: i + 1,
@@ -15,6 +16,7 @@ const rows = Array.from({ length: 300 }).map((_, i) => ({
 
 export default function AccountingJournalLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -37,46 +39,20 @@ export default function AccountingJournalLanding() {
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <Input
-          type="date"
-          value={fromDate}
-          onChange={(e) => {
-            setFromDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("common.fromDate", "From Date")}
-        />
-      </div>
-      <div>
-        <Input
-          type="date"
-          value={toDate}
-          onChange={(e) => {
-            setToDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("common.toDate", "To Date")}
-        />
-      </div>
-      <div className="flex flex-col justify-end">
-        <button
-          type="button"
-          className="btn-outline text-xs"
-          onClick={() => {
-            setSearch("");
-            setFromDate("");
-            setToDate("");
-            setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { fromDate, toDate };
+    const setValue = (name, value) => {
+      if (name === 'fromDate') setFromDate(value || '');
+      if (name === 'toDate') setToDate(value || '');
+      setPage(1);
+    };
+    const fields = [
+      { input: { name: 'fromDate', label: t('common.fromDate','From Date'), type: 'date' } },
+      { input: { name: 'toDate', label: t('common.toDate','To Date'), type: 'date' } },
+      { button: { label: t('common.reset','Reset Filters'), variant: 'outline', onClick: ()=>{ setSearch(''); setFromDate(''); setToDate(''); setPage(1); } } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },
@@ -103,7 +79,7 @@ export default function AccountingJournalLanding() {
   return (
     <CommonLandingLayout
       title={t("account.journal", "Accounting Journal")}
-      headerButtons={[]}
+      headerButtons={[{ label: t('account.journal.create','Add Journal'), type: 'primary', onClick: ()=> navigate('/account/journal/add') }]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search voucher or description")}

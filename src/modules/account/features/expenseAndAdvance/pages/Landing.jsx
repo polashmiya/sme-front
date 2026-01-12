@@ -1,8 +1,8 @@
-import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
-import Dropdown from "../../../../../common/components/Dropdown";
+import { Fields } from "../../../../../common/components/FieldRenderer";
+import { useNavigate } from "react-router-dom";
 
 const STATUSES = ["Pending", "Approved", "Paid"];
 const EMPLOYEES = ["Alice", "Bob", "Charlie", "David"];
@@ -16,6 +16,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
 
 export default function ExpenseAdvanceLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [employee, setEmployee] = useState("");
@@ -40,65 +41,26 @@ export default function ExpenseAdvanceLanding() {
 
   const headerButtons = [
     {
-      variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} /> {t("account.expense.create", "New Expense")}
-        </>
-      ),
-      onClick: () => {},
+      label: t("account.expense.create", "Add Expense"),
+      type: "primary",
+      onClick: () => navigate("/account/expense/add"),
     },
   ];
 
-  const FilterSection = () => (
-    <div className="grid md:grid-cols-4 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("common.status", "Status")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...STATUSES.map((s) => ({ label: s, value: s })),
-          ]}
-          value={status ? { label: status, value: status } : { label: t("common.all", "All"), value: "" }}
-          onChange={(opt) => {
-            setStatus(opt.value);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Dropdown
-          label={t("account.expense.employee", "Employee")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...EMPLOYEES.map((s) => ({ label: s, value: s })),
-          ]}
-          value={employee ? { label: employee, value: employee } : { label: t("common.all", "All"), value: "" }}
-          onChange={(opt) => {
-            setEmployee(opt.value);
-            setPage(1);
-          }}
-          className="w-full"
-        />
-      </div>
-      <div className="flex flex-col justify-end">
-        <button
-          type="button"
-          className="btn-outline text-xs"
-          onClick={() => {
-            setSearch("");
-            setStatus("");
-            setEmployee("");
-            setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset Filters")}
-        </button>
-      </div>
-    </div>
-  );
+  const FilterSection = () => {
+    const values = { status, employee };
+    const setValue = (name, value) => {
+      if (name === 'status') setStatus(value?.value || value || '');
+      if (name === 'employee') setEmployee(value?.value || value || '');
+      setPage(1);
+    };
+    const fields = [
+      { ddl: { name: 'status', label: t('common.status','Status'), options: [{ label: t('common.all','All'), value: '' }, ...STATUSES.map(s=>({label:s,value:s}))] } },
+      { ddl: { name: 'employee', label: t('account.expense.employee','Employee'), options: [{ label: t('common.all','All'), value: '' }, ...EMPLOYEES.map(s=>({label:s,value:s}))] } },
+      { button: { label: t('common.reset','Reset Filters'), variant: 'outline', onClick: ()=>{ setSearch(''); setStatus(''); setEmployee(''); setPage(1); } } },
+    ];
+    return <Fields fields={fields} commonProps={{ values, setValue }} />;
+  };
 
   const tableColumns = [
     { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },

@@ -4,13 +4,19 @@ import ChartOfAccountsLanding from './features/chartOfAccounts/pages/Landing'
 import AccountingJournalLanding from './features/journal/pages/Landing'
 import FinancialReportLanding from './features/financialReport/pages/Landing'
 import OtherReportLanding from './features/otherReport/pages/Landing'
-import ExpenseAdvanceLanding from './features/ExpenseAndAdvance/pages/Landing'
+import ExpenseAdvanceLanding from './features/expenseAndAdvance/pages/Landing'
+import ChartOfAccountsCreate from './features/chartOfAccounts/pages/Create'
+import AccountingJournalCreate from './features/journal/pages/Create'
+import ExpenseAdvanceCreate from './features/expenseAndAdvance/pages/Create'
 
 const pages = [
   { key: 'account.dashboard', path: '/account/dashboard', component: <AccountDashboardPage /> },
   { key: 'account.coa', path: '/account/coa', component: <ChartOfAccountsLanding /> },
+  { key: 'account.coa.add', path: '/account/coa/add', component: <ChartOfAccountsCreate /> },
   { key: 'account.journal', path: '/account/journal', component: <AccountingJournalLanding /> },
+  { key: 'account.journal.add', path: '/account/journal/add', component: <AccountingJournalCreate /> },
   { key: 'account.expense', path: '/account/expense', component: <ExpenseAdvanceLanding /> },
+  { key: 'account.expense.add', path: '/account/expense/add', component: <ExpenseAdvanceCreate /> },
   { key: 'account.financial', path: '/account/financial-report', component: <FinancialReportLanding /> },
   { key: 'account.other', path: '/account/other-report', component: <OtherReportLanding /> },
 ]
