@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 
 const schema = yup
   .object({
@@ -14,7 +15,17 @@ const schema = yup
   .required();
 
 export default function PurchasePaymentCreate() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({ resolver: yupResolver(schema) });
+  const { control, handleSubmit, formState: { isSubmitting }, reset } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      poNo: "",
+      supplier: "",
+      paymentDate: "",
+      amount: "",
+      method: "",
+      remarks: "",
+    },
+  });
 
   const onSubmit = (data) => {
     alert("Submitted: " + JSON.stringify(data, null, 2));
@@ -25,53 +36,42 @@ export default function PurchasePaymentCreate() {
     <CommonCreateLayout
       title="Create Purchase Payment"
       onSubmit={handleSubmit(onSubmit)}
+      submitDisabled={isSubmitting}
       onCancel={() => reset()}
       submitLabel="Save Payment"
     >
-      <div className="grid md:grid-cols-3 gap-4 text-sm">
-        <div className="flex flex-col">
-          <label htmlFor="poNo" className="font-medium mb-1">PO No</label>
-          <input id="poNo" type="text" {...register("poNo")} className="border border-gray-300 rounded px-2 py-1" />
-          {errors.poNo && <span className="text-red-600 text-xs mt-1">{errors.poNo.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="supplier" className="font-medium mb-1">Supplier</label>
-          <select id="supplier" {...register("supplier")} className="border border-gray-300 rounded px-2 py-1">
-            <option value="">Select supplier</option>
-            <option>Supplier A</option>
-            <option>Supplier B</option>
-            <option>Supplier C</option>
-          </select>
-          {errors.supplier && <span className="text-red-600 text-xs mt-1">{errors.supplier.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="paymentDate" className="font-medium mb-1">Payment Date</label>
-          <input id="paymentDate" type="date" {...register("paymentDate")} className="border border-gray-300 rounded px-2 py-1" />
-          {errors.paymentDate && <span className="text-red-600 text-xs mt-1">{errors.paymentDate.message}</span>}
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-4 text-sm">
-        <div className="flex flex-col">
-          <label htmlFor="amount" className="font-medium mb-1">Amount</label>
-          <input id="amount" type="number" min="0" step="0.01" {...register("amount")} className="border border-gray-300 rounded px-2 py-1" />
-          {errors.amount && <span className="text-red-600 text-xs mt-1">{errors.amount.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="method" className="font-medium mb-1">Method</label>
-          <select id="method" {...register("method")} className="border border-gray-300 rounded px-2 py-1">
-            <option value="">Select method</option>
-            <option>Cash</option>
-            <option>Bank Transfer</option>
-            <option>Cheque</option>
-          </select>
-          {errors.method && <span className="text-red-600 text-xs mt-1">{errors.method.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="remarks" className="font-medium mb-1">Remarks</label>
-          <input id="remarks" type="text" {...register("remarks")} className="border border-gray-300 rounded px-2 py-1" />
-        </div>
-      </div>
+      {(() => {
+        const fieldsTop = [
+          { input: { name: "poNo", label: "PO No", placeholder: "PO-1001" } },
+          {
+            ddl: {
+              name: "supplier",
+              label: "Supplier",
+              options: ["Supplier A", "Supplier B", "Supplier C"].map((s) => ({ label: s, value: s })),
+              placeholder: "Select supplier",
+            },
+          },
+          { input: { name: "paymentDate", label: "Payment Date", type: "date" } },
+        ];
+        const fieldsBottom = [
+          { input: { name: "amount", label: "Amount", type: "number", placeholder: "0.00" } },
+          {
+            ddl: {
+              name: "method",
+              label: "Method",
+              options: ["Cash", "Bank Transfer", "Cheque"].map((m) => ({ label: m, value: m })),
+              placeholder: "Select method",
+            },
+          },
+          { input: { name: "remarks", label: "Remarks", placeholder: "Optional" } },
+        ];
+        return (
+          <>
+            <Fields fields={fieldsTop} commonProps={{ control }} parentDivClassName="grid md:grid-cols-3 gap-4 text-sm" />
+            <Fields fields={fieldsBottom} commonProps={{ control }} parentDivClassName="grid md:grid-cols-3 gap-4 text-sm mt-4" />
+          </>
+        );
+      })()}
     </CommonCreateLayout>
   );
 }

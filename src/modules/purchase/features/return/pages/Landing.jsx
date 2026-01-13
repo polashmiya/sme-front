@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../../../../../common/components/Button";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
 import Dropdown from "../../../../../common/components/Dropdown";
@@ -26,6 +26,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
 
 export default function PurchaseReturnLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [supplier, setSupplier] = useState("");
   const [status, setStatus] = useState("");
@@ -55,15 +56,10 @@ export default function PurchaseReturnLanding() {
 
   const headerButtons = [
     {
+      label: t("purchase.return.create", "Create Purchase Return"),
       variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} /> {t("purchase.return.create", "Create Purchase Return")}
-        </>
-      ),
-      as: Link,
-      to: "/purchase/return/create",
+      className: "text-sm",
+      onClick: () => navigate("/purchase/return/create"),
     },
   ];
 

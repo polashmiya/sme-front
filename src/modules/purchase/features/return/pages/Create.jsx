@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Trash2 } from "lucide-react";
 import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
+import { Fields } from "../../../../../common/components/FieldRenderer";
 
 const schema = yup
   .object({
@@ -23,9 +24,17 @@ export default function PurchaseReturnCreate() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    control,
+    formState: { errors, isSubmitting },
     reset,
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      poNo: "",
+      returnDate: "",
+      supplier: "",
+    },
+  });
 
   const [items, setItems] = useState([
     { itemId: 1, qty: 1, rate: DUMMY_ITEMS[0].rate },
@@ -87,6 +96,7 @@ export default function PurchaseReturnCreate() {
     <CommonCreateLayout
       title="Create Purchase Return"
       onSubmit={handleSubmit(onSubmit)}
+      submitDisabled={isSubmitting}
       onCancel={() => { reset(); setItems([{ itemId: 1, qty: 1, rate: DUMMY_ITEMS[0].rate }]); }}
       submitLabel="Save Return"
       itemsTitle="Items"
@@ -119,28 +129,21 @@ export default function PurchaseReturnCreate() {
         </div>
       }
     >
-      <div className="grid md:grid-cols-3 gap-4 text-sm">
-        <div className="flex flex-col">
-          <label htmlFor="poNo" className="font-medium mb-1">PO No</label>
-          <input id="poNo" type="text" {...register("poNo")} className="border border-gray-300 rounded px-2 py-1" />
-          {errors.poNo && <span className="text-red-600 text-xs mt-1">{errors.poNo.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="supplier" className="font-medium mb-1">Supplier</label>
-          <select id="supplier" {...register("supplier")} className="border border-gray-300 rounded px-2 py-1">
-            <option value="">Select supplier</option>
-            <option>Supplier A</option>
-            <option>Supplier B</option>
-            <option>Supplier C</option>
-          </select>
-          {errors.supplier && <span className="text-red-600 text-xs mt-1">{errors.supplier.message}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="returnDate" className="font-medium mb-1">Return Date</label>
-          <input id="returnDate" type="date" {...register("returnDate")} className="border border-gray-300 rounded px-2 py-1" />
-          {errors.returnDate && <span className="text-red-600 text-xs mt-1">{errors.returnDate.message}</span>}
-        </div>
-      </div>
+      {(() => {
+        const fields = [
+          { input: { name: "poNo", label: "PO No", placeholder: "PO-1001" } },
+          {
+            ddl: {
+              name: "supplier",
+              label: "Supplier",
+              options: ["Supplier A", "Supplier B", "Supplier C"].map((s) => ({ label: s, value: s })),
+              placeholder: "Select supplier",
+            },
+          },
+          { input: { name: "returnDate", label: "Return Date", type: "date" } },
+        ];
+        return <Fields fields={fields} commonProps={{ control }} parentDivClassName="grid md:grid-cols-3 gap-4 text-sm" />;
+      })()}
     </CommonCreateLayout>
   );
 }

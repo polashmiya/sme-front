@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
 import Dropdown from "../../../../../common/components/Dropdown";
 import Input from "../../../../../common/components/Input";
@@ -18,6 +19,7 @@ const rows = Array.from({ length: 150 }).map((_, i) => ({
 
 export default function SalesCollectionLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
@@ -70,6 +72,13 @@ export default function SalesCollectionLanding() {
   return (
     <CommonLandingLayout
       title={t("sales.collection", "Sales Collection")}
+      headerButtons={[
+        {
+          label: t("sales.collection.create", "Create Collection"),
+          type: "primary",
+          onClick: () => navigate("/sales/collection/create"),
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search Customer")}

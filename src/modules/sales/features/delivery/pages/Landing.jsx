@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
 import Dropdown from "../../../../../common/components/Dropdown";
 import Input from "../../../../../common/components/Input";
@@ -17,6 +18,7 @@ const rows = Array.from({ length: 200 }).map((_, i) => ({
 
 export default function SalesDeliveryLanding() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [date, setDate] = useState("");
@@ -76,6 +78,13 @@ export default function SalesDeliveryLanding() {
   return (
     <CommonLandingLayout
       title={t("sales.delivery", "Sales Delivery")}
+      headerButtons={[
+        {
+          label: t("sales.delivery.create", "Create Delivery"),
+          type: "primary",
+          onClick: () => navigate("/sales/delivery/create"),
+        },
+      ]}
       showSearch={true}
       onSearch={setSearch}
       searchPlaceholder={t("common.search", "Search SO")}

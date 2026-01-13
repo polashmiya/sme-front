@@ -61,19 +61,10 @@ export default function PurchaseOrderLanding() {
 
   const headerButtons = [
     {
+      label: t("purchase.dash.actions.createPO", "Create New Purchase Order"),
       variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} />{" "}
-          {t("purchase.dash.actions.createPO", "Create New Purchase Order")}
-        </>
-      ),
-      as: Link,
-      to: "/purchase/order/create",
-      onClick: () => {
-        navigate("/purchase/order/create");
-      },
+      className: "text-sm",
+      onClick: () => navigate("/purchase/order/create"),
     },
   ];
 

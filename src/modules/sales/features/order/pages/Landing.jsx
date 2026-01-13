@@ -55,15 +55,9 @@ export default function SalesOrderLanding() {
 
   const headerButtons = [
     {
+      label: t("sales.order.create", "Create Sales Order"),
       variant: "primary",
-      className: "flex items-center gap-1 text-sm",
-      children: (
-        <>
-          <Plus size={14} /> {t("sales.order.create", "Create Sales Order")}
-        </>
-      ),
-      as: Link,
-      to: "/sales/order/create",
+      className: "text-sm",
       onClick: () => navigate("/sales/order/create"),
     },
   ];
