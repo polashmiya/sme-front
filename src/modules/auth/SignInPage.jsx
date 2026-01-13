@@ -156,6 +156,17 @@ export default function SignInPage() {
         .signin-primary-button:hover {
           box-shadow: 0 18px 40px rgba(22, 163, 74, 0.45);
         }
+
+        /* Force Ant Design primary button on SignIn to use the app primary green */
+        .signin-primary-button.ant-btn-primary {
+          background-color: rgb(22, 163, 74) !important;
+          border-color: rgb(22, 163, 74) !important;
+        }
+        .signin-primary-button.ant-btn-primary:hover,
+        .signin-primary-button.ant-btn-primary:focus {
+          background-color: rgb(21, 128, 61) !important; /* slightly darker green */
+          border-color: rgb(21, 128, 61) !important;
+        }
       `}</style>
     </div>
   );
