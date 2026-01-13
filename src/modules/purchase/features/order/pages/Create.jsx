@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { yupResolver } from "@hookform/resolvers/yup";
-
 import * as yup from "yup";
-
 import { Trash2 } from "lucide-react";
 import CommonCreateLayout from "../../../../../common/components/CommonCreateLayout";
 import Dropdown from "../../../../../common/components/Dropdown";
@@ -130,43 +127,81 @@ export default function PurchaseOrderCreate() {
       itemsTitle="Items"
       onAddLine={handleAddLine}
       itemsColumns={[
-        { key: 'item', title: 'Item', className: 'text-left px-3 py-2', dataIndex: 'itemId', render: (value, row) => (
-          <Dropdown
-            options={DUMMY_ITEMS.map((it) => ({ value: it.id, label: it.name }))}
-            value={row.itemId}
-            onChange={(val) => handleItemChange(row._idx, 'itemId', val)}
-          />
-        ) },
-        { key: 'qty', title: 'Qty', className: 'text-right px-3 py-2', dataIndex: 'qty', render: (value, row) => (
-          <input
-            type="number"
-            min="1"
-            value={row.qty}
-            onChange={(e) => handleItemChange(row._idx, 'qty', e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1 w-16 text-right"
-          />
-        ) },
-        { key: 'rate', title: 'Rate', className: 'text-right px-3 py-2', dataIndex: 'rate', render: (value, row) => (
-          <input
-            type="number"
-            min="0"
-            value={row.rate}
-            onChange={(e) => handleItemChange(row._idx, 'rate', e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1 w-20 text-right"
-          />
-        ) },
-        { key: 'total', title: 'Total', className: 'text-right px-3 py-2', dataIndex: 'total', render: (_, row) => lineTotal(row) },
-        { key: 'action', title: 'Action', className: 'text-center px-3 py-2', dataIndex: 'action', render: (_, row) => (
-          <button
-            type="button"
-            className="text-red-600 p-1"
-            onClick={() => handleRemoveLine(row._idx)}
-            disabled={items.length === 1}
-            title="Delete"
-          >
-            <Trash2 size={16} />
-          </button>
-        ) },
+        {
+          key: "item",
+          title: "Item",
+          className: "text-left px-3 py-2",
+          dataIndex: "itemId",
+          render: (value, row) => {
+            const options = DUMMY_ITEMS.map((it) => ({ value: it.id, label: it.name }));
+            const selected = options.find((opt) => opt.value === row.itemId) || null;
+            return (
+              <Dropdown
+                options={options}
+                value={selected}
+                onChange={(opt) => handleItemChange(row._idx, "itemId", opt.value)}
+                className="min-w-[140px]"
+                searchable={true}
+              />
+            );
+          },
+        },
+        {
+          key: "qty",
+          title: "Qty",
+          className: "text-right px-3 py-2",
+          dataIndex: "qty",
+          render: (value, row) => (
+            <input
+              type="number"
+              min="1"
+              value={row.qty}
+              onChange={(e) => handleItemChange(row._idx, "qty", e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 w-20 text-right text-sm"
+            />
+          ),
+        },
+        {
+          key: "rate",
+          title: "Rate",
+          className: "text-right px-3 py-2",
+          dataIndex: "rate",
+          render: (value, row) => (
+            <input
+              type="number"
+              min="0"
+              value={row.rate}
+              onChange={(e) => handleItemChange(row._idx, "rate", e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 w-24 text-right text-sm"
+            />
+          ),
+        },
+        {
+          key: "total",
+          title: "Total",
+          className: "text-right px-3 py-2",
+          dataIndex: "total",
+          render: (_, row) => (
+            <span className="text-sm font-medium">{lineTotal(row)}</span>
+          ),
+        },
+        {
+          key: "action",
+          title: "Action",
+          className: "text-center px-3 py-2",
+          dataIndex: "action",
+          render: (_, row) => (
+            <button
+              type="button"
+              className="text-red-600 p-1"
+              onClick={() => handleRemoveLine(row._idx)}
+              disabled={items.length === 1}
+              title="Delete"
+            >
+              <Trash2 size={16} />
+            </button>
+          ),
+        },
       ]}
       itemsData={items.map((r, idx) => ({ ...r, _idx: idx }))}
       itemsFooter={
@@ -174,7 +209,6 @@ export default function PurchaseOrderCreate() {
           <div className="font-semibold">Grand Total:&nbsp;{grandTotal}</div>
         </div>
       }
-      actionsPosition="header"
     >
       {(() => {
         const fields = [
