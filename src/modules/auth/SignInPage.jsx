@@ -33,8 +33,14 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 animate-light-purple-bg -z-10" />
-      <div className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 bg-emerald-400/40 blur-3xl rounded-full" />
-      <div className="pointer-events-none absolute -top-24 -right-10 h-72 w-72 bg-purple-400/40 blur-3xl rounded-full" />
+      <div
+        className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 blur-3xl rounded-full"
+        style={{ background: "rgba(22, 163, 74, 0.35)" }}
+      />
+      <div
+        className="pointer-events-none absolute -top-24 -right-10 h-72 w-72 blur-3xl rounded-full"
+        style={{ background: "rgba(22, 163, 74, 0.22)" }}
+      />
 
       <div className="relative w-full max-w-md px-6 sm:px-8 py-8 sm:py-10 animate-fade-in-right">
         <div className="w-full bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl shadow-emerald-500/20 rounded-2xl px-6 sm:px-8 py-8 sm:py-10">
@@ -92,7 +98,7 @@ export default function SignInPage() {
               size="large"
               type="primary"
               htmlType="submit"
-              className="!h-11 rounded-lg text-[15px] font-semibold shadow-md shadow-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/40 transition-transform duration-200 hover:-translate-y-0.5"
+              className="!h-11 rounded-lg text-[15px] font-semibold transition-transform duration-200 hover:-translate-y-0.5 signin-primary-button"
             >
               {t("auth.signIn")}
             </Button>
@@ -124,7 +130,11 @@ export default function SignInPage() {
           50% { background-position: 100% 50%; }
         }
         .animate-light-purple-bg {
-          background: linear-gradient(135deg, #ede7ff 0%, #bbaaff 50%, #9767FF 100%);
+          background: linear-gradient(135deg,
+            rgba(22, 163, 74, 0.15) 0%,
+            rgba(22, 163, 74, 0.45) 45%,
+            rgba(22, 163, 74, 0.9) 100%
+          );
           background-size: 200% 200%;
           animation: light-purple-bg 8s ease-in-out infinite;
           opacity: 0.97;
@@ -139,6 +149,13 @@ export default function SignInPage() {
           to { opacity: 1; transform: translateX(0); }
         }
         .animate-fade-in-right { animation: fade-in-right 1s cubic-bezier(.4,0,.2,1) both; }
+
+        .signin-primary-button {
+          box-shadow: 0 14px 30px rgba(22, 163, 74, 0.35);
+        }
+        .signin-primary-button:hover {
+          box-shadow: 0 18px 40px rgba(22, 163, 74, 0.45);
+        }
       `}</style>
     </div>
   );
