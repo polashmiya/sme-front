@@ -3,25 +3,57 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* declare the primary color */
+/* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
   --primary-color: rgb(22 163 74);
+
+  /* Match exact Tailwind values used in the original codebase */
+  --bg-base:        #f9fafb;   /* gray-50 / bg-gray-50 */
+  --bg-surface:     #ffffff;   /* white */
+  --bg-elevated:    #f9fafb;   /* gray-50 — table headers */
+  --bg-hover:       #f3f4f6;   /* gray-100 — hover states */
+
+  --text-primary:   #111827;   /* gray-900 */
+  --text-secondary: #374151;   /* gray-700 */
+  --text-muted:     #9ca3af;   /* gray-400 */
+
+  --border:         #e5e7eb;   /* gray-200 */
+  --border-strong:  #d1d5db;   /* gray-300 */
 }
 
+/* Dark mode overrides — applied when <html class="dark"> */
+.dark {
+  --bg-base:        #0f172a;
+  --bg-surface:     #1e293b;
+  --bg-elevated:    #263245;
+  --bg-hover:       #2d3f55;
+
+  --text-primary:   #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted:     #64748b;
+
+  --border:         #2e3f52;
+  --border-strong:  #3d5068;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────── */
 html, body, #root {
   height: 100%;
   width: 100vw;
   overflow-x: hidden;
 }
+
 body {
-  @apply bg-gray-50 text-gray-800 antialiased;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  @apply antialiased;
   overflow-x: hidden;
   width: 100vw;
+  /* light: #f9fafb (same as original bg-gray-50) */
 }
 
-
-
+/* ─── App shell / layout grid ────────────────────────────────────── */
 .app-shell {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -52,35 +84,55 @@ body {
 }
 
 .sidebar-area { grid-area: sidebar; }
-.header-area { grid-area: header; }
-.main-area { grid-area: main; }
 
-/* Scrollbar styling */
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-*::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.header-area {
+  grid-area: header;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
 
+.main-area {
+  grid-area: main;
+  background: var(--bg-base);
+  transition: background-color 0.2s ease;
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────────────── */
+*::-webkit-scrollbar        { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track  { background: transparent; }
+*::-webkit-scrollbar-thumb  { background: var(--border-strong); border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Table ──────────────────────────────────────────────────────── */
 .table-base {
-  /* Full outer border and inner cell borders */
-  @apply w-full text-sm border border-gray-300 border-collapse;
+  @apply w-full text-sm border-collapse;
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
 }
 .table-base th {
-  @apply bg-gray-100 font-medium text-gray-700 px-3 py-2 border border-gray-300 text-left;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+  @apply font-semibold px-3 py-2 text-left;
 }
 .table-base td {
-  @apply px-3 py-1.5 border border-gray-200 align-middle;
+  border: 1px solid var(--border);
+  @apply px-3 py-1.5 align-middle;
 }
-.table-base tr:hover {
-  @apply bg-gray-50;
-}
+.table-base tr:hover { background: var(--bg-hover); }
 
+/* ─── Components ─────────────────────────────────────────────────── */
 .page-title {
+  color: var(--text-primary);
   @apply text-xl font-semibold tracking-tight mb-4 flex items-center gap-2;
 }
 
 .card {
-  @apply bg-white shadow-sm rounded-lg border border-gray-200 p-4;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  @apply shadow-sm rounded-lg p-4;
 }
 
 .btn-primary {
@@ -88,14 +140,128 @@ body {
 }
 
 .btn-outline {
-  @apply inline-flex items-center gap-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 active:bg-gray-200 transition-colors;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  transition: background-color 0.15s ease;
+  @apply inline-flex items-center gap-1 rounded-md px-4 py-2 text-sm font-medium;
+}
+.btn-outline:hover  { background: var(--bg-hover); }
+.btn-outline:active { background: var(--bg-elevated); }
+
+/* ─── Adaptive form/UI controls (CSS-var only — no Tailwind dark:) ── */
+
+/* Input fields */
+.ctrl-input {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 13px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.ctrl-input::placeholder { color: var(--text-muted); }
+.ctrl-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.25);
+  border-color: rgb(22 163 74);
+}
+.ctrl-input.error { border-color: #ef4444; }
+
+/* Select / rows-per-page */
+.ctrl-select {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.ctrl-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(22,163,74,0.25); }
+
+/* Dropdown trigger button */
+.dropdown-trigger {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  height: 30px;
+  border-radius: 6px;
+  padding: 0 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dropdown-trigger:hover { background: var(--bg-hover); }
+.dropdown-trigger:focus { outline: none; box-shadow: 0 0 0 2px rgba(22,163,74,0.25); border-color: rgb(22 163 74); }
+
+/* Dropdown panel */
+.dropdown-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
-.fade-enter {
-  opacity: 0;
+/* Dropdown items */
+.dropdown-item {
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.1s;
 }
-.fade-enter-active {
-  opacity: 1;
-  transition: opacity 200ms;
+.dropdown-item:hover { background: var(--bg-hover); }
+.dropdown-item.selected {
+  background: rgba(22,163,74,0.1);
+  color: rgb(22 163 74);
+  font-weight: 500;
 }
 
+/* Dropdown search input */
+.dropdown-search {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: transparent;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  outline: none;
+}
+.dropdown-search::placeholder { color: var(--text-muted); }
+
+/* Icon muted helper */
+.icon-muted { color: var(--text-muted); }
+
+/* Pagination */
+.pg-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  line-height: 1.25;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.pg-btn:hover:not(:disabled) { background: var(--bg-hover); }
+.pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pg-btn.active {
+  background: rgb(22 163 74);
+  border-color: rgb(22 163 74);
+  color: #fff;
+  cursor: default;
+}
+.pg-muted { color: var(--text-muted); padding: 0 8px; font-size: 13px; }
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+.fade-enter        { opacity: 0; }
+.fade-enter-active { opacity: 1; transition: opacity 200ms; }

@@ -1,16 +1,18 @@
-import { LogOut, User } from "lucide-react";
+import { LogOut, Moon, Sun, User } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "../common/components/LanguageSwitcher";
 import { signOut } from "../auth/authSlice";
 import Button from "../common/ant/Button";
+import { toggleDarkMode } from "../ui/uiSlice";
 
 export default function Header() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const darkMode = useSelector(s => s.ui.darkMode);
 
   const [showUser, setShowUser] = React.useState(false);
   const userBtnRef = React.useRef(null);
@@ -20,18 +22,8 @@ export default function Header() {
   React.useEffect(() => {
     if (!showUser) return;
     function handleClickOutside(event) {
-      if (
-        userBtnRef.current && userBtnRef.current.contains(event.target)
-      ) {
-        // Clicked the user icon, let the handler toggle
-        return;
-      }
-      if (
-        userInfoRef.current && userInfoRef.current.contains(event.target)
-      ) {
-        // Clicked inside the user info, do nothing
-        return;
-      }
+      if (userBtnRef.current && userBtnRef.current.contains(event.target)) return;
+      if (userInfoRef.current && userInfoRef.current.contains(event.target)) return;
       setShowUser(false);
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -40,7 +32,7 @@ export default function Header() {
 
   return (
     <header
-      className="header-area bg-white border-b border-gray-200 px-4 flex items-center justify-between sticky top-0 z-20 w-full"
+      className="header-area px-4 flex items-center justify-between sticky top-0 z-20 w-full"
       style={{ minWidth: 0 }}
     >
       <div className="flex items-center gap-2">
@@ -49,45 +41,70 @@ export default function Header() {
             className="font-bold text-lg tracking-wide cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <span style={{ color: '#8C57FF' }}>Core</span>lium
+            <span style={{ color: '#8C57FF' }}>Core</span>
+            <span style={{ color: 'var(--text-primary)' }}>lium</span>
           </span>
         )}
       </div>
+
       <div className="flex items-center gap-2">
+        {/* Dark / light mode toggle */}
+        <button
+          onClick={() => dispatch(toggleDarkMode())}
+          className="btn-outline w-9 h-9 !px-0 flex items-center justify-center"
+          title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label="Toggle dark mode"
+        >
+          {darkMode
+            ? <Sun size={15} style={{ color: '#f59e0b' }} />
+            : <Moon size={15} style={{ color: 'var(--text-secondary)' }} />
+          }
+        </button>
+
         <LanguageSwitcher />
-        {/* <button className="btn-outline"><User size={16} /> Admin</button> */}
+
+        {/* User avatar */}
         <button
           ref={userBtnRef}
-          className="flex items-center justify-center w-9 h-9 rounded-full"
-          style={{ backgroundColor: '#F3EDFF' }}
-          onClick={() => setShowUser((v) => !v)}
+          className="flex items-center justify-center w-9 h-9 rounded-full transition-colors"
+          style={{ backgroundColor: darkMode ? '#2d3f55' : '#F3EDFF' }}
+          onClick={() => setShowUser(v => !v)}
+          aria-label="User menu"
         >
-          <User size={22} style={{ color: 'rgb(22 163 74)' }} />
+          <User size={20} style={{ color: 'rgb(22 163 74)' }} />
         </button>
+
+        {/* User dropdown */}
         {showUser && (
           <div
             ref={userInfoRef}
-            className="absolute right-4 top-14 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50 min-w-[200px] flex flex-col "
+            className="absolute right-4 top-14 rounded-xl shadow-xl border p-4 z-50 min-w-[200px] flex flex-col"
+            style={{
+              background: 'var(--bg-surface)',
+              borderColor: 'var(--border)',
+            }}
           >
-            <span className="font-semibold text-gray-800 mb-1">Md Polash Miya</span>
-            <span className="text-xs text-gray-500 mb-2">Software Engineer</span>
-            <span className="text-xs text-gray-500 mb-2">+880123456789</span>
-           
+            <span className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
+              Md Polash Miya
+            </span>
+            <span className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>
+              Software Engineer
+            </span>
+            <span className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
+              +880123456789
+            </span>
             <Button
               type="button"
-              className="btn-primary w-full mt-2"
+              className="btn-primary w-full"
               onClick={() => {
                 setShowUser(false);
                 dispatch(signOut());
               }}
             >
-              <LogOut size={16} /> {t("auth.signOut")}
+              <LogOut size={14} /> {t("auth.signOut")}
             </Button>
           </div>
         )}
-        {/* <Button type="button" className="btn-primary" onClick={() => dispatch(signOut())}>
-          <LogOut size={16} /> {t("auth.signOut")}
-        </Button> */}
       </div>
     </header>
   );

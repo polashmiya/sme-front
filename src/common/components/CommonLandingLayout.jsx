@@ -39,8 +39,8 @@ const CommonLandingLayout = ({
   return (
     <AnimatePresence>
       <motion.div
-        className="common-landing-layout flex flex-col h-full min-h-screen bg-white sm:bg-transparent sm:h-auto sm:min-h-0"
-        style={{ height: `calc(100vh - 64px - 24px)`, overflow: "hidden" }}
+        className="common-landing-layout flex flex-col h-full min-h-screen sm:bg-transparent sm:h-auto sm:min-h-0"
+        style={{ height: `calc(100vh - 64px - 24px)`, overflow: "hidden", background: 'var(--bg-base)' }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
@@ -85,9 +85,9 @@ const CommonLandingLayout = ({
           >
             <Card className="w-full">
             <div className="sm:hidden flex justify-between items-center mb-2">
-              <span className="font-semibold text-base">Filters</span>
+              <span className="font-semibold text-base" style={{ color: 'var(--text-primary)' }}>Filters</span>
               <button
-                className="text-blue-600 text-sm px-2 py-1 rounded focus:outline-none flex items-center gap-1"
+                className="text-blue-600 dark:text-blue-400 text-sm px-2 py-1 rounded focus:outline-none flex items-center gap-1"
                 onClick={() => setFilterExpanded((prev) => !prev)}
               >
                 {filterExpanded ? "Collapse" : "Expand"}

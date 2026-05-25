@@ -13,84 +13,77 @@ const Pagination = ({
   const totalPages = Math.ceil(total / pageSize);
   if (totalPages <= 1) return null;
 
-  const handleClick = (page) => {
-    if (page !== current && page > 0 && page <= totalPages) {
-      onChange(page);
-    }
+  const handleClick = page => {
+    if (page !== current && page > 0 && page <= totalPages) onChange(page);
   };
 
   const getPages = () => {
-  const pages = [];
-
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i);
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
+    }
+    pages.push(1);
+    if (current > 3) pages.push('left-ellipsis');
+    const start = Math.max(2, current - 1);
+    const end = Math.min(totalPages - 1, current + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (current < totalPages - 2) pages.push('right-ellipsis');
+    pages.push(totalPages);
     return pages;
-  }
+  };
 
-  pages.push(1);
-
-  if (current > 3) pages.push('left-ellipsis');
-
-  const start = Math.max(2, current - 1);
-  const end = Math.min(totalPages - 1, current + 1);
-
-  for (let i = start; i <= end; i++) pages.push(i);
-
-  if (current < totalPages - 2) pages.push('right-ellipsis');
-
-  pages.push(totalPages);
-  return pages;
-};
   return (
     <div className={`flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-3 ${className}`}>
-      <label className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start mb-2 sm:mb-0">
-        <span className="text-sm text-gray-600">Rows per page:</span>
+      <label className="flex items-center gap-1.5 w-full sm:w-auto justify-center sm:justify-start mb-2 sm:mb-0">
+        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Rows per page:</span>
         <select
-          className="border rounded px-2 py-1 text-sm"
+          className="ctrl-select"
+          style={{ height: 28, paddingLeft: 8, paddingRight: 8 }}
           value={pageSize}
-          onChange={e => {
-            if (onPageSizeChange) onPageSizeChange(Number(e.target.value));
-          }}
+          onChange={e => onPageSizeChange && onPageSizeChange(Number(e.target.value))}
         >
           {pageSizeOptions.map(size => (
             <option key={size} value={size}>{size}</option>
           ))}
         </select>
       </label>
-      <div className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start flex-wrap">
+
+      <div className="flex items-center gap-1 w-full sm:w-auto justify-center flex-wrap">
         <button
-          className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+          className="pg-btn"
           onClick={() => handleClick(current - 1)}
           disabled={current === 1}
         >
           &lt;
         </button>
+
         {getPages().map((page, idx) =>
-          typeof page === "string" ? (
-            <span key={`ellipsis-${idx}`} className="px-2">...</span>
+          typeof page === 'string' ? (
+            <span key={`e-${idx}`} className="pg-muted">…</span>
           ) : (
             <button
-              key={`page-${idx}`}
-              className={`px-3 py-1 rounded border ${
-                Number(current) === page ? "bg-primary text-white" : "bg-white hover:bg-gray-100"
-              }`}
-              onClick={() => handleClick(page)}  
+              key={`p-${idx}`}
+              className={`pg-btn${Number(current) === page ? ' active' : ''}`}
+              onClick={() => handleClick(page)}
               disabled={Number(current) === page}
             >
               {page}
             </button>
           )
         )}
+
         <button
-          className="px-2 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
+          className="pg-btn"
           onClick={() => handleClick(current + 1)}
           disabled={current === totalPages}
         >
           &gt;
         </button>
+
         {showTotal && (
-          <span className="ml-4 text-sm text-gray-600">
-            Showing {(current - 1) * pageSize + 1} - {Math.min(current * pageSize, total)} of {total}
+          <span className="ml-3 text-sm" style={{ color: 'var(--text-muted)' }}>
+            {(current - 1) * pageSize + 1}–{Math.min(current * pageSize, total)} of {total}
           </span>
         )}
       </div>
