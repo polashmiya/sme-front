@@ -1,93 +1,84 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  LayoutDashboard,
-  ShoppingCart,
-  ShoppingBag,
-  Banknote,
-  Boxes,
-  Settings,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  BarChart3,
-  FilePlus2,
-  Inbox,
-  RotateCcw,
-  CreditCard,
-  FileText,
-  Truck,
-  BookText,
-  Wallet,
-  Files,
-  SlidersHorizontal,
-  Users,
-  Package,
-  UserRound,
-  Building2,
-  BadgePercent,
-  Tag,
+  LayoutDashboard, ShoppingCart, ShoppingBag, Banknote, Boxes, Settings, CheckCircle,
+  ChevronLeft, ChevronRight, ChevronDown, BarChart3, FilePlus2, Inbox, RotateCcw,
+  CreditCard, FileText, Truck, BookText, Wallet, Files, SlidersHorizontal, Users,
+  Package, UserRound, Building2, BadgePercent, Tag, Sun, Moon,
 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useState, useRef, useEffect } from 'react'
 import { toggleSidebar, toggleSidebarWhite } from '../ui/uiSlice'
-const sections = [
+
+const navGroups = [
   {
-    key: 'dashboard', icon: LayoutDashboard, path: '/',
-  },
-  {
-    key: 'purchase', icon: ShoppingCart, children: [
-      { key: 'purchase.dashboard', path: '/purchase/dashboard', icon: BarChart3 },
-      { key: 'purchase.order', path: '/purchase/order', icon: FilePlus2 },
-      { key: 'purchase.receive', path: '/purchase/receive', icon: Inbox },
-      { key: 'purchase.return', path: '/purchase/return', icon: RotateCcw },
-      { key: 'purchase.payment', path: '/purchase/payment', icon: CreditCard },
-      { key: 'purchase.report', path: '/purchase/report', icon: FileText },
+    label: null,
+    items: [
+      { key: 'dashboard', icon: LayoutDashboard, path: '/' },
     ],
   },
   {
-    key: 'sales', icon: ShoppingBag, children: [
-      { key: 'sales.dashboard', path: '/sales/dashboard', icon: BarChart3 },
-      { key: 'sales.order', path: '/sales/order', icon: FilePlus2 },
-      { key: 'sales.delivery', path: '/sales/delivery', icon: Truck },
-      { key: 'sales.return', path: '/sales/return', icon: RotateCcw },
-      { key: 'sales.collection', path: '/sales/collection', icon: Wallet },
-      { key: 'sales.report', path: '/sales/report', icon: FileText },
+    label: 'OPERATIONS',
+    items: [
+      {
+        key: 'purchase', icon: ShoppingCart, children: [
+          { key: 'purchase.dashboard', path: '/purchase/dashboard', icon: BarChart3 },
+          { key: 'purchase.order', path: '/purchase/order', icon: FilePlus2 },
+          { key: 'purchase.receive', path: '/purchase/receive', icon: Inbox },
+          { key: 'purchase.return', path: '/purchase/return', icon: RotateCcw },
+          { key: 'purchase.payment', path: '/purchase/payment', icon: CreditCard },
+          { key: 'purchase.report', path: '/purchase/report', icon: FileText },
+        ],
+      },
+      {
+        key: 'sales', icon: ShoppingBag, children: [
+          { key: 'sales.dashboard', path: '/sales/dashboard', icon: BarChart3 },
+          { key: 'sales.order', path: '/sales/order', icon: FilePlus2 },
+          { key: 'sales.delivery', path: '/sales/delivery', icon: Truck },
+          { key: 'sales.return', path: '/sales/return', icon: RotateCcw },
+          { key: 'sales.collection', path: '/sales/collection', icon: Wallet },
+          { key: 'sales.report', path: '/sales/report', icon: FileText },
+        ],
+      },
+      {
+        key: 'account', icon: Banknote, children: [
+          { key: 'account.dashboard', path: '/account/dashboard', icon: BarChart3 },
+          { key: 'account.coa', path: '/account/coa', icon: Files },
+          { key: 'account.journal', path: '/account/journal', icon: BookText },
+          { key: 'account.expense', path: '/account/expense', icon: Wallet },
+          { key: 'account.financial', path: '/account/financial-report', icon: FileText },
+          { key: 'account.other', path: '/account/other-report', icon: FileText },
+        ],
+      },
+      {
+        key: 'inventory', icon: Boxes, children: [
+          { key: 'inventory.dashboard', path: '/inventory/dashboard', icon: BarChart3 },
+          { key: 'inventory.adjustment', path: '/inventory/adjustment', icon: SlidersHorizontal },
+          { key: 'inventory.reports', path: '/inventory/reports', icon: FileText },
+        ],
+      },
     ],
   },
   {
-    key: 'account', icon: Banknote, children: [
-      { key: 'account.dashboard', path: '/account/dashboard', icon: BarChart3 },
-      { key: 'account.coa', path: '/account/coa', icon: Files },
-      { key: 'account.journal', path: '/account/journal', icon: BookText },
-      { key: 'account.expense', path: '/account/expense', icon: Wallet },
-      { key: 'account.financial', path: '/account/financial-report', icon: FileText },
-      { key: 'account.other', path: '/account/other-report', icon: FileText },
+    label: 'SYSTEM',
+    items: [
+      {
+        key: 'configuration', icon: Settings, children: [
+          { key: 'configuration.employee.employee', path: '/configuration/employee', icon: Users },
+          { key: 'configuration.itemProfile', path: '/configuration/item-profile', icon: Package },
+          { key: 'configuration.customerProfile', path: '/configuration/customer-profile', icon: UserRound },
+          { key: 'configuration.supplierProfile', path: '/configuration/supplier-profile', icon: Building2 },
+          { key: 'configuration.offerSetup', path: '/configuration/offer-setup', icon: BadgePercent },
+          { key: 'configuration.customerPrice', path: '/configuration/customer-price', icon: Tag },
+          { key: 'configuration.standardPrice', path: '/configuration/standard-price', icon: Tag },
+        ],
+      },
+      { key: 'approval', icon: CheckCircle, path: '/approval' },
     ],
-  },
-  {
-    key: 'inventory', icon: Boxes, children: [
-      { key: 'inventory.dashboard', path: '/inventory/dashboard', icon: BarChart3 },
-      { key: 'inventory.adjustment', path: '/inventory/adjustment', icon: SlidersHorizontal },
-      { key: 'inventory.reports', path: '/inventory/reports', icon: FileText },
-    ],
-  },
-  {
-    key: 'configuration', icon: Settings, children: [
-      { key: 'configuration.employee.employee', path: '/configuration/employee', icon: Users },
-      { key: 'configuration.itemProfile', path: '/configuration/item-profile', icon: Package },
-      { key: 'configuration.customerProfile', path: '/configuration/customer-profile', icon: UserRound },
-      { key: 'configuration.supplierProfile', path: '/configuration/supplier-profile', icon: Building2 },
-      { key: 'configuration.offerSetup', path: '/configuration/offer-setup', icon: BadgePercent },
-      { key: 'configuration.customerPrice', path: '/configuration/customer-price', icon: Tag },
-      { key: 'configuration.standardPrice', path: '/configuration/standard-price', icon: Tag },
-    ],
-  },
-  {
-    key: 'approval', icon: CheckCircle, path: '/approval',
   },
 ]
+
+const sections = navGroups.flatMap(g => g.items)
 
 export default function Sidebar() {
   const { t } = useTranslation()
@@ -95,162 +86,273 @@ export default function Sidebar() {
   const sidebarWhite = useSelector(s => s.ui.sidebarWhite)
   const dispatch = useDispatch()
   const location = useLocation()
+
   const [expanded, setExpanded] = useState(() => {
     const match = sections.find(sec => sec.children?.some(ch => location.pathname.startsWith(ch.path)))
     return match?.key || null
   })
+
   useEffect(() => {
     const match = sections.find(sec => sec.children?.some(ch => location.pathname.startsWith(ch.path)))
     setExpanded(match?.key || null)
   }, [location.pathname])
 
-  const toggle = (key) => {
-    setExpanded(prev => (prev === key ? null : key))
-  }
+  const toggle = key => setExpanded(prev => prev === key ? null : key)
 
-  // Smooth width transition and content clipping
+  const isDark = !sidebarWhite
+  const bg = isDark ? '#0f172a' : '#ffffff'
+  const borderColor = isDark ? '#1e293b' : '#e5e7eb'
+  const textMuted = isDark ? '#64748b' : '#9ca3af'
+  const PRIMARY = '#16a34a'
+
   return (
     <aside
-      className={`sidebar-area flex flex-col border-r h-full overflow-hidden transition-all duration-300 ${sidebarWhite ? 'bg-white text-gray-900 border-gray-200' : 'bg-sidebar text-gray-100 border-gray-800'}`}
-      style={{ width: open ? 260 : 64, minWidth: open ? 260 : 64, maxWidth: open ? 260 : 64 }}
+      className="sidebar-area flex flex-col h-full overflow-hidden transition-all duration-300"
+      style={{
+        width: open ? 260 : 64,
+        minWidth: open ? 260 : 64,
+        maxWidth: open ? 260 : 64,
+        background: bg,
+        borderRight: `1px solid ${borderColor}`,
+      }}
     >
-      {/* Header: only show color toggle in header if expanded */}
-      <div className={`flex items-center justify-between px-4 h-header border-b ${sidebarWhite ? 'border-gray-200' : 'border-gray-700'}`}>
-        <NavLink to="/" className="font-semibold tracking-wide text-sm focus:outline-none">
-          {open ? (
-            <span dangerouslySetInnerHTML={{ __html: t('appName') }} />
-          ) : (
-            'SME'
-          )}
-        </NavLink>
-        <div className="flex gap-1 items-center">
-          {open && (
+      {/* Brand Header */}
+      <div
+        className="flex items-center h-header px-3 flex-shrink-0"
+        style={{ borderBottom: `1px solid ${borderColor}` }}
+      >
+        {open ? (
+          <>
+            <NavLink to="/" className="flex items-center gap-2.5 flex-1 min-w-0 focus:outline-none">
+              <div
+                className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}
+              >
+                <span className="text-white font-bold text-sm leading-none">C</span>
+              </div>
+              <div className="min-w-0">
+                <div
+                  className="font-semibold text-[13px] leading-tight truncate"
+                  style={{ color: isDark ? '#f1f5f9' : '#111827' }}
+                >
+                  Corelium
+                </div>
+                <div className="text-[10px] leading-tight" style={{ color: textMuted }}>
+                  Enterprise Suite
+                </div>
+              </div>
+            </NavLink>
+            <button
+              onClick={() => dispatch(toggleSidebar())}
+              className="flex-shrink-0 p-1.5 rounded-md transition-colors"
+              style={{ color: textMuted }}
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft size={15} />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => dispatch(toggleSidebar())}
+            className="mx-auto p-1.5 rounded-md transition-colors"
+            style={{ color: textMuted }}
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight size={15} />
+          </button>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <nav
+        className="flex-1 overflow-y-auto py-2"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: `${borderColor} transparent` }}
+      >
+        {navGroups.map((group, gi) => (
+          <div key={gi} className={gi > 0 ? 'mt-5' : 'mt-1'}>
+            {group.label && open && (
+              <div
+                className="px-4 mb-1 select-none"
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: textMuted,
+                }}
+              >
+                {group.label}
+              </div>
+            )}
+            {group.label && !open && (
+              <div
+                className="mx-auto mb-2 mt-1"
+                style={{ width: 20, height: 1, background: borderColor }}
+              />
+            )}
+            <div>
+              {group.items.map(sec => (
+                <SidebarItem
+                  key={sec.key}
+                  section={sec}
+                  open={open}
+                  t={t}
+                  expanded={expanded}
+                  onToggle={toggle}
+                  isDark={isDark}
+                  borderColor={borderColor}
+                  textMuted={textMuted}
+                  primary={PRIMARY}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div
+        className="flex-shrink-0 px-3 py-2.5"
+        style={{ borderTop: `1px solid ${borderColor}` }}
+      >
+        {open ? (
+          <div className="flex items-center justify-between">
+            <span style={{ fontSize: 11, color: textMuted }}>v0.1.0</span>
             <button
               onClick={() => dispatch(toggleSidebarWhite())}
-              className={`rounded p-1 transition-colors duration-150 ${sidebarWhite ? 'text-gray-700 hover:bg-gray-200' : 'bg-gray-900 text-gray-200 hover:bg-gray-800'}`}
-              aria-label="Toggle sidebar color"
-              title={sidebarWhite ? 'Switch to dark sidebar' : 'Switch to white sidebar'}
-              style={{ marginRight: 4, background: sidebarWhite ? 'transparent' : undefined }}
+              className="p-1.5 rounded-md transition-colors"
+              style={{ color: textMuted }}
+              title={isDark ? 'Light mode' : 'Dark mode'}
+              aria-label="Toggle theme"
             >
-              {/* Color toggle icon: simple circle */}
-              <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 8, background: sidebarWhite ? '#fff' : '#0f172a', border: '1.5px solid #cbd5e1' }} />
+              {isDark ? <Sun size={13} /> : <Moon size={13} />}
             </button>
-          )}
-          <button onClick={() => dispatch(toggleSidebar())} className={`${sidebarWhite ? 'text-gray-500 hover:text-gray-800' : 'text-gray-300 hover:text-white'}`} aria-label="Toggle sidebar">
-            {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-          </button>
-        </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <button
+              onClick={() => dispatch(toggleSidebarWhite())}
+              className="p-1.5 rounded-md transition-colors"
+              style={{ color: textMuted }}
+              title={isDark ? 'Light mode' : 'Dark mode'}
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun size={13} /> : <Moon size={13} />}
+            </button>
+          </div>
+        )}
       </div>
-      <nav
-        className="flex-1 py-2 min-h-0 overflow-hidden"
-        style={{
-          overflowY: open ? 'auto' : 'hidden',
-          transition: 'overflow 0.3s',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          {sections.map(sec => (
-            <div key={sec.key} className="mb-1">
-              <SidebarSection section={sec} open={open} t={t} expanded={expanded} onToggle={toggle} sidebarWhite={sidebarWhite} />
-            </div>
-          ))}
-        </div>
-      </nav>
-      {/* Bottom: show color toggle here if collapsed */}
-      {!open && (
-        <div className="flex flex-col items-center py-3 border-t w-full" style={{ borderColor: sidebarWhite ? '#e5e7eb' : '#374151' }}>
-          <button
-            onClick={() => dispatch(toggleSidebarWhite())}
-            className={`rounded p-1 transition-colors duration-150 ${sidebarWhite ? 'text-gray-700 hover:bg-gray-200' : 'bg-gray-900 text-gray-200 hover:bg-gray-800'}`}
-            aria-label="Toggle sidebar color"
-            title={sidebarWhite ? 'Switch to dark sidebar' : 'Switch to white sidebar'}
-            style={{ marginBottom: 2, background: sidebarWhite ? 'transparent' : undefined }}
-          >
-            <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 8, background: sidebarWhite ? '#fff' : '#0f172a', border: '1.5px solid #cbd5e1' }} />
-          </button>
-        </div>
-      )}
-      <div className={`text-xs px-4 py-3 border-t ${sidebarWhite ? 'text-gray-400 border-gray-200' : 'text-gray-400 border-gray-700'}`}>v0.1.0</div>
     </aside>
   )
 }
 
-
-function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) {
+function SidebarItem({ section, open, t, expanded, onToggle, isDark, borderColor, textMuted, primary }) {
   const Icon = section.icon
   const hasChildren = !!section.children
   const [hovered, setHovered] = useState(false)
-  const [submenuStyle, setSubmenuStyle] = useState({})
-  const sectionRef = useRef(null)
+  const [flyoutPos, setFlyoutPos] = useState({ top: 0, left: 0 })
+  const ref = useRef(null)
+  const location = useLocation()
+
+  const isExpanded = expanded === section.key && open
+  const hasActiveChild = hasChildren && section.children.some(ch => location.pathname.startsWith(ch.path))
+
   useEffect(() => {
-    if (hovered && sectionRef.current) {
-      const rect = sectionRef.current.getBoundingClientRect()
-      setSubmenuStyle({
-        position: 'fixed',
-        left: rect.right + 2,
-        top: rect.top,
-        zIndex: 1000,
-        minWidth: 180,
-      })
+    if (hovered && ref.current) {
+      const rect = ref.current.getBoundingClientRect()
+      setFlyoutPos({ top: rect.top, left: rect.right + 6 })
     }
   }, [hovered])
 
-  // No children: just render the icon and label (if open)
-  if (!hasChildren) {
-    // Collapsed: match icon size, spacing, and alignment with submenu icons
-    if (!open) {
-      return (
-        <div className="relative flex justify-center" style={{ width: '100%' }}>
-          <NavLink
-            to={section.path}
-            className={({ isActive }) => `flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}${isActive ? ' text-[var(--primary-color)]' : ''}`}
-            style={{ minWidth: 48, minHeight: 48 }}
-            end
-          >
-            <Icon size={18} />
-          </NavLink>
-        </div>
-      )
-    }
-    // Expanded: show icon and label
+  const textColor = isDark ? '#cbd5e1' : '#4b5563'
+  const activeBg = isDark ? 'rgba(22,163,74,0.1)' : '#f0fdf4'
+  const activeIndicator = `inset 3px 0 0 ${primary}`
+  const flyoutBg = isDark ? '#1e293b' : '#ffffff'
+
+  // COLLAPSED — leaf
+  if (!open && !hasChildren) {
     return (
-      <NavLink
-        to={section.path}
-        className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-[13px]${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
-        end
+      <div ref={ref} className="px-2 mb-px"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <Icon size={16} /> {open && <span>{t(`menu.${section.key}`) || t(section.key)}</span>}
-      </NavLink>
+        <NavLink
+          to={section.path}
+          end
+          className="flex items-center justify-center h-9 rounded-md transition-all duration-150"
+          style={({ isActive }) => ({
+            color: isActive ? primary : textColor,
+            background: isActive ? activeBg : 'transparent',
+            boxShadow: isActive ? activeIndicator : 'none',
+          })}
+        >
+          <Icon size={17} />
+        </NavLink>
+        {hovered && (
+          <ItemTooltip top={flyoutPos.top} left={flyoutPos.left} bg={flyoutBg} borderColor={borderColor} textColor={textColor}>
+            {t(`menu.${section.key}`) || section.key}
+          </ItemTooltip>
+        )}
+      </div>
     )
   }
 
-  // Expanded sidebar: show normal dropdown
-  if (open) {
-    const isOpen = expanded === section.key && open
+  // COLLAPSED — parent with flyout
+  if (!open && hasChildren) {
     return (
-      <div>
+      <div
+        ref={ref}
+        className="px-2 mb-px"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
         <button
           type="button"
-          onClick={() => onToggle(section.key)}
-          className={`w-full px-4 py-2 flex items-center justify-between text-xs uppercase tracking-wide ${sidebarWhite ? 'text-gray-500 hover:text-gray-900' : 'text-gray-400 hover:text-white'}`}
+          className="w-full flex items-center justify-center h-9 rounded-md transition-all duration-150"
+          style={{
+            color: hasActiveChild ? primary : textColor,
+            background: hasActiveChild ? activeBg : 'transparent',
+            boxShadow: hasActiveChild ? activeIndicator : 'none',
+          }}
         >
-          <span className="flex items-center gap-2">
-            <Icon size={16} /> {open && <span>{t(`menu.${section.key}`)}</span>}
-          </span>
-          {open && <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
+          <Icon size={17} />
         </button>
-        {isOpen && (
-          <div className="pb-1">
+        {hovered && (
+          <div
+            className="fixed z-50 rounded-lg shadow-xl py-2"
+            style={{
+              top: flyoutPos.top,
+              left: flyoutPos.left,
+              background: flyoutBg,
+              border: `1px solid ${borderColor}`,
+              minWidth: 190,
+            }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <div
+              className="px-3 pb-1.5"
+              style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: textMuted }}
+            >
+              {t(`menu.${section.key}`)}
+            </div>
             {section.children.map(child => {
               const ChildIcon = child.icon || ChevronRight
               return (
                 <NavLink
                   key={child.key}
                   to={child.path}
-                  className={({ isActive }) => `flex items-center gap-3 pl-8 pr-3 py-1.5 text-[13px]${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
+                  onClick={() => setHovered(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 transition-colors"
+                  style={({ isActive }) => ({
+                    fontSize: 12.5,
+                    color: isActive ? primary : textColor,
+                    background: isActive ? activeBg : 'transparent',
+                    fontWeight: isActive ? 500 : 400,
+                  })}
                 >
-                  <ChildIcon size={14} />
-                  {open && <span>{t(child.key)}</span>}
+                  <ChildIcon size={13} />
+                  <span>{t(child.key)}</span>
                 </NavLink>
               )
             })}
@@ -260,51 +362,99 @@ function SidebarSection({ section, open, t, expanded, onToggle, sidebarWhite }) 
     )
   }
 
-  // Collapsed sidebar: show icon, and on hover show floating submenu (aligned with icon)
+  // EXPANDED — leaf
+  if (!hasChildren) {
+    return (
+      <div className="px-2 mb-px">
+        <NavLink
+          to={section.path}
+          end
+          className="flex items-center gap-3 px-3 h-9 rounded-md transition-all duration-150"
+          style={({ isActive }) => ({
+            fontSize: 13,
+            fontWeight: 500,
+            color: isActive ? primary : textColor,
+            background: isActive ? activeBg : 'transparent',
+            boxShadow: isActive ? activeIndicator : 'none',
+          })}
+        >
+          <Icon size={16} />
+          <span>{t(`menu.${section.key}`) || section.key}</span>
+        </NavLink>
+      </div>
+    )
+  }
 
+  // EXPANDED — parent with accordion
   return (
-    <div
-      ref={sectionRef}
-      className="relative flex justify-center"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ width: '100%' }}
-    >
+    <div className="px-2 mb-px">
       <button
         type="button"
-        className={`flex items-center justify-center w-12 h-12 mx-auto my-1 rounded transition-colors duration-150 ${sidebarWhite ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}
-        style={{ minWidth: 48, minHeight: 48 }}
-      >
-        <Icon size={22} />
-      </button>
-      <div
+        onClick={() => onToggle(section.key)}
+        className="w-full flex items-center gap-3 px-3 h-9 rounded-md transition-all duration-150"
         style={{
-          ...submenuStyle,
-          pointerEvents: hovered ? 'auto' : 'none',
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? 'translateY(0px)' : 'translateY(10px)',
-          transition: 'opacity 0.18s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1)',
+          fontSize: 13,
+          fontWeight: 500,
+          color: hasActiveChild ? primary : textColor,
+          background: hasActiveChild && !isExpanded ? activeBg : 'transparent',
+          boxShadow: hasActiveChild && !isExpanded ? activeIndicator : 'none',
         }}
-        className={`${sidebarWhite ? 'bg-white border border-gray-200' : 'bg-gray-900 border border-gray-700'} rounded-md shadow-lg py-2 absolute`}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
       >
-        {section.children && section.children.map(child => {
-          const ChildIcon = child.icon || ChevronRight
-          return (
-            <NavLink
-              key={child.key}
-              to={child.path}
-              className={({ isActive }) => `flex items-center gap-3 px-4 py-2 text-sm whitespace-nowrap${isActive ? ' text-[var(--primary-color)]' : (sidebarWhite ? ' text-gray-700 hover:bg-gray-100 hover:text-gray-900' : ' text-gray-300 hover:bg-gray-800 hover:text-white')}`}
-              style={{ minWidth: 160 }}
-              onClick={() => setHovered(false)}
-            >
-              <ChildIcon size={16} />
-              <span>{t(child.key)}</span>
-            </NavLink>
-          )
-        })}
-      </div>
+        <Icon size={16} />
+        <span className="flex-1 text-left">{t(`menu.${section.key}`)}</span>
+        <ChevronDown
+          size={13}
+          style={{
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s ease',
+            opacity: 0.4,
+          }}
+        />
+      </button>
+      {isExpanded && (
+        <div className="mt-0.5 mb-1">
+          {section.children.map(child => {
+            const ChildIcon = child.icon || ChevronRight
+            return (
+              <NavLink
+                key={child.key}
+                to={child.path}
+                className="flex items-center gap-2.5 h-8 px-9 rounded-md transition-all duration-150"
+                style={({ isActive }) => ({
+                  fontSize: 12.5,
+                  color: isActive ? primary : isDark ? '#94a3b8' : '#6b7280',
+                  background: isActive ? activeBg : 'transparent',
+                  fontWeight: isActive ? 500 : 400,
+                  boxShadow: isActive ? `inset 2px 0 0 ${primary}` : 'none',
+                })}
+              >
+                <ChildIcon size={13} />
+                <span>{t(child.key)}</span>
+              </NavLink>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ItemTooltip({ top, left, bg, borderColor, textColor, children }) {
+  return (
+    <div
+      className="fixed z-50 rounded-md shadow-lg px-3 py-1.5 pointer-events-none"
+      style={{
+        top: top + 4,
+        left,
+        background: bg,
+        border: `1px solid ${borderColor}`,
+        color: textColor,
+        fontSize: 12.5,
+        fontWeight: 500,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {children}
     </div>
   )
 }
