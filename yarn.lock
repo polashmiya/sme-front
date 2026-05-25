@@ -5213,9 +5213,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sme-front@workspace:.":
+"corelium-front@workspace:.":
   version: 0.0.0-use.local
-  resolution: "sme-front@workspace:."
+  resolution: "corelium-front@workspace:."
   dependencies:
     "@ant-design/icons": ^6.1.0
     "@eslint/js": ^9.39.1
