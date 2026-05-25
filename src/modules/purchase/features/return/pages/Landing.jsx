@@ -1,6 +1,4 @@
-import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../../../common/components/Button";
 import CommonLandingLayout from "../../../../../common/components/CommonLandingLayout";
@@ -10,191 +8,193 @@ import Input from "../../../../../common/components/Input";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
 
-const STATUSES = ["Draft", "Approved", "Completed"];
-const SUPPLIERS = ["Supplier A", "Supplier B", "Supplier C", "Supplier D"];
-const rows = Array.from({ length: 200 }).map((_, i) => ({
-  id: i + 1,
-  prNo: "PR-" + String(3000 + i),
-  poNo: "PO-" + String(1000 + (i % 200)),
-  supplier: SUPPLIERS[i % SUPPLIERS.length],
-  returnDate: new Date(2025, 2, (i % 28) + 1),
-  totalAmount: Math.floor(Math.random() * 20000) + 1000,
-  status: STATUSES[i % STATUSES.length],
-  createdBy: "User " + ((i % 5) + 1),
-  createdDate: new Date(2025, 2, (i % 28) + 1, 9, i % 55),
-}));
+// ─── Static Data ──────────────────────────────────────────────────────────────
+const STATUSES  = ["Draft", "Approved", "Completed"];
+const TYPES     = ["GRN Based", "Direct"];
+const SUPPLIERS = [
+  "Alpha Tech Supplies",
+  "Beta Trading Co. Ltd.",
+  "Gamma Electronics Ltd.",
+  "Delta Logistics Inc.",
+  "Epsilon Office Solutions",
+];
+const REASONS = ["Damaged", "Wrong Item", "Quality Issue", "Over Delivery", "Expired", "Price Dispute"];
 
+const ALL_ROWS = Object.freeze(
+  Array.from({ length: 250 }, (_, i) => {
+    const isGRNBased = i % 3 !== 2;
+    return {
+      id:          i + 1,
+      prNo:        "PR-" + String(3000 + i),
+      returnType:  isGRNBased ? "GRN Based" : "Direct",
+      grnRef:      isGRNBased ? "GRN-" + String(2000 + (i % 50)) : "—",
+      supplier:    SUPPLIERS[i % SUPPLIERS.length],
+      returnDate:  new Date(2025, i % 12, (i % 28) + 1),
+      totalAmount: 2000 + ((i * 6173) % 38000),
+      returnReason:REASONS[i % REASONS.length],
+      status:      STATUSES[i % STATUSES.length],
+      createdBy:   "User " + ((i % 5) + 1),
+      createdDate: new Date(2025, i % 12, (i % 28) + 1, 10, i % 55),
+    };
+  })
+);
+
+// ─── Type Badge ───────────────────────────────────────────────────────────────
+function TypeBadge({ type }) {
+  const styles = {
+    "GRN Based": "bg-violet-50 text-violet-700 border-violet-200",
+    "Direct":    "bg-orange-50 text-orange-700 border-orange-200",
+  };
+  return (
+    <span className={`text-[11px] px-1.5 py-0.5 rounded border font-medium ${styles[type] || styles["Direct"]}`}>
+      {type}
+    </span>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function PurchaseReturnLanding() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [status, setStatus] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+
+  const [search,      setSearch]      = useState("");
+  const [supplier,    setSupplier]    = useState("");
+  const [status,      setStatus]      = useState("");
+  const [returnType,  setReturnType]  = useState("");
+  const [fromDate,    setFromDate]    = useState("");
+  const [toDate,      setToDate]      = useState("");
+  const [page,        setPage]        = useState(1);
+  const [pageSize,    setPageSize]    = useState(20);
 
   const filtered = useMemo(() => {
-    return rows.filter((r) => {
-      if (
-        search &&
-        !r.prNo.toLowerCase().includes(search.toLowerCase()) &&
-        !r.poNo.toLowerCase().includes(search.toLowerCase()) &&
-        !r.supplier.toLowerCase().includes(search.toLowerCase())
-      )
-        return false;
-      if (supplier && r.supplier !== supplier) return false;
-      if (status && r.status !== status) return false;
-      if (fromDate && r.returnDate < new Date(fromDate)) return false;
-      if (toDate && r.returnDate > new Date(toDate)) return false;
+    const sl = search.toLowerCase();
+    return ALL_ROWS.filter((r) => {
+      if (sl && !r.prNo.toLowerCase().includes(sl) && !r.grnRef.toLowerCase().includes(sl) && !r.supplier.toLowerCase().includes(sl)) return false;
+      if (supplier   && r.supplier   !== supplier)   return false;
+      if (status     && r.status     !== status)     return false;
+      if (returnType && r.returnType !== returnType) return false;
+      if (fromDate   && r.returnDate < new Date(fromDate)) return false;
+      if (toDate     && r.returnDate > new Date(toDate))   return false;
       return true;
     });
-  }, [search, supplier, status, fromDate, toDate]);
+  }, [search, supplier, status, returnType, fromDate, toDate]);
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const headerButtons = [
-    {
-      label: t("purchase.return.create", "Create Purchase Return"),
-      variant: "primary",
-      className: "text-sm",
-      onClick: () => navigate("/purchase/return/create"),
-    },
-  ];
+  const resetFilters = () => {
+    setSupplier(""); setStatus(""); setReturnType("");
+    setFromDate(""); setToDate(""); setPage(1);
+  };
 
   const FilterSection = () => (
-    <div className="grid md:grid-cols-5 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("purchase.dash.filters.supplier")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...SUPPLIERS.map((s) => ({ label: s, value: s })),
-          ]}
-          value={
-            supplier
-              ? { label: supplier, value: supplier }
-              : { label: t("common.all", "All"), value: "" }
-          }
-          onChange={(opt) => {
-            setSupplier(opt.value);
-            setPage(1);
-          }}
-          placeholder={t("purchase.dash.filters.supplier")}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Dropdown
-          label={t("common.status", "Status")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...STATUSES.map((s) => ({ label: s, value: s })),
-          ]}
-          value={
-            status
-              ? { label: status, value: status }
-              : { label: t("common.all", "All"), value: "" }
-          }
-          onChange={(opt) => {
-            setStatus(opt.value);
-            setPage(1);
-          }}
-          placeholder={t("common.status", "Status")}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Input
-          type="date"
-          value={fromDate}
-          onChange={(e) => {
-            setFromDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("purchase.dash.filters.dateRange", "From Date")}
-        />
-      </div>
-      <div>
-        <Input
-          type="date"
-          value={toDate}
-          onChange={(e) => {
-            setToDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("purchase.dash.filters.dateRange", "To Date")}
-        />
-      </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-sm">
+      <Dropdown
+        label="Supplier"
+        options={[{ label: "All", value: "" }, ...SUPPLIERS.map((s) => ({ label: s, value: s }))]}
+        value={supplier ? { label: supplier, value: supplier } : { label: "All", value: "" }}
+        onChange={(opt) => { setSupplier(opt.value); setPage(1); }}
+        placeholder="All Suppliers"
+        searchable
+      />
+      <Dropdown
+        label="Status"
+        options={[{ label: "All", value: "" }, ...STATUSES.map((s) => ({ label: s, value: s }))]}
+        value={status ? { label: status, value: status } : { label: "All", value: "" }}
+        onChange={(opt) => { setStatus(opt.value); setPage(1); }}
+        placeholder="All Statuses"
+      />
+      <Dropdown
+        label="Return Type"
+        options={[{ label: "All Types", value: "" }, ...TYPES.map((t) => ({ label: t, value: t }))]}
+        value={returnType ? { label: returnType, value: returnType } : { label: "All Types", value: "" }}
+        onChange={(opt) => { setReturnType(opt.value); setPage(1); }}
+        placeholder="All Types"
+      />
+      <Input type="date" label="From Date" value={fromDate}
+        onChange={(e) => { setFromDate(e.target.value); setPage(1); }} />
+      <Input type="date" label="To Date" value={toDate}
+        onChange={(e) => { setToDate(e.target.value); setPage(1); }} />
       <div className="flex flex-col justify-end">
-        <Button
-          variant="outline"
-          className="text-xs"
-          onClick={() => {
-            setSearch("");
-            setSupplier("");
-            setStatus("");
-            setFromDate("");
-            setToDate("");
-            setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset Filters")}
+        <Button variant="outline" className="text-xs w-full" onClick={resetFilters}>
+          Reset Filters
         </Button>
       </div>
     </div>
   );
 
   const tableColumns = [
-    { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },
-    { title: t("purchase.return.pr", "PR No"), dataIndex: "prNo" },
-    { title: t("purchase.order", "PO No"), dataIndex: "poNo" },
-    { title: t("purchase.dash.filters.supplier", "Supplier"), dataIndex: "supplier" },
-    { title: t("purchase.return.date", "Return Date"), dataIndex: "returnDate", render: (d) => formatDate(d) },
-    { title: t("purchase.dash.kpis.totalAmount", "Total Amount"), dataIndex: "totalAmount", render: (amt) => `৳ ${amt.toFixed(2).toLocaleString()}`, textAlign: "right" },
-    { title: t("common.status", "Status"), dataIndex: "status", render: (s) => <StatusBadge status={s} /> },
-    { title: t("common.createdBy", "Created By"), dataIndex: "createdBy" },
-    { title: t("common.createdDate", "Created Date"), dataIndex: "createdDate", render: (d) => formatDateTime(d) },
     {
-      title: t("common.actions", "Actions"),
-      dataIndex: "actions",
-      render: () => (
-        <div className="flex gap-2 justify-center">
-          <PView />
-          <PEdit />
-          <PPrint />
-          <PDelete />
+      title: "SL", dataIndex: "sl", textAlign: "center",
+      render: (_, __, i) => (page - 1) * pageSize + i + 1,
+    },
+    {
+      title: "PR No", dataIndex: "prNo",
+      render: (v) => <span className="font-semibold font-mono text-rose-600">{v}</span>,
+    },
+    {
+      title: "Type", dataIndex: "returnType", textAlign: "center",
+      render: (v) => <TypeBadge type={v} />,
+    },
+    {
+      title: "GRN Reference", dataIndex: "grnRef",
+      render: (v) => v === "—"
+        ? <span style={{ color: "var(--text-muted)" }}>—</span>
+        : <span className="font-mono text-emerald-600">{v}</span>,
+    },
+    { title: "Supplier",     dataIndex: "supplier" },
+    { title: "Return Date",  dataIndex: "returnDate",  render: (d) => formatDate(d) },
+    {
+      title: "Total Amount", dataIndex: "totalAmount", textAlign: "right",
+      render: (amt) => (
+        <span className="font-semibold tabular-nums">
+          {"৳ " + Number(amt).toLocaleString("en-BD", { minimumFractionDigits: 2 })}
+        </span>
+      ),
+    },
+    {
+      title: "Status", dataIndex: "status", textAlign: "center",
+      render: (s) => <StatusBadge status={s} />,
+    },
+    { title: "Created By",   dataIndex: "createdBy" },
+    { title: "Created Date", dataIndex: "createdDate", render: (d) => formatDateTime(d) },
+    {
+      title: "Actions", dataIndex: "actions", textAlign: "center",
+      render: (_, row) => (
+        <div className="flex items-center justify-center gap-1">
+          <PView   onClick={() => navigate(`/purchase/return/${row.id}`)} />
+          <PEdit   onClick={() => navigate(`/purchase/return/edit/${row.id}`)} />
+          <PPrint  onClick={() => {}} />
+          <PDelete onClick={() => {}} />
         </div>
       ),
-      textAlign: "center",
     },
   ];
 
-  const pagination = {
-    current: page,
-    total: filtered.length,
-    pageSize,
-    onChange: setPage,
-    onPageSizeChange: (size) => {
-      setPageSize(size);
-      setPage(1);
+  const headerButtons = [
+    {
+      label: "Create Purchase Return",
+      variant: "primary",
+      className: "text-sm",
+      onClick: () => navigate("/purchase/return/create"),
     },
-    showTotal: true,
-    pageSizeOptions: [10, 20, 50, 100],
-  };
+  ];
 
   return (
     <CommonLandingLayout
-      title={t("purchase.return", "Purchase Return")}
+      title="Purchase Returns"
       headerButtons={headerButtons}
-      showSearch={true}
-      onSearch={setSearch}
-      searchPlaceholder={t("common.search", "Search PR/PO/Supplier")}
+      showSearch
+      onSearch={(val) => { setSearch(val); setPage(1); }}
+      searchPlaceholder="Search PR No, GRN or supplier…"
       filters={FilterSection}
       tableColumns={tableColumns}
       tableData={pageRows}
-      pagination={pagination}
+      pagination={{
+        current: page, total: filtered.length, pageSize,
+        onChange: (p) => setPage(p),
+        onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+        showTotal: true,
+        pageSizeOptions: [10, 20, 50, 100],
+      }}
     />
   );
 }

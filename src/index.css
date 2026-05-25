@@ -240,6 +240,24 @@ body {
 /* Icon muted helper */
 .icon-muted { color: var(--text-muted); }
 
+/* Action icon buttons (used in tables / detail pages) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.icon-btn.text-red-600:hover { background: #fee2e2; color: #dc2626; }
+
 /* Pagination */
 .pg-btn {
   background: var(--bg-surface);

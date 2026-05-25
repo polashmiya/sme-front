@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -10,191 +9,187 @@ import Input from "../../../../../common/components/Input";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
 
-const STATUSES = ["Pending", "Partially Received", "Completed"];
-const SUPPLIERS = ["Supplier A", "Supplier B", "Supplier C", "Supplier D"];
-const rows = Array.from({ length: 300 }).map((_, i) => ({
-  id: i + 1,
-  grnNo: "GRN-" + String(2000 + i),
-  poNo: "PO-" + String(1000 + (i % 200)),
-  supplier: SUPPLIERS[i % SUPPLIERS.length],
-  receiveDate: new Date(2025, 1, (i % 28) + 1),
-  totalQty: Math.floor(Math.random() * 100) + 1,
-  status: STATUSES[i % STATUSES.length],
-  createdBy: "User " + ((i % 5) + 1),
-  createdDate: new Date(2025, 1, (i % 28) + 1, 12, i % 55),
-}));
+// ─── Static Data ──────────────────────────────────────────────────────────────
+const STATUSES  = ["Draft", "Partially Received", "Completed"];
+const TYPES     = ["Order Based", "Direct"];
+const SUPPLIERS = [
+  "Alpha Tech Supplies",
+  "Beta Trading Co. Ltd.",
+  "Gamma Electronics Ltd.",
+  "Delta Logistics Inc.",
+  "Epsilon Office Solutions",
+];
 
+const ALL_ROWS = Object.freeze(
+  Array.from({ length: 300 }, (_, i) => {
+    const isOrderBased = i % 3 !== 2;
+    return {
+      id:          i + 1,
+      grnNo:       "GRN-" + String(2000 + i),
+      receiveType: isOrderBased ? "Order Based" : "Direct",
+      poNo:        isOrderBased ? "PO-" + String(1000 + (i % 50)) : "—",
+      supplier:    SUPPLIERS[i % SUPPLIERS.length],
+      receiveDate: new Date(2025, i % 12, (i % 28) + 1),
+      totalQty:    5 + ((i * 7) % 95),
+      status:      STATUSES[i % STATUSES.length],
+      createdBy:   "User " + ((i % 5) + 1),
+      createdDate: new Date(2025, i % 12, (i % 28) + 1, 12, i % 55),
+    };
+  })
+);
+
+// ─── Type Badge ───────────────────────────────────────────────────────────────
+function TypeBadge({ type }) {
+  const styles = {
+    "Order Based": "bg-blue-50 text-blue-700 border-blue-200",
+    "Direct":      "bg-orange-50 text-orange-700 border-orange-200",
+  };
+  return (
+    <span className={`text-[11px] px-1.5 py-0.5 rounded border font-medium ${styles[type] || styles["Direct"]}`}>
+      {type}
+    </span>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function PurchaseReceiveLanding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [status, setStatus] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+
+  const [search,      setSearch]      = useState("");
+  const [supplier,    setSupplier]    = useState("");
+  const [status,      setStatus]      = useState("");
+  const [receiveType, setReceiveType] = useState("");
+  const [fromDate,    setFromDate]    = useState("");
+  const [toDate,      setToDate]      = useState("");
+  const [page,        setPage]        = useState(1);
+  const [pageSize,    setPageSize]    = useState(20);
 
   const filtered = useMemo(() => {
-    return rows.filter((r) => {
-      if (
-        search &&
-        !r.grnNo.toLowerCase().includes(search.toLowerCase()) &&
-        !r.poNo.toLowerCase().includes(search.toLowerCase()) &&
-        !r.supplier.toLowerCase().includes(search.toLowerCase())
-      )
-        return false;
-      if (supplier && r.supplier !== supplier) return false;
-      if (status && r.status !== status) return false;
-      if (fromDate && r.receiveDate < new Date(fromDate)) return false;
-      if (toDate && r.receiveDate > new Date(toDate)) return false;
+    const sl = search.toLowerCase();
+    return ALL_ROWS.filter((r) => {
+      if (sl && !r.grnNo.toLowerCase().includes(sl) && !r.poNo.toLowerCase().includes(sl) && !r.supplier.toLowerCase().includes(sl)) return false;
+      if (supplier    && r.supplier    !== supplier)    return false;
+      if (status      && r.status      !== status)      return false;
+      if (receiveType && r.receiveType !== receiveType) return false;
+      if (fromDate    && r.receiveDate < new Date(fromDate)) return false;
+      if (toDate      && r.receiveDate > new Date(toDate))   return false;
       return true;
     });
-  }, [search, supplier, status, fromDate, toDate]);
+  }, [search, supplier, status, receiveType, fromDate, toDate]);
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const headerButtons = [
-    {
-      label: t("purchase.receive.create", "Create Goods Receive"),
-      variant: "primary",
-      className: "text-sm",
-      onClick: () => navigate("/purchase/receive/create"),
-    },
-  ];
+  const resetFilters = () => {
+    setSupplier(""); setStatus(""); setReceiveType("");
+    setFromDate(""); setToDate(""); setPage(1);
+  };
 
   const FilterSection = () => (
-    <div className="grid md:grid-cols-5 gap-4 text-sm">
-      <div>
-        <Dropdown
-          label={t("purchase.dash.filters.supplier")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...SUPPLIERS.map((s) => ({ label: s, value: s })),
-          ]}
-          value={
-            supplier
-              ? { label: supplier, value: supplier }
-              : { label: t("common.all", "All"), value: "" }
-          }
-          onChange={(opt) => {
-            setSupplier(opt.value);
-            setPage(1);
-          }}
-          placeholder={t("purchase.dash.filters.supplier")}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Dropdown
-          label={t("common.status", "Status")}
-          options={[
-            { label: t("common.all", "All"), value: "" },
-            ...STATUSES.map((s) => ({ label: s, value: s })),
-          ]}
-          value={
-            status
-              ? { label: status, value: status }
-              : { label: t("common.all", "All"), value: "" }
-          }
-          onChange={(opt) => {
-            setStatus(opt.value);
-            setPage(1);
-          }}
-          placeholder={t("common.status", "Status")}
-          className="w-full"
-        />
-      </div>
-      <div>
-        <Input
-          type="date"
-          value={fromDate}
-          onChange={(e) => {
-            setFromDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("purchase.dash.filters.dateRange", "From Date")}
-        />
-      </div>
-      <div>
-        <Input
-          type="date"
-          value={toDate}
-          onChange={(e) => {
-            setToDate(e.target.value);
-            setPage(1);
-          }}
-          label={t("purchase.dash.filters.dateRange", "To Date")}
-        />
-      </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-sm">
+      <Dropdown
+        label="Supplier"
+        options={[{ label: "All", value: "" }, ...SUPPLIERS.map((s) => ({ label: s, value: s }))]}
+        value={supplier ? { label: supplier, value: supplier } : { label: "All", value: "" }}
+        onChange={(opt) => { setSupplier(opt.value); setPage(1); }}
+        placeholder="All Suppliers"
+        searchable
+      />
+      <Dropdown
+        label="Status"
+        options={[{ label: "All", value: "" }, ...STATUSES.map((s) => ({ label: s, value: s }))]}
+        value={status ? { label: status, value: status } : { label: "All", value: "" }}
+        onChange={(opt) => { setStatus(opt.value); setPage(1); }}
+        placeholder="All Statuses"
+      />
+      <Dropdown
+        label="Receive Type"
+        options={[{ label: "All Types", value: "" }, ...TYPES.map((t) => ({ label: t, value: t }))]}
+        value={receiveType ? { label: receiveType, value: receiveType } : { label: "All Types", value: "" }}
+        onChange={(opt) => { setReceiveType(opt.value); setPage(1); }}
+        placeholder="All Types"
+      />
+      <Input type="date" label="From Date" value={fromDate}
+        onChange={(e) => { setFromDate(e.target.value); setPage(1); }} />
+      <Input type="date" label="To Date" value={toDate}
+        onChange={(e) => { setToDate(e.target.value); setPage(1); }} />
       <div className="flex flex-col justify-end">
-        <Button
-          variant="outline"
-          className="text-xs"
-          onClick={() => {
-            setSearch("");
-            setSupplier("");
-            setStatus("");
-            setFromDate("");
-            setToDate("");
-            setPage(1);
-          }}
-        >
-          {t("common.reset", "Reset Filters")}
+        <Button variant="outline" className="text-xs w-full" onClick={resetFilters}>
+          Reset Filters
         </Button>
       </div>
     </div>
   );
 
   const tableColumns = [
-    { title: t("common.sl", "SL"), render: (_, __, i) => (page - 1) * pageSize + i + 1, textAlign: "center" },
-    { title: t("purchase.receive.grn", "GRN No"), dataIndex: "grnNo" },
-    { title: t("purchase.order", "PO No"), dataIndex: "poNo" },
-    { title: t("purchase.dash.filters.supplier", "Supplier"), dataIndex: "supplier" },
-    { title: t("purchase.receive.date", "Receive Date"), dataIndex: "receiveDate", render: (d) => formatDate(d) },
-    { title: t("purchase.receive.totalQty", "Total Qty"), dataIndex: "totalQty", textAlign: "right" },
-    { title: t("common.status", "Status"), dataIndex: "status", render: (s) => <StatusBadge status={s} /> },
-    { title: t("common.createdBy", "Created By"), dataIndex: "createdBy" },
-    { title: t("common.createdDate", "Created Date"), dataIndex: "createdDate", render: (d) => formatDateTime(d) },
     {
-      title: t("common.actions", "Actions"),
-      dataIndex: "actions",
-      render: () => (
-        <div className="flex gap-2 justify-center">
-          <PView />
-          <PEdit />
-          <PPrint />
-          <PDelete />
+      title: "SL", dataIndex: "sl", textAlign: "center",
+      render: (_, __, i) => (page - 1) * pageSize + i + 1,
+    },
+    {
+      title: "GRN No", dataIndex: "grnNo",
+      render: (v) => <span className="font-semibold font-mono text-emerald-600">{v}</span>,
+    },
+    {
+      title: "Type", dataIndex: "receiveType",
+      render: (v) => <TypeBadge type={v} />,
+      textAlign: "center",
+    },
+    {
+      title: "PO Reference", dataIndex: "poNo",
+      render: (v) => v === "—"
+        ? <span style={{ color: "var(--text-muted)" }}>—</span>
+        : <span className="font-mono text-blue-600">{v}</span>,
+    },
+    { title: "Supplier",      dataIndex: "supplier" },
+    { title: "Receive Date",  dataIndex: "receiveDate",  render: (d) => formatDate(d) },
+    { title: "Total Qty",     dataIndex: "totalQty",     textAlign: "right" },
+    {
+      title: "Status", dataIndex: "status",
+      render: (s) => <StatusBadge status={s} />,
+      textAlign: "center",
+    },
+    { title: "Created By",   dataIndex: "createdBy" },
+    { title: "Created Date", dataIndex: "createdDate", render: (d) => formatDateTime(d) },
+    {
+      title: "Actions", dataIndex: "actions", textAlign: "center",
+      render: (_, row) => (
+        <div className="flex items-center justify-center gap-1">
+          <PView  onClick={() => navigate(`/purchase/receive/${row.id}`)} />
+          <PEdit  onClick={() => navigate(`/purchase/receive/edit/${row.id}`)} />
+          <PPrint onClick={() => {}} />
+          <PDelete onClick={() => {}} />
         </div>
       ),
-      textAlign: "center",
     },
   ];
 
-  const pagination = {
-    current: page,
-    total: filtered.length,
-    pageSize,
-    onChange: setPage,
-    onPageSizeChange: (size) => {
-      setPageSize(size);
-      setPage(1);
+  const headerButtons = [
+    {
+      label: "Create Goods Receive",
+      variant: "primary",
+      className: "text-sm",
+      onClick: () => navigate("/purchase/receive/create"),
     },
-    showTotal: true,
-    pageSizeOptions: [10, 20, 50, 100],
-  };
+  ];
 
   return (
     <CommonLandingLayout
-      title={t("purchase.receive", "Purchase Receive")}
+      title="Goods Receive Notes"
       headerButtons={headerButtons}
-      showSearch={true}
-      onSearch={setSearch}
-      searchPlaceholder={t("common.search", "Search GRN/PO/Supplier")}
+      showSearch
+      onSearch={(val) => { setSearch(val); setPage(1); }}
+      searchPlaceholder="Search GRN, PO no. or supplier…"
       filters={FilterSection}
       tableColumns={tableColumns}
       tableData={pageRows}
-      pagination={pagination}
+      pagination={{
+        current: page, total: filtered.length, pageSize,
+        onChange: (p) => setPage(p),
+        onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+        showTotal: true,
+        pageSizeOptions: [10, 20, 50, 100],
+      }}
     />
   );
 }
