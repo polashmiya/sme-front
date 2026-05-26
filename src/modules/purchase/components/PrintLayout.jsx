@@ -3,7 +3,7 @@
 
 export const PAGE_STYLE = `
   @page { size: A4 portrait; margin: 12mm 15mm; }
-  /* Override app globals that get copied into the print iframe */
+  /* Override app globals copied into the print iframe (index.css sets height:100%) */
   html, body {
     height: auto !important;
     min-height: 0 !important;
@@ -22,6 +22,12 @@ export const PAGE_STYLE = `
   th { background: #f9fafb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 `;
 
+// ─── Footer height constant ───────────────────────────────────────────────────
+// Keep this equal to the fixed footer's rendered height so the tfoot spacer
+// reserves exactly that space — no more, no less. The @page margin provides
+// all the visual breathing room; nothing extra is added here.
+const FOOTER_H = 14;
+
 // ─── Status badge colours ────────────────────────────────────────────────────
 const STATUS = {
   Draft:              { bg: "#f3f4f6", color: "#374151", border: "#e5e7eb" },
@@ -34,7 +40,7 @@ const STATUS = {
 // ─── Helper sub-components ───────────────────────────────────────────────────
 export function PrintSection({ title, children, style }) {
   return (
-    <div className="print-section" style={{ marginBottom: 14, ...style }}>
+    <div style={{ marginBottom: 14, ...style }}>
       <div style={{
         fontSize: 10, fontWeight: 700, color: "#374151",
         textTransform: "uppercase", letterSpacing: "0.8px",
@@ -100,6 +106,12 @@ export function PrintTd({ children, align = "left", bold, accent, muted, mono, s
 }
 
 // ─── Main layout wrapper ─────────────────────────────────────────────────────
+// Two-part footer strategy:
+//   1. <tfoot> invisible spacer — display:table-footer-group repeats it at
+//      the bottom of every printed page, reserving FOOTER_H px of space so
+//      no content row is ever placed in the footer zone.
+//   2. position:fixed; bottom:0 — renders the visible footer text in that
+//      exact reserved space at the physical page bottom on every page.
 export default function PurchasePrintLayout({ docType, docNo, docDate, status, children }) {
   const sc = STATUS[status] || STATUS.Draft;
 
@@ -113,62 +125,95 @@ export default function PurchasePrintLayout({ docType, docNo, docDate, status, c
       fontFamily: "Arial, Helvetica, sans-serif",
       fontSize: 11, color: "#111827", background: "#fff", width: "100%",
     }}>
-      {/* ══ Header ══════════════════════════════════════════════════════════ */}
+
+      {/* ── Outer wrapper table ────────────────────────────────────────────
+          tfoot  → invisible spacer, reserves FOOTER_H px at every page bottom
+          tbody  → all document content                                        */}
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+
+        <tfoot>
+          <tr>
+            {/* Invisible — just reserves height for the fixed footer below */}
+            <td style={{ height: FOOTER_H, padding: 0, border: "none" }} />
+          </tr>
+        </tfoot>
+
+        <tbody>
+          <tr>
+            <td style={{ padding: 0, verticalAlign: "top", border: "none" }}>
+
+              {/* Document header */}
+              <div style={{
+                display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+                paddingBottom: 12, marginBottom: 16, borderBottom: "2px solid #16a34a",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{
+                    width: 40, height: 40, background: "#16a34a", borderRadius: 8,
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                  }}>
+                    <span style={{ color: "#fff", fontWeight: 900, fontSize: 20, lineHeight: 1 }}>C</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", lineHeight: 1.2 }}>Corelium</div>
+                    <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>Enterprise Resource Planning</div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: "0.8px" }}>
+                    {docType}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "monospace", color: "#111827", marginTop: 2 }}>
+                    {docNo}
+                  </div>
+                  {docDate && (
+                    <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>
+                      Date: {typeof docDate === "string" ? docDate
+                        : new Date(docDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })}
+                    </div>
+                  )}
+                  {status && (
+                    <span style={{
+                      display: "inline-block", marginTop: 4,
+                      fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 9999,
+                      background: sc.bg, color: sc.color, border: `1px solid ${sc.border}`,
+                    }}>
+                      {status}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {children}
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* ── Visible footer — fixed at page bottom, sits in the tfoot space ── */}
       <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-        paddingBottom: 12, marginBottom: 16, borderBottom: "2px solid #16a34a",
-      }}>
-        {/* Company */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 40, height: 40, background: "#16a34a", borderRadius: 8,
-            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-          }}>
-            <span style={{ color: "#fff", fontWeight: 900, fontSize: 20, lineHeight: 1 }}>C</span>
-          </div>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", lineHeight: 1.2 }}>Corelium</div>
-            <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>Enterprise Resource Planning</div>
-          </div>
-        </div>
-
-        {/* Document identity */}
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: "0.8px" }}>
-            {docType}
-          </div>
-          <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "monospace", color: "#111827", marginTop: 2 }}>
-            {docNo}
-          </div>
-          {docDate && (
-            <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>
-              Date: {typeof docDate === "string" ? docDate
-                : new Date(docDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })}
-            </div>
-          )}
-          {status && (
-            <span style={{
-              display: "inline-block", marginTop: 4,
-              fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 9999,
-              background: sc.bg, color: sc.color, border: `1px solid ${sc.border}`,
-            }}>
-              {status}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {children}
-
-      {/* ══ Footer ══════════════════════════════════════════════════════════ */}
-      <div style={{
-        marginTop: 20, paddingTop: 8, borderTop: "1px solid #e5e7eb",
-        display: "flex", justifyContent: "space-between",
-        fontSize: 9, color: "#9ca3af",
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: FOOTER_H,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        paddingTop: 2,
+        paddingBottom: 0,
+        fontSize: 9,
+        color: "#9ca3af",
+        background: "#fff",
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact",
       }}>
         <span>Printed: {printedAt}</span>
         <span>This is a computer-generated document · Corelium ERP</span>
       </div>
+
     </div>
   );
 }
