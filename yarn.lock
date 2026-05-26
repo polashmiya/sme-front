@@ -2351,6 +2351,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"corelium-front@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "corelium-front@workspace:."
+  dependencies:
+    "@ant-design/icons": ^6.1.0
+    "@eslint/js": ^9.39.1
+    "@google/genai": ^1.30.0
+    "@hookform/resolvers": ^5.2.2
+    "@reduxjs/toolkit": ^2.10.1
+    "@types/react": ^19.2.2
+    "@types/react-dom": ^19.2.2
+    "@vitejs/plugin-react": ^5.1.0
+    antd: ^6.1.2
+    autoprefixer: ^10.4.22
+    axios: ^1.13.2
+    classnames: ^2.5.1
+    eslint: ^9.39.1
+    eslint-plugin-react-hooks: ^5.2.0
+    eslint-plugin-react-refresh: ^0.4.24
+    framer-motion: ^12.23.24
+    globals: ^16.5.0
+    i18next: ^25.6.1
+    i18next-browser-languagedetector: ^8.2.0
+    lucide-react: ^0.553.0
+    postcss: ^8.5.6
+    prop-types: ^15.8.1
+    react: ^19.2.0
+    react-dom: ^19.2.0
+    react-hook-form: ^7.66.0
+    react-i18next: ^16.2.4
+    react-markdown: ^10.1.0
+    react-redux: ^9.2.0
+    react-router-dom: ^7.9.5
+    react-to-print: ^3.2.0
+    recharts: ^3.4.1
+    remark-gfm: ^4.0.1
+    tailwindcss: ^3.4.14
+    vite: ^7.2.2
+    yup: ^1.7.1
+  languageName: unknown
+  linkType: soft
+
 "cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -5212,48 +5254,6 @@ __metadata:
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
   languageName: node
   linkType: hard
-
-"corelium-front@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "corelium-front@workspace:."
-  dependencies:
-    "@ant-design/icons": ^6.1.0
-    "@eslint/js": ^9.39.1
-    "@google/genai": ^1.30.0
-    "@hookform/resolvers": ^5.2.2
-    "@reduxjs/toolkit": ^2.10.1
-    "@types/react": ^19.2.2
-    "@types/react-dom": ^19.2.2
-    "@vitejs/plugin-react": ^5.1.0
-    antd: ^6.1.2
-    autoprefixer: ^10.4.22
-    axios: ^1.13.2
-    classnames: ^2.5.1
-    eslint: ^9.39.1
-    eslint-plugin-react-hooks: ^5.2.0
-    eslint-plugin-react-refresh: ^0.4.24
-    framer-motion: ^12.23.24
-    globals: ^16.5.0
-    i18next: ^25.6.1
-    i18next-browser-languagedetector: ^8.2.0
-    lucide-react: ^0.553.0
-    postcss: ^8.5.6
-    prop-types: ^15.8.1
-    react: ^19.2.0
-    react-dom: ^19.2.0
-    react-hook-form: ^7.66.0
-    react-i18next: ^16.2.4
-    react-markdown: ^10.1.0
-    react-redux: ^9.2.0
-    react-router-dom: ^7.9.5
-    react-to-print: ^3.2.0
-    recharts: ^3.4.1
-    remark-gfm: ^4.0.1
-    tailwindcss: ^3.4.14
-    vite: ^7.2.2
-    yup: ^1.7.1
-  languageName: unknown
-  linkType: soft
 
 "source-map-js@npm:^1.2.1":
   version: 1.2.1
