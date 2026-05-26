@@ -1,11 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { usePrint } from "../../../hooks/usePrint";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Edit2, Printer, CheckCircle2, XCircle,
   Package, Building2, ClipboardList, Clock, User, RotateCcw,
 } from "lucide-react";
+import PurchasePrintLayout, { PrintSection, PrintRow, PrintTable, PrintTd } from "../../../components/PrintLayout";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
+import Table from "../../../../../common/components/Table";
 
 // ─── Static Reference Data ────────────────────────────────────────────────────
 const SUPPLIERS    = ["Alpha Tech Supplies","Beta Trading Co. Ltd.","Gamma Electronics Ltd.","Delta Logistics Inc.","Epsilon Office Solutions"];
@@ -151,7 +154,10 @@ const fmt = (n) => Number(n || 0).toLocaleString("en-BD", { minimumFractionDigit
 export default function PurchaseReturnView() {
   const { id }   = useParams();
   const navigate = useNavigate();
+
   const pr       = getMockReturn(id);
+
+  const { printRef, handlePrint } = usePrint(`Purchase Return - ${pr.prNo}`);
   const isGRN    = pr.returnType === "GRN Based";
 
   const timeline = [
@@ -197,8 +203,8 @@ export default function PurchaseReturnView() {
                 <Edit2 className="w-3.5 h-3.5" /> Edit
               </button>
             )}
-            <button type="button" className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5">
-              <Printer className="w-3.5 h-3.5" /> Print
+            <button type="button" className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5" onClick={handlePrint}>
+              <Printer className="w-3.5 h-3.5" /> Print / PDF
             </button>
             {pr.status === "Draft" && (
               <>
@@ -270,63 +276,40 @@ export default function PurchaseReturnView() {
 
       {/* Items Table */}
       <SectionCard icon={Package} label="Return Items" iconColor="text-rose-600">
-        <div className="overflow-x-auto rounded-lg" style={{ border: "1px solid var(--border)" }}>
-          <table className="w-full text-xs border-collapse" style={{ minWidth: isGRN ? 820 : 780 }}>
-            <thead>
-              <tr style={{ background: "var(--bg-elevated)" }}>
-                {(isGRN
-                  ? ["#","Item","UOM","Received Qty","Return Qty","Unit Price","Return Amount","Return Reason","Remarks"]
-                  : ["#","Item","UOM","Return Qty","Unit Price","Total Amount","Return Reason","Remarks"]
-                ).map((col, ci) => (
-                  <th key={col} className="px-3 py-2.5 font-semibold whitespace-nowrap"
-                    style={{
-                      color: "var(--text-secondary)",
-                      borderBottom: "2px solid var(--border-strong)",
-                      textAlign: ci === 0 ? "center" : (["Return Qty","Received Qty","Unit Price","Return Amount","Total Amount"].includes(col) ? "right" : "left"),
-                    }}>
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {pr.items.map((row) => (
-                <tr key={row.sl} style={{ borderBottom: "1px solid var(--border)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                  <td className="px-3 py-2 text-center" style={{ color: "var(--text-muted)" }}>{row.sl}</td>
-                  <td className="px-3 py-2 font-medium" style={{ color: "var(--text-primary)" }}>{row.itemName}</td>
-                  <td className="px-3 py-2 text-center" style={{ color: "var(--text-muted)" }}>{row.uom}</td>
-                  {isGRN && <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-muted)" }}>{row.receivedQty}</td>}
-                  <td className="px-3 py-2 text-right font-bold tabular-nums text-rose-600">{row.returnQty}</td>
-                  <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-secondary)" }}>৳ {fmt(row.unitPrice)}</td>
-                  <td className="px-3 py-2 text-right font-semibold tabular-nums text-rose-600">৳ {fmt(row.lineAmount)}</td>
-                  <td className="px-3 py-2">
-                    <span className="text-[11px] px-1.5 py-0.5 rounded border font-medium bg-rose-50 text-rose-700 border-rose-200">
-                      {row.returnReason}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2" style={{ color: "var(--text-muted)" }}>{row.remarks || "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
-                <td colSpan={isGRN ? 4 : 3} className="px-3 py-2.5 text-right text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>
-                  Total Return Amount
-                </td>
-                <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums text-rose-600">
-                  {pr.items.reduce((s, r) => s + r.returnQty, 0)}
-                </td>
-                <td />
-                <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums text-rose-600">
-                  ৳ {fmt(pr.totalAmount)}
-                </td>
-                <td colSpan={2} />
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+        <Table
+          columns={isGRN ? [
+            { key: "num",             title: "#",             textAlign: "center", render: (_, r) => r.sl },
+            { dataIndex: "itemName",  title: "Item",          render: (v) => <span className="font-medium">{v}</span> },
+            { dataIndex: "uom",       title: "UOM",           textAlign: "center" },
+            { dataIndex: "receivedQty",title: "Received Qty", textAlign: "right",  render: (v) => <span style={{ color: "var(--text-muted)" }}>{v}</span> },
+            { dataIndex: "returnQty", title: "Return Qty",    textAlign: "right",  render: (v) => <span className="font-bold text-rose-600">{v}</span> },
+            { dataIndex: "unitPrice", title: "Unit Price",    textAlign: "right",  render: (v) => `৳ ${fmt(v)}` },
+            { dataIndex: "lineAmount",title: "Return Amount", textAlign: "right",  render: (v) => <span className="font-semibold text-rose-600">৳ {fmt(v)}</span> },
+            { dataIndex: "returnReason",title: "Return Reason", render: (v) => <span className="text-[11px] px-1.5 py-0.5 rounded border font-medium bg-rose-50 text-rose-700 border-rose-200">{v}</span> },
+            { dataIndex: "remarks",   title: "Remarks",       render: (v) => v || "—" },
+          ] : [
+            { key: "num",             title: "#",             textAlign: "center", render: (_, r) => r.sl },
+            { dataIndex: "itemName",  title: "Item",          render: (v) => <span className="font-medium">{v}</span> },
+            { dataIndex: "uom",       title: "UOM",           textAlign: "center" },
+            { dataIndex: "returnQty", title: "Return Qty",    textAlign: "right",  render: (v) => <span className="font-bold text-rose-600">{v}</span> },
+            { dataIndex: "unitPrice", title: "Unit Price",    textAlign: "right",  render: (v) => `৳ ${fmt(v)}` },
+            { dataIndex: "lineAmount",title: "Total Amount",  textAlign: "right",  render: (v) => <span className="font-semibold text-rose-600">৳ {fmt(v)}</span> },
+            { dataIndex: "returnReason",title: "Return Reason", render: (v) => <span className="text-[11px] px-1.5 py-0.5 rounded border font-medium bg-rose-50 text-rose-700 border-rose-200">{v}</span> },
+            { dataIndex: "remarks",   title: "Remarks",       render: (v) => v || "—" },
+          ]}
+          data={pr.items}
+          rowKey={(r) => r.sl}
+          maxHeight="420px"
+          footer={
+            <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
+              <td colSpan={isGRN ? 4 : 3} style={{ padding: "5px 8px", textAlign: "right", fontWeight: 600, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Total Return</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#f43f5e", border: "1px solid var(--border)" }}>{pr.items.reduce((s, r) => s + r.returnQty, 0)}</td>
+              <td style={{ border: "1px solid var(--border)" }} />
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#f43f5e", border: "1px solid var(--border)" }}>৳ {fmt(pr.totalAmount)}</td>
+              <td colSpan={2} style={{ border: "1px solid var(--border)" }} />
+            </tr>
+          }
+        />
       </SectionCard>
 
       {/* Activity Trail */}
@@ -354,6 +337,69 @@ export default function PurchaseReturnView() {
           ))}
         </div>
       </SectionCard>
+
+      {/* ══ Hidden Print Content ══════════════════════════════════════════ */}
+      <div aria-hidden style={{ position: "absolute", top: 0, left: "-9999px", pointerEvents: "none" }}>
+        <div ref={printRef} style={{ background: "#fff", width: "210mm" }}>
+          <PurchasePrintLayout docType="Purchase Return" docNo={pr.prNo} docDate={pr.returnDate} status={pr.status}>
+
+            {/* Return Info + Supplier & Summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+              <PrintSection title="Return Details">
+                <PrintRow label="PR Number"       value={pr.prNo}           mono />
+                <PrintRow label="Return Type"     value={pr.returnType} />
+                {isGRN && <PrintRow label="GRN Reference" value={pr.grnRef} mono />}
+                <PrintRow label="Return Date"     value={new Date(pr.returnDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })} />
+                <PrintRow label="Return Reason"   value={pr.returnReason} />
+                <PrintRow label="Shipping Method" value={pr.shippingMethod} />
+              </PrintSection>
+              <PrintSection title="Supplier & Summary">
+                <PrintRow label="Supplier Name"   value={pr.supplier} />
+                <PrintRow label="Warehouse"       value={pr.warehouse} />
+                <PrintRow label="Status"          value={pr.status} />
+                {pr.debitNoteNo && <PrintRow label="Debit Note No." value={pr.debitNoteNo} mono />}
+                <PrintRow label="Total Amount"    value={`৳ ${fmt(pr.totalAmount)}`} accent />
+                <PrintRow label="Created By"      value={pr.createdBy} />
+                {pr.approvedBy && <PrintRow label="Approved By" value={pr.approvedBy} />}
+                {pr.remarks    && <PrintRow label="Remarks"     value={pr.remarks} />}
+              </PrintSection>
+            </div>
+
+            {/* Items Table */}
+            <PrintSection title="Return Items">
+              <PrintTable headers={[
+                { label: "#",             align: "center" },
+                { label: "Item"                           },
+                { label: "UOM",           align: "center" },
+                ...(isGRN ? [{ label: "Rcvd Qty", align: "right" }] : []),
+                { label: "Return Qty",    align: "right"  },
+                { label: "Unit Price",    align: "right"  },
+                { label: "Line Amount",   align: "right"  },
+                { label: "Return Reason"                  },
+              ]}>
+                {pr.items.map((row, idx) => (
+                  <tr key={row.sl} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                    <PrintTd align="center" muted>{row.sl}</PrintTd>
+                    <PrintTd bold>{row.itemName}</PrintTd>
+                    <PrintTd align="center" muted>{row.uom}</PrintTd>
+                    {isGRN && <PrintTd align="right" muted>{row.receivedQty}</PrintTd>}
+                    <PrintTd align="right" bold style={{ color: "#f43f5e" }}>{row.returnQty}</PrintTd>
+                    <PrintTd align="right">৳ {fmt(row.unitPrice)}</PrintTd>
+                    <PrintTd align="right" bold>৳ {fmt(row.lineAmount)}</PrintTd>
+                    <PrintTd muted>{row.returnReason}</PrintTd>
+                  </tr>
+                ))}
+                <tr style={{ background: "#f9fafb" }}>
+                  <td colSpan={isGRN ? 7 : 6} style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 600, fontSize: 10, color: "#374151" }}>Total Return Amount</td>
+                  <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10, color: "#16a34a" }}>৳ {fmt(pr.totalAmount)}</td>
+                  <td style={{ border: "1px solid #d1d5db" }} />
+                </tr>
+              </PrintTable>
+            </PrintSection>
+
+          </PurchasePrintLayout>
+        </div>
+      </div>
     </motion.div>
   );
 }

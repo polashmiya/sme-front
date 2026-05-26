@@ -1,11 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { usePrint } from "../../../hooks/usePrint";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Edit2, Printer, CheckCircle2, XCircle,
   Package, Building2, FileText, ClipboardList, Clock, User,
 } from "lucide-react";
+import PurchasePrintLayout, { PrintSection, PrintRow, PrintTable, PrintTd } from "../../../components/PrintLayout";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
+import Table from "../../../../../common/components/Table";
 
 // ─── Static Reference Data ────────────────────────────────────────────────────
 const SUPPLIERS = [
@@ -174,7 +177,10 @@ const fmt = (n) => Number(n || 0).toLocaleString("en-BD", { minimumFractionDigit
 export default function PurchaseReceiveView() {
   const { id }   = useParams();
   const navigate = useNavigate();
+
   const grn      = getMockGRN(id);
+
+  const { printRef, handlePrint } = usePrint(`GRN - ${grn.grnNo}`);
 
   const isOrderBased = grn.receiveType === "Order Based";
 
@@ -244,8 +250,9 @@ export default function PurchaseReceiveView() {
             <button
               type="button"
               className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5"
+              onClick={handlePrint}
             >
-              <Printer className="w-3.5 h-3.5" /> Print
+              <Printer className="w-3.5 h-3.5" /> Print / PDF
             </button>
             {grn.status === "Draft" && (
               <>
@@ -328,104 +335,52 @@ export default function PurchaseReceiveView() {
 
       {/* ══ Items Table ═══════════════════════════════════════════════════════ */}
       <SectionCard icon={Package} label="Received Items" iconColor="text-orange-600">
-        <div className="overflow-x-auto rounded-lg" style={{ border: "1px solid var(--border)" }}>
-          <table className="w-full text-xs border-collapse" style={{ minWidth: isOrderBased ? 780 : 860 }}>
-            <thead>
-              <tr style={{ background: "var(--bg-elevated)" }}>
-                {isOrderBased
-                  ? [
-                      { label: "#",              align: "center" },
-                      { label: "Item",           align: "left"   },
-                      { label: "UOM",            align: "center" },
-                      { label: "PO Qty",         align: "right"  },
-                      { label: "Prev. Received", align: "right"  },
-                      { label: "Pending Qty",    align: "right"  },
-                      { label: "Received Qty",   align: "right"  },
-                      { label: "Condition",      align: "center" },
-                      { label: "Remarks",        align: "left"   },
-                    ]
-                  : [
-                      { label: "#",            align: "center" },
-                      { label: "Item",         align: "left"   },
-                      { label: "UOM",          align: "center" },
-                      { label: "Received Qty", align: "right"  },
-                      { label: "Unit Cost",    align: "right"  },
-                      { label: "Total Cost",   align: "right"  },
-                      { label: "Batch No.",    align: "left"   },
-                      { label: "Remarks",      align: "left"   },
-                    ]
-                }.map((col) => (
-                  <th
-                    key={col.label}
-                    className="px-3 py-2.5 font-semibold whitespace-nowrap"
-                    style={{ color: "var(--text-secondary)", borderBottom: "2px solid var(--border-strong)", textAlign: col.align }}
-                  >
-                    {col.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {grn.items.map((row) => (
-                <tr
-                  key={row.sl}
-                  style={{ borderBottom: "1px solid var(--border)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                  <td className="px-3 py-2 text-center" style={{ color: "var(--text-muted)" }}>{row.sl}</td>
-                  <td className="px-3 py-2 font-medium" style={{ color: "var(--text-primary)" }}>{row.itemName}</td>
-                  <td className="px-3 py-2 text-center" style={{ color: "var(--text-muted)" }}>{row.uom}</td>
-                  {isOrderBased ? (
-                    <>
-                      <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-muted)" }}>{row.poQty}</td>
-                      <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-muted)" }}>{row.prevReceived}</td>
-                      <td className="px-3 py-2 text-right font-semibold tabular-nums" style={{ color: "var(--text-secondary)" }}>{row.pendingQty}</td>
-                      <td className="px-3 py-2 text-right font-bold tabular-nums text-emerald-600">{row.receiveQty}</td>
-                      <td className="px-3 py-2 text-center">
-                        <span className={`text-[11px] px-1.5 py-0.5 rounded border font-medium ${
-                          row.condition === "Good"       ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-                          row.condition === "Acceptable" ? "bg-blue-50 text-blue-700 border-blue-200" :
-                          "bg-red-50 text-red-700 border-red-200"
-                        }`}>
-                          {row.condition}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2" style={{ color: "var(--text-muted)" }}>{row.remarks || "—"}</td>
-                    </>
-                  ) : (
-                    <>
-                      <td className="px-3 py-2 text-right font-bold tabular-nums text-emerald-600">{row.receiveQty}</td>
-                      <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-secondary)" }}>৳ {fmt(row.unitCost)}</td>
-                      <td className="px-3 py-2 text-right font-semibold tabular-nums" style={{ color: "var(--text-primary)" }}>৳ {fmt(row.totalCost)}</td>
-                      <td className="px-3 py-2 font-mono text-xs" style={{ color: "var(--text-secondary)" }}>{row.batchNo || "—"}</td>
-                      <td className="px-3 py-2" style={{ color: "var(--text-muted)" }}>{row.remarks || "—"}</td>
-                    </>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
-                {isOrderBased ? (
-                  <>
-                    <td colSpan={6} className="px-3 py-2.5 text-right text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>Total Received</td>
-                    <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums text-emerald-600">{grn.totalQty}</td>
-                    <td colSpan={2} />
-                  </>
-                ) : (
-                  <>
-                    <td colSpan={3} className="px-3 py-2.5 text-right text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>Totals</td>
-                    <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums text-emerald-600">{grn.totalQty}</td>
-                    <td />
-                    <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>৳ {fmt(grn.totalCost)}</td>
-                    <td colSpan={2} />
-                  </>
-                )}
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+        <Table
+          columns={isOrderBased ? [
+            { key: "num",              title: "#",              textAlign: "center", render: (_, r) => r.sl },
+            { dataIndex: "itemName",   title: "Item",           render: (v) => <span className="font-medium">{v}</span> },
+            { dataIndex: "uom",        title: "UOM",            textAlign: "center" },
+            { dataIndex: "poQty",      title: "PO Qty",         textAlign: "right" },
+            { dataIndex: "prevReceived",title: "Prev. Received",textAlign: "right",  render: (v) => <span style={{ color: "var(--text-muted)" }}>{v}</span> },
+            { dataIndex: "pendingQty", title: "Pending Qty",    textAlign: "right" },
+            { dataIndex: "receiveQty", title: "Received Qty",   textAlign: "right",  render: (v) => <span className="font-bold text-emerald-600">{v}</span> },
+            { dataIndex: "condition",  title: "Condition",      textAlign: "center", render: (v) => (
+              <span className={`text-[11px] px-1.5 py-0.5 rounded border font-medium ${
+                v === "Good" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                v === "Acceptable" ? "bg-blue-50 text-blue-700 border-blue-200" :
+                "bg-red-50 text-red-700 border-red-200"
+              }`}>{v}</span>
+            )},
+            { dataIndex: "remarks",    title: "Remarks",        render: (v) => v || "—" },
+          ] : [
+            { key: "num",              title: "#",              textAlign: "center", render: (_, r) => r.sl },
+            { dataIndex: "itemName",   title: "Item",           render: (v) => <span className="font-medium">{v}</span> },
+            { dataIndex: "uom",        title: "UOM",            textAlign: "center" },
+            { dataIndex: "receiveQty", title: "Received Qty",   textAlign: "right",  render: (v) => <span className="font-bold text-emerald-600">{v}</span> },
+            { dataIndex: "unitCost",   title: "Unit Cost",      textAlign: "right",  render: (v) => `৳ ${fmt(v)}` },
+            { dataIndex: "totalCost",  title: "Total Cost",     textAlign: "right",  render: (v) => <span className="font-semibold">৳ {fmt(v)}</span> },
+            { dataIndex: "batchNo",    title: "Batch No.",      render: (v) => <span className="font-mono">{v || "—"}</span> },
+            { dataIndex: "remarks",    title: "Remarks",        render: (v) => v || "—" },
+          ]}
+          data={grn.items}
+          rowKey={(r) => r.sl}
+          maxHeight="420px"
+          footer={isOrderBased ? (
+            <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
+              <td colSpan={6} style={{ padding: "5px 8px", textAlign: "right", fontWeight: 600, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Total Received</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#059669", border: "1px solid var(--border)" }}>{grn.totalQty}</td>
+              <td colSpan={2} style={{ border: "1px solid var(--border)" }} />
+            </tr>
+          ) : (
+            <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
+              <td colSpan={3} style={{ padding: "5px 8px", textAlign: "right", fontWeight: 600, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Totals</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#059669", border: "1px solid var(--border)" }}>{grn.totalQty}</td>
+              <td style={{ border: "1px solid var(--border)" }} />
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-primary)", border: "1px solid var(--border)" }}>৳ {fmt(grn.totalCost)}</td>
+              <td colSpan={2} style={{ border: "1px solid var(--border)" }} />
+            </tr>
+          )}
+        />
       </SectionCard>
 
       {/* ══ Activity & Audit Trail ════════════════════════════════════════════ */}
@@ -453,6 +408,106 @@ export default function PurchaseReceiveView() {
           ))}
         </div>
       </SectionCard>
+
+      {/* ══ Hidden Print Content ══════════════════════════════════════════ */}
+      <div aria-hidden style={{ position: "absolute", top: 0, left: "-9999px", pointerEvents: "none" }}>
+        <div ref={printRef} style={{ background: "#fff", width: "210mm" }}>
+          <PurchasePrintLayout docType="Goods Receipt Note" docNo={grn.grnNo} docDate={grn.receiveDate} status={grn.status}>
+
+            {/* GRN Info + Supplier & Summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+              <PrintSection title="Receipt Details">
+                <PrintRow label="GRN Number"    value={grn.grnNo}          mono />
+                <PrintRow label="Receive Type"  value={grn.receiveType} />
+                {isOrderBased
+                  ? <PrintRow label="PO Reference"  value={grn.poNo}          mono />
+                  : <PrintRow label="Vendor Invoice" value={grn.vendorInvoice} mono />}
+                <PrintRow label="Receive Date"  value={new Date(grn.receiveDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })} />
+                <PrintRow label="Received By"   value={grn.receivedBy} />
+                <PrintRow label="Vehicle No."   value={grn.vehicleNo} />
+              </PrintSection>
+              <PrintSection title="Supplier & Summary">
+                <PrintRow label="Supplier Name" value={grn.supplier} />
+                <PrintRow label="Warehouse"     value={grn.warehouse} />
+                <PrintRow label="Status"        value={grn.status} />
+                <PrintRow label="Total Qty"     value={String(grn.totalQty)} />
+                {!isOrderBased && grn.totalCost != null && <PrintRow label="Total Cost" value={`৳ ${fmt(grn.totalCost)}`} accent />}
+                <PrintRow label="Created By"    value={grn.createdBy} />
+                {grn.approvedBy && <PrintRow label="Approved By" value={grn.approvedBy} />}
+                {grn.remarks    && <PrintRow label="Remarks"     value={grn.remarks} />}
+              </PrintSection>
+            </div>
+
+            {/* Items Table */}
+            <PrintSection title="Received Items">
+              {isOrderBased ? (
+                <PrintTable headers={[
+                  { label: "#",              align: "center" },
+                  { label: "Item"                            },
+                  { label: "UOM",            align: "center" },
+                  { label: "PO Qty",         align: "right"  },
+                  { label: "Prev. Rcvd",     align: "right"  },
+                  { label: "Pending",        align: "right"  },
+                  { label: "Rcvd Qty",       align: "right"  },
+                  { label: "Condition",      align: "center" },
+                  { label: "Remarks"                         },
+                ]}>
+                  {grn.items.map((row, idx) => (
+                    <tr key={row.sl} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                      <PrintTd align="center" muted>{row.sl}</PrintTd>
+                      <PrintTd bold>{row.itemName}</PrintTd>
+                      <PrintTd align="center" muted>{row.uom}</PrintTd>
+                      <PrintTd align="right" muted>{row.poQty}</PrintTd>
+                      <PrintTd align="right" muted>{row.prevReceived}</PrintTd>
+                      <PrintTd align="right">{row.pendingQty}</PrintTd>
+                      <PrintTd align="right" bold accent>{row.receiveQty}</PrintTd>
+                      <PrintTd align="center">{row.condition}</PrintTd>
+                      <PrintTd muted>{row.remarks || "—"}</PrintTd>
+                    </tr>
+                  ))}
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td colSpan={6} style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 600, fontSize: 10, color: "#374151" }}>Total Received</td>
+                    <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10, color: "#16a34a" }}>{grn.totalQty}</td>
+                    <td colSpan={2} style={{ border: "1px solid #d1d5db" }} />
+                  </tr>
+                </PrintTable>
+              ) : (
+                <PrintTable headers={[
+                  { label: "#",            align: "center" },
+                  { label: "Item"                          },
+                  { label: "UOM",          align: "center" },
+                  { label: "Rcvd Qty",     align: "right"  },
+                  { label: "Unit Cost",    align: "right"  },
+                  { label: "Total Cost",   align: "right"  },
+                  { label: "Batch No."                     },
+                  { label: "Remarks"                       },
+                ]}>
+                  {grn.items.map((row, idx) => (
+                    <tr key={row.sl} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                      <PrintTd align="center" muted>{row.sl}</PrintTd>
+                      <PrintTd bold>{row.itemName}</PrintTd>
+                      <PrintTd align="center" muted>{row.uom}</PrintTd>
+                      <PrintTd align="right" bold accent>{row.receiveQty}</PrintTd>
+                      <PrintTd align="right">৳ {fmt(row.unitCost)}</PrintTd>
+                      <PrintTd align="right" bold>৳ {fmt(row.totalCost)}</PrintTd>
+                      <PrintTd mono muted>{row.batchNo || "—"}</PrintTd>
+                      <PrintTd muted>{row.remarks || "—"}</PrintTd>
+                    </tr>
+                  ))}
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td colSpan={3} style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 600, fontSize: 10, color: "#374151" }}>Totals</td>
+                    <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10, color: "#16a34a" }}>{grn.totalQty}</td>
+                    <td style={{ border: "1px solid #d1d5db" }} />
+                    <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10 }}>৳ {fmt(grn.totalCost)}</td>
+                    <td colSpan={2} style={{ border: "1px solid #d1d5db" }} />
+                  </tr>
+                </PrintTable>
+              )}
+            </PrintSection>
+
+          </PurchasePrintLayout>
+        </div>
+      </div>
     </motion.div>
   );
 }

@@ -7,6 +7,7 @@ const Table = ({
   rowKey = (row, i) => i,
   emptyText = 'No data',
   maxHeight,
+  footer,
   ...props
 }) => (
   <div
@@ -81,6 +82,7 @@ const Table = ({
           ))
         )}
       </tbody>
+      {footer && <tfoot>{footer}</tfoot>}
     </table>
   </div>
 );

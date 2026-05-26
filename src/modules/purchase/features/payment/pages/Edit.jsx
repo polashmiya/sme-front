@@ -60,7 +60,7 @@ function getMockFormData(id) {
       sl:          i + 1,
       poNo:        PO_POOL[(n + i) % PO_POOL.length],
       invoiceDate: new Date(2025, (n + i) % 12, ((n + i) % 28) + 1),
-      invoiceAmt,
+      invoiceAmt: invAmt,
       prevPaid,
       outstanding,
       paymentAmt:  payAmt,

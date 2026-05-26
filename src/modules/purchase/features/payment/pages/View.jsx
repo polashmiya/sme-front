@@ -1,12 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { usePrint } from "../../../hooks/usePrint";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Edit2, Printer, CheckCircle2, XCircle,
   Building2, FileText, ClipboardList, Clock, User,
   CreditCard, Banknote, Landmark, Wallet,
 } from "lucide-react";
+import PurchasePrintLayout, { PrintSection, PrintRow, PrintTable, PrintTd } from "../../../components/PrintLayout";
 import StatusBadge from "../../../../../common/components/StatusBadge";
 import { formatDate, formatDateTime } from "../../../../../common/utils";
+import Table from "../../../../../common/components/Table";
 
 // ─── Static Reference Data ────────────────────────────────────────────────────
 const SUPPLIERS    = ["Alpha Tech Supplies","Beta Trading Co. Ltd.","Gamma Electronics Ltd.","Delta Logistics Inc.","Epsilon Office Solutions"];
@@ -37,7 +40,7 @@ function getMockPayment(id) {
       sl:        i + 1,
       poNo:      PO_POOL[(n + i) % PO_POOL.length],
       invoiceDate: new Date(2025, (n + i) % 12, ((n + i) % 28) + 1),
-      invoiceAmt,
+      invoiceAmt: invAmt,
       prevPaid,
       outstanding,
       paymentAmt: payAmt,
@@ -161,7 +164,10 @@ const fmt = (n) => Number(n || 0).toLocaleString("en-BD", { minimumFractionDigit
 export default function PurchasePaymentView() {
   const { id }   = useParams();
   const navigate = useNavigate();
+
   const pv       = getMockPayment(id);
+
+  const { printRef, handlePrint } = usePrint(`Payment Voucher - ${pv.pvNo}`);
   const isAdv    = pv.paymentType === "Advance Payment";
 
   const timeline = [
@@ -208,8 +214,8 @@ export default function PurchasePaymentView() {
                 <Edit2 className="w-3.5 h-3.5" /> Edit
               </button>
             )}
-            <button type="button" className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5">
-              <Printer className="w-3.5 h-3.5" /> Print
+            <button type="button" className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5" onClick={handlePrint}>
+              <Printer className="w-3.5 h-3.5" /> Print / PDF
             </button>
             {pv.status === "Draft" && (
               <>
@@ -279,48 +285,29 @@ export default function PurchasePaymentView() {
       {/* Invoice Allocation Table (settlement only) */}
       {!isAdv && pv.invoices.length > 0 && (
         <SectionCard icon={FileText} label="Invoice Allocation" iconColor="text-blue-600">
-          <div className="overflow-x-auto rounded-lg" style={{ border: "1px solid var(--border)" }}>
-            <table className="w-full text-xs border-collapse" style={{ minWidth: 680 }}>
-              <thead>
-                <tr style={{ background: "var(--bg-elevated)" }}>
-                  {["#","PO No.","Invoice Date","Invoice Amount","Previously Paid","Outstanding","Payment Amount"].map((col, ci) => (
-                    <th key={col} className="px-3 py-2.5 font-semibold whitespace-nowrap"
-                      style={{
-                        color: "var(--text-secondary)",
-                        borderBottom: "2px solid var(--border-strong)",
-                        textAlign: ci === 0 ? "center" : (ci >= 3 ? "right" : "left"),
-                      }}>
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {pv.invoices.map((row) => (
-                  <tr key={row.sl} style={{ borderBottom: "1px solid var(--border)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                    <td className="px-3 py-2 text-center" style={{ color: "var(--text-muted)" }}>{row.sl}</td>
-                    <td className="px-3 py-2 font-mono font-semibold text-emerald-600">{row.poNo}</td>
-                    <td className="px-3 py-2" style={{ color: "var(--text-secondary)" }}>{row.invoiceDate.toLocaleDateString("en-BD")}</td>
-                    <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-secondary)" }}>৳ {fmt(row.invoiceAmt)}</td>
-                    <td className="px-3 py-2 text-right tabular-nums" style={{ color: "var(--text-muted)" }}>৳ {fmt(row.prevPaid)}</td>
-                    <td className="px-3 py-2 text-right font-semibold tabular-nums" style={{ color: "var(--text-primary)" }}>৳ {fmt(row.outstanding)}</td>
-                    <td className="px-3 py-2 text-right font-bold tabular-nums text-blue-600">৳ {fmt(row.paymentAmt)}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
-                  <td colSpan={3} className="px-3 py-2.5 text-right text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>Totals</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.invoiceAmt,0))}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums" style={{ color: "var(--text-muted)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.prevPaid,0))}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.outstanding,0))}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-bold tabular-nums text-blue-600">৳ {fmt(pv.totalPaid)}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+          <Table
+            columns={[
+              { key: "num",             title: "#",                textAlign: "center", render: (_, r) => r.sl },
+              { dataIndex: "poNo",      title: "PO No.",           render: (v) => <span className="font-mono font-semibold text-emerald-600">{v}</span> },
+              { dataIndex: "invoiceDate",title: "Invoice Date",    render: (v) => v.toLocaleDateString("en-BD") },
+              { dataIndex: "invoiceAmt",title: "Invoice Amount",   textAlign: "right", render: (v) => `৳ ${fmt(v)}` },
+              { dataIndex: "prevPaid",  title: "Previously Paid",  textAlign: "right", render: (v) => <span style={{ color: "var(--text-muted)" }}>৳ {fmt(v)}</span> },
+              { dataIndex: "outstanding",title: "Outstanding",     textAlign: "right", render: (v) => <span className="font-semibold">৳ {fmt(v)}</span> },
+              { dataIndex: "paymentAmt",title: "Payment Amount",   textAlign: "right", render: (v) => <span className="font-bold text-blue-600">৳ {fmt(v)}</span> },
+            ]}
+            data={pv.invoices}
+            rowKey={(r) => r.sl}
+            maxHeight="380px"
+            footer={
+              <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
+                <td colSpan={3} style={{ padding: "5px 8px", textAlign: "right", fontWeight: 600, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Totals</td>
+                <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-primary)", border: "1px solid var(--border)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.invoiceAmt,0))}</td>
+                <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-muted)",   border: "1px solid var(--border)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.prevPaid,0))}</td>
+                <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-primary)", border: "1px solid var(--border)" }}>৳ {fmt(pv.invoices.reduce((s,r)=>s+r.outstanding,0))}</td>
+                <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#2563eb",              border: "1px solid var(--border)" }}>৳ {fmt(pv.totalPaid)}</td>
+              </tr>
+            }
+          />
         </SectionCard>
       )}
 
@@ -365,6 +352,85 @@ export default function PurchasePaymentView() {
           ))}
         </div>
       </SectionCard>
+
+      {/* ══ Hidden Print Content ══════════════════════════════════════════ */}
+      <div aria-hidden style={{ position: "absolute", top: 0, left: "-9999px", pointerEvents: "none" }}>
+        <div ref={printRef} style={{ background: "#fff", width: "210mm" }}>
+          <PurchasePrintLayout docType="Payment Voucher" docNo={pv.pvNo} docDate={pv.paymentDate} status={pv.status}>
+
+            {/* PV Info + Payee & Summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+              <PrintSection title="Payment Details">
+                <PrintRow label="PV Number"       value={pv.pvNo}            mono />
+                <PrintRow label="Payment Type"    value={pv.paymentType} />
+                <PrintRow label="Payment Date"    value={new Date(pv.paymentDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })} />
+                <PrintRow label="Payment Method"  value={pv.paymentMethod} />
+                {pv.bankAccount    && <PrintRow label="Bank Account"    value={pv.bankAccount} />}
+                {pv.transactionRef && <PrintRow label="Transaction Ref" value={pv.transactionRef} mono />}
+                {pv.chequeNo       && <PrintRow label="Cheque No."      value={pv.chequeNo}      mono />}
+              </PrintSection>
+              <PrintSection title="Payee & Summary">
+                <PrintRow label="Supplier Name"   value={pv.supplier} />
+                <PrintRow label="Contact Person"  value={pv.contact} />
+                <PrintRow label="Status"          value={pv.status} />
+                <PrintRow label="Total Amount"    value={`৳ ${fmt(pv.totalPaid)}`} accent />
+                {pv.purpose    && <PrintRow label="Purpose"     value={pv.purpose} />}
+                <PrintRow label="Created By"      value={pv.createdBy} />
+                {pv.approvedBy && <PrintRow label="Approved By" value={pv.approvedBy} />}
+                {pv.paidBy     && <PrintRow label="Paid By"     value={pv.paidBy} />}
+                {pv.remarks    && <PrintRow label="Remarks"     value={pv.remarks} />}
+              </PrintSection>
+            </div>
+
+            {/* Invoice Allocation Table (only for Invoice Settlement) */}
+            {!isAdv && pv.invoices.length > 0 && (
+              <PrintSection title="Invoice Allocation">
+                <PrintTable headers={[
+                  { label: "#",            align: "center" },
+                  { label: "PO No.",       align: "left"   },
+                  { label: "Invoice Date", align: "left"   },
+                  { label: "Invoice Amt",  align: "right"  },
+                  { label: "Prev. Paid",   align: "right"  },
+                  { label: "Outstanding",  align: "right"  },
+                  { label: "Pay Amount",   align: "right"  },
+                ]}>
+                  {pv.invoices.map((row, idx) => (
+                    <tr key={row.sl} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                      <PrintTd align="center" muted>{row.sl}</PrintTd>
+                      <PrintTd mono bold>{row.poNo}</PrintTd>
+                      <PrintTd>{new Date(row.invoiceDate).toLocaleDateString("en-BD", { day: "2-digit", month: "short", year: "numeric" })}</PrintTd>
+                      <PrintTd align="right">৳ {fmt(row.invoiceAmt)}</PrintTd>
+                      <PrintTd align="right" muted>৳ {fmt(row.prevPaid)}</PrintTd>
+                      <PrintTd align="right">৳ {fmt(row.outstanding)}</PrintTd>
+                      <PrintTd align="right" bold accent>৳ {fmt(row.paymentAmt)}</PrintTd>
+                    </tr>
+                  ))}
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td colSpan={6} style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 600, fontSize: 10, color: "#374151" }}>Total Payment</td>
+                    <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10, color: "#16a34a" }}>৳ {fmt(pv.totalPaid)}</td>
+                  </tr>
+                </PrintTable>
+              </PrintSection>
+            )}
+
+            {/* Advance summary */}
+            {isAdv && (
+              <PrintSection title="Advance Payment Summary">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <PrintRow label="Advance Amount" value={`৳ ${fmt(pv.totalPaid)}`} accent />
+                  <PrintRow label="Purpose"        value={pv.purpose || "—"} />
+                  <PrintRow label="Payment Method" value={pv.paymentMethod} />
+                  {pv.bankAccount && <PrintRow label="Bank Account" value={pv.bankAccount} />}
+                </div>
+                <div style={{ marginTop: 8, fontSize: 10, color: "#6b7280", background: "#fef9c3", padding: "6px 8px", borderRadius: 4, border: "1px solid #fde047" }}>
+                  This advance will be adjusted against future invoices from {pv.supplier}.
+                </div>
+              </PrintSection>
+            )}
+
+          </PurchasePrintLayout>
+        </div>
+      </div>
     </motion.div>
   );
 }

@@ -1,4 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { usePrint } from "../../../hooks/usePrint";
+import PurchasePrintLayout, { PrintSection, PrintRow, PrintTable, PrintTd } from "../../../components/PrintLayout";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Printer, Edit2, CheckCircle2, XCircle,
@@ -7,6 +9,7 @@ import {
   AlertTriangle, MoreHorizontal, Download, Send,
 } from "lucide-react";
 import StatusBadge from "../../../../../common/components/StatusBadge";
+import Table from "../../../../../common/components/Table";
 
 // ─── Mock Reference Data ─────────────────────────────────────────────────────
 const SUPPLIERS_DATA = [
@@ -18,16 +21,57 @@ const SUPPLIERS_DATA = [
 ];
 
 const ITEMS_POOL = [
-  { name: "Desktop Computer (Core i5)",         uom: "Pcs",  rate: 45000 },
-  { name: "Laptop (Core i7, 16GB RAM)",          uom: "Pcs",  rate: 85000 },
-  { name: "Executive Office Chair",              uom: "Pcs",  rate: 8500  },
-  { name: 'Office Table (60"×30")',              uom: "Pcs",  rate: 12000 },
-  { name: "A4 Paper (500 Sheets/Ream)",          uom: "Box",  rate: 350   },
-  { name: "HP Printer Ink Cartridge Set",        uom: "Set",  rate: 2200  },
-  { name: "Network Switch 24-Port (Cisco)",      uom: "Pcs",  rate: 12000 },
-  { name: "UPS 1000VA (APC)",                    uom: "Pcs",  rate: 9500  },
-  { name: "CAT6 Ethernet Cable (100m)",          uom: "Roll", rate: 1800  },
-  { name: 'Samsung 27" Monitor',                 uom: "Pcs",  rate: 28000 },
+  { name: "Desktop Computer (Core i5)",           uom: "Pcs",  rate: 45000 },
+  { name: "Desktop Computer (Core i7)",           uom: "Pcs",  rate: 65000 },
+  { name: "Laptop (Core i7, 16GB RAM)",           uom: "Pcs",  rate: 85000 },
+  { name: "Laptop (Core i5, 8GB RAM)",            uom: "Pcs",  rate: 55000 },
+  { name: "Executive Office Chair",               uom: "Pcs",  rate: 8500  },
+  { name: "Task Chair (Mesh Back)",               uom: "Pcs",  rate: 5500  },
+  { name: 'Office Table (60"×30")',               uom: "Pcs",  rate: 12000 },
+  { name: "Meeting Table (8-Seater)",             uom: "Pcs",  rate: 35000 },
+  { name: "A4 Paper 80gsm (500 Sheets/Ream)",     uom: "Box",  rate: 350   },
+  { name: "A3 Paper 80gsm (500 Sheets/Ream)",     uom: "Box",  rate: 520   },
+  { name: "HP LaserJet Printer (Mono)",           uom: "Pcs",  rate: 18000 },
+  { name: "HP Printer Ink Cartridge Set",         uom: "Set",  rate: 2200  },
+  { name: "Network Switch 24-Port (Cisco)",       uom: "Pcs",  rate: 12000 },
+  { name: "Network Switch 48-Port (Cisco)",       uom: "Pcs",  rate: 22000 },
+  { name: "UPS 1000VA (APC)",                     uom: "Pcs",  rate: 9500  },
+  { name: "UPS 2000VA (APC)",                     uom: "Pcs",  rate: 18000 },
+  { name: "CAT6 Ethernet Cable (100m)",           uom: "Roll", rate: 1800  },
+  { name: "CAT6 Ethernet Cable (300m)",           uom: "Roll", rate: 4500  },
+  { name: 'Samsung 27" FHD Monitor',              uom: "Pcs",  rate: 28000 },
+  { name: 'Dell 24" FHD Monitor',                 uom: "Pcs",  rate: 22000 },
+  { name: "Wireless Keyboard & Mouse Combo",      uom: "Set",  rate: 1800  },
+  { name: "USB-C Hub 7-Port",                     uom: "Pcs",  rate: 2500  },
+  { name: "External Hard Drive 1TB",              uom: "Pcs",  rate: 5500  },
+  { name: "External Hard Drive 2TB",              uom: "Pcs",  rate: 8500  },
+  { name: "USB Flash Drive 64GB (Pack/10)",       uom: "Pack", rate: 2800  },
+  { name: "HDMI Cable 3m (Pack/5)",               uom: "Pack", rate: 750   },
+  { name: "Office Stapler + Staples (Pack/10)",   uom: "Pack", rate: 1200  },
+  { name: 'Whiteboard 4×3 ft',                    uom: "Pcs",  rate: 3500  },
+  { name: "Whiteboard Marker Set (12 Pcs)",       uom: "Set",  rate: 450   },
+  { name: "File Cabinet (4-Drawer Steel)",        uom: "Pcs",  rate: 14000 },
+  { name: "Bookshelf (5-Shelf Steel)",            uom: "Pcs",  rate: 8500  },
+  { name: "Power Strip 8-Outlet (10m)",           uom: "Pcs",  rate: 850   },
+  { name: "Network Rack 9U Wall Mount",           uom: "Pcs",  rate: 12000 },
+  { name: "Patch Panel 24-Port (Cat6)",           uom: "Pcs",  rate: 4500  },
+  { name: "Fiber Optic Cable SC/LC (100m)",       uom: "Roll", rate: 8000  },
+  { name: "Server Rack PDU 16A",                  uom: "Pcs",  rate: 15000 },
+  { name: "LCD Projector 3500 Lumens",            uom: "Pcs",  rate: 55000 },
+  { name: 'Projector Screen 100"',                uom: "Pcs",  rate: 8500  },
+  { name: "Video Conferencing Camera (4K)",       uom: "Pcs",  rate: 32000 },
+  { name: "Noise-Canceling Headset (USB)",        uom: "Pcs",  rate: 4500  },
+  { name: "Mechanical Keyboard (TKL)",            uom: "Pcs",  rate: 3200  },
+  { name: "SSD 1TB (Samsung 870 EVO)",            uom: "Pcs",  rate: 7500  },
+  { name: "RAM 16GB DDR4 (PC-3200)",              uom: "Pcs",  rate: 4800  },
+  { name: "RAM 32GB DDR4 (PC-3200)",              uom: "Pcs",  rate: 9200  },
+  { name: "LED Desk Lamp (USB Charging)",         uom: "Pcs",  rate: 1200  },
+  { name: "Extension Cord 10m (3-Pin)",           uom: "Pcs",  rate: 650   },
+  { name: "Cable Management Tray (Under Desk)",   uom: "Pcs",  rate: 1500  },
+  { name: "Thermal Receipt Printer (80mm)",       uom: "Pcs",  rate: 8500  },
+  { name: "Barcode Scanner (USB, 2D)",            uom: "Pcs",  rate: 6500  },
+  { name: "IP Camera (2MP Indoor)",               uom: "Pcs",  rate: 3500  },
+  { name: "Unmanaged PoE Switch 8-Port",          uom: "Pcs",  rate: 7200  },
 ];
 
 const STATUSES   = ["Draft", "Approved", "Partially Received", "Completed"];
@@ -60,9 +104,12 @@ const getMockPO = (id) => {
   const status = STATUSES[(n - 1) % 4];
   const base   = new Date(2025, (n % 12), (n % 28) + 1);
 
-  const itemCount = 2 + (n % 4);
+  // n=1 → 105 items (bulk order for testing); every 15th → 20–35; rest → 3–10
+  const itemCount = n === 1 ? 105
+    : n % 15 === 0 ? 20 + (n % 16)
+    : 3 + (n % 8);
   const items = Array.from({ length: itemCount }, (_, i) => {
-    const itm       = ITEMS_POOL[(n + i) % 10];
+    const itm       = ITEMS_POOL[(n + i) % ITEMS_POOL.length];
     const qty       = 1 + ((n + i) % 5);
     const discPct   = (n + i) % 3 === 0 ? 5 : 0;
     const taxPct    = (n + i) % 2 === 0 ? 15 : 0;
@@ -217,7 +264,10 @@ const PRIORITY_BADGE = {
 export default function PurchaseOrderView() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const po = getMockPO(id);
+
+  const { printRef, handlePrint } = usePrint(`Purchase Order - ${po.poNo}`);
 
   const canEdit     = po.status === "Draft";
   const canApprove  = po.status === "Draft";
@@ -271,8 +321,8 @@ export default function PurchaseOrderView() {
 
           {/* Right: actions */}
           <div className="flex items-center gap-2 flex-wrap">
-            <button className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5" onClick={() => window.print()}>
-              <Printer className="w-3.5 h-3.5" /> Print
+            <button className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5" onClick={handlePrint}>
+              <Printer className="w-3.5 h-3.5" /> Print / PDF
             </button>
             <button className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5">
               <Download className="w-3.5 h-3.5" /> Export PDF
@@ -375,59 +425,33 @@ export default function PurchaseOrderView() {
         label="Order Items"
         iconColor="text-orange-600"
       >
-        <div className="overflow-x-auto rounded-lg -mx-1" style={{ border: "1px solid var(--border)" }}>
-          <table className="w-full border-collapse text-xs" style={{ minWidth: 820 }}>
-            <thead>
-              <tr style={{ background: "var(--bg-elevated)" }}>
-                {["#", "Item", "UOM", "Qty", "Unit Price", "Disc %", "Tax %", "Line Amount", "Discount", "Tax Amt", "Total"].map((h, i) => (
-                  <th
-                    key={h}
-                    className="px-3 py-2.5 font-semibold whitespace-nowrap"
-                    style={{
-                      color: "var(--text-secondary)",
-                      borderBottom: "2px solid var(--border-strong)",
-                      textAlign: i <= 1 ? "left" : "right",
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {po.items.map((row, idx) => (
-                <tr
-                  key={row.id}
-                  style={{ borderBottom: "1px solid var(--border)" }}
-                  className="transition-colors hover:bg-primary/5"
-                >
-                  <td className="px-3 py-2 text-right" style={{ color: "var(--text-muted)", width: 36 }}>{idx + 1}</td>
-                  <td className="px-3 py-2 font-medium" style={{ color: "var(--text-primary)" }}>{row.name}</td>
-                  <td className="px-3 py-2 text-right" style={{ color: "var(--text-muted)" }}>{row.uom}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{row.qty.toLocaleString()}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{fmtAmt(row.unitPrice)}</td>
-                  <td className="px-3 py-2 text-right tabular-nums text-red-500">{row.discPct > 0 ? `${row.discPct}%` : "—"}</td>
-                  <td className="px-3 py-2 text-right tabular-nums text-blue-600">{row.taxPct > 0 ? `${row.taxPct}%` : "—"}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{fmtAmt(row.lineAmt)}</td>
-                  <td className="px-3 py-2 text-right tabular-nums text-red-500">{row.discAmt > 0 ? `(${fmtAmt(row.discAmt)})` : "—"}</td>
-                  <td className="px-3 py-2 text-right tabular-nums text-blue-600">{row.taxAmt > 0 ? fmtAmt(row.taxAmt) : "—"}</td>
-                  <td className="px-3 py-2 text-right tabular-nums font-semibold" style={{ color: "var(--text-primary)" }}>{fmtAmt(row.total)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
-                <td colSpan={7} className="px-3 py-2 text-right font-semibold text-xs" style={{ color: "var(--text-secondary)" }}>
-                  Items Subtotal
-                </td>
-                <td className="px-3 py-2 text-right font-bold text-xs tabular-nums" style={{ color: "var(--text-primary)" }}>{fmtAmt(po.subtotal)}</td>
-                <td className="px-3 py-2 text-right font-bold text-xs tabular-nums text-red-500">{po.totalDiscount > 0 ? `(${fmtAmt(po.totalDiscount)})` : "—"}</td>
-                <td className="px-3 py-2 text-right font-bold text-xs tabular-nums text-blue-600">{po.totalTax > 0 ? fmtAmt(po.totalTax) : "—"}</td>
-                <td className="px-3 py-2 text-right font-bold text-xs tabular-nums" style={{ color: "var(--text-primary)" }}>{fmtAmt(po.grandTotal - po.shippingCost)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+        <Table
+          columns={[
+            { key: "num",            title: "#",            textAlign: "center", render: (_, __, i) => i + 1 },
+            { dataIndex: "name",     title: "Item",         render: (v) => <span className="font-medium">{v}</span> },
+            { dataIndex: "uom",      title: "UOM",          textAlign: "center" },
+            { dataIndex: "qty",      title: "Qty",          textAlign: "right",  render: (v) => v.toLocaleString() },
+            { dataIndex: "unitPrice",title: "Unit Price (৳)",textAlign: "right",  render: (v) => fmtAmt(v) },
+            { dataIndex: "discPct",  title: "Disc %",       textAlign: "right",  render: (v) => v > 0 ? <span className="text-red-500">{v}%</span> : <span style={{ color: "var(--text-muted)" }}>—</span> },
+            { dataIndex: "taxPct",   title: "Tax %",        textAlign: "right",  render: (v) => v > 0 ? <span className="text-blue-600">{v}%</span> : <span style={{ color: "var(--text-muted)" }}>—</span> },
+            { dataIndex: "lineAmt",  title: "Line Amt (৳)", textAlign: "right",  render: (v) => fmtAmt(v) },
+            { dataIndex: "discAmt",  title: "Discount (৳)", textAlign: "right",  render: (v) => v > 0 ? <span className="text-red-500">({fmtAmt(v)})</span> : <span style={{ color: "var(--text-muted)" }}>—</span> },
+            { dataIndex: "taxAmt",   title: "Tax Amt (৳)",  textAlign: "right",  render: (v) => v > 0 ? <span className="text-blue-600">{fmtAmt(v)}</span> : <span style={{ color: "var(--text-muted)" }}>—</span> },
+            { dataIndex: "total",    title: "Total (৳)",    textAlign: "right",  render: (v) => <span className="font-semibold">{fmtAmt(v)}</span> },
+          ]}
+          data={po.items}
+          rowKey={(r) => r.id}
+          maxHeight="420px"
+          footer={
+            <tr style={{ background: "var(--bg-elevated)", borderTop: "2px solid var(--border-strong)" }}>
+              <td colSpan={7} style={{ padding: "5px 8px", textAlign: "right", fontWeight: 600, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border)" }}>Items Subtotal</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-primary)", border: "1px solid var(--border)" }}>{fmtAmt(po.subtotal)}</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#ef4444",              border: "1px solid var(--border)" }}>{po.totalDiscount > 0 ? `(${fmtAmt(po.totalDiscount)})` : "—"}</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "#2563eb",              border: "1px solid var(--border)" }}>{po.totalTax > 0 ? fmtAmt(po.totalTax) : "—"}</td>
+              <td style={{ padding: "5px 8px", textAlign: "right", fontWeight: 700, fontSize: 13, color: "var(--text-primary)", border: "1px solid var(--border)" }}>{fmtAmt(po.grandTotal - po.shippingCost)}</td>
+            </tr>
+          }
+        />
       </SectionCard>
 
       {/* ══ Row 4: Notes + Summary ════════════════════════════════════════ */}
@@ -547,6 +571,111 @@ export default function PurchaseOrderView() {
               <Edit2 className="w-4 h-4" /> Edit PO
             </button>
           )}
+        </div>
+      </div>
+
+      {/* ══ Hidden Print Content ══════════════════════════════════════════ */}
+      <div aria-hidden style={{ position: "absolute", top: 0, left: "-9999px", pointerEvents: "none" }}>
+        <div ref={printRef} style={{ background: "#fff", width: "210mm" }}>
+          <PurchasePrintLayout docType="Purchase Order" docNo={po.poNo} docDate={po.poDate} status={po.status}>
+
+            {/* Order Info + Supplier & Terms */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 14 }}>
+              <PrintSection title="Order Details">
+                <PrintRow label="PO Number"         value={po.poNo}                  mono />
+                <PrintRow label="PO Date"            value={fmtDate(po.poDate)} />
+                <PrintRow label="Expected Delivery"  value={fmtDate(po.expectedDate)} />
+                <PrintRow label="Priority"           value={po.priority} />
+                <PrintRow label="Currency"           value={po.currency} />
+                <PrintRow label="Warehouse"          value={po.warehouse} />
+                <PrintRow label="Created By"         value={po.createdBy} />
+                <PrintRow label="Created Date"       value={fmtDateTime(po.createdDate)} />
+              </PrintSection>
+              <PrintSection title="Supplier & Terms">
+                <PrintRow label="Supplier Name"  value={po.supplier.name} />
+                <PrintRow label="Contact Person" value={po.supplier.contact} />
+                <PrintRow label="Phone"          value={po.supplier.phone} />
+                <PrintRow label="Email"          value={po.supplier.email} />
+                <PrintRow label="Address"        value={po.supplier.address} />
+                <PrintRow label="Payment Terms"  value={po.paymentTerms} />
+                <PrintRow label="Shipping Method" value={po.shippingMethod} />
+                {po.referenceNo && <PrintRow label="Supplier Ref" value={po.referenceNo} mono />}
+                {po.buyerRef    && <PrintRow label="Internal Ref" value={po.buyerRef}    mono />}
+              </PrintSection>
+            </div>
+
+            {/* Items Table */}
+            <PrintSection title="Order Items">
+              <PrintTable headers={[
+                { label: "#",              align: "center" },
+                { label: "Item Description" },
+                { label: "UOM",            align: "center" },
+                { label: "Qty",            align: "right"  },
+                { label: "Unit Price (৳)", align: "right"  },
+                { label: "Disc %",         align: "right"  },
+                { label: "Tax %",          align: "right"  },
+                { label: "Disc Amt",       align: "right"  },
+                { label: "Tax Amt",        align: "right"  },
+                { label: "Total (৳)",      align: "right"  },
+              ]}>
+                {po.items.map((row, idx) => (
+                  <tr key={row.id} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                    <PrintTd align="center" muted>{idx + 1}</PrintTd>
+                    <PrintTd bold>{row.name}</PrintTd>
+                    <PrintTd align="center" muted>{row.uom}</PrintTd>
+                    <PrintTd align="right">{row.qty}</PrintTd>
+                    <PrintTd align="right">{fmtAmt(row.unitPrice)}</PrintTd>
+                    <PrintTd align="right" style={{ color: row.discPct > 0 ? "#dc2626" : "#6b7280" }}>{row.discPct > 0 ? `${row.discPct}%` : "—"}</PrintTd>
+                    <PrintTd align="right" style={{ color: row.taxPct  > 0 ? "#2563eb" : "#6b7280" }}>{row.taxPct  > 0 ? `${row.taxPct}%`  : "—"}</PrintTd>
+                    <PrintTd align="right" style={{ color: row.discAmt > 0 ? "#dc2626" : "#6b7280" }}>{row.discAmt > 0 ? `(${fmtAmt(row.discAmt)})` : "—"}</PrintTd>
+                    <PrintTd align="right" style={{ color: row.taxAmt  > 0 ? "#2563eb" : "#6b7280" }}>{row.taxAmt  > 0 ? fmtAmt(row.taxAmt) : "—"}</PrintTd>
+                    <PrintTd align="right" bold>{fmtAmt(row.total)}</PrintTd>
+                  </tr>
+                ))}
+                {/* Subtotal row */}
+                <tr style={{ background: "#f9fafb" }}>
+                  <td colSpan={9} style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 600, fontSize: 10, color: "#374151" }}>Items Subtotal</td>
+                  <td style={{ padding: "5px 6px", border: "1px solid #d1d5db", textAlign: "right", fontWeight: 700, fontSize: 10 }}>{fmtAmt(po.subtotal)}</td>
+                </tr>
+              </PrintTable>
+            </PrintSection>
+
+            {/* Summary + Notes side by side */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "start" }}>
+              {(po.internalNotes || po.supplierNotes) && (
+                <PrintSection title="Notes & Terms">
+                  {po.internalNotes && (
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ fontSize: 10, color: "#6b7280", marginBottom: 3 }}>Internal Notes (not visible to supplier)</div>
+                      <div style={{ fontSize: 11, color: "#374151", background: "#f9fafb", padding: "6px 8px", borderRadius: 4, border: "1px solid #e5e7eb" }}>{po.internalNotes}</div>
+                    </div>
+                  )}
+                  {po.supplierNotes && (
+                    <div>
+                      <div style={{ fontSize: 10, color: "#6b7280", marginBottom: 3 }}>Supplier Notes / Terms & Conditions</div>
+                      <div style={{ fontSize: 11, color: "#374151", background: "#f9fafb", padding: "6px 8px", borderRadius: 4, border: "1px solid #e5e7eb" }}>{po.supplierNotes}</div>
+                    </div>
+                  )}
+                </PrintSection>
+              )}
+              <div style={{ minWidth: 240 }}>
+                <PrintSection title="Order Summary">
+                  <PrintRow label="Sub Total"         value={`৳ ${fmtAmt(po.subtotal)}`} />
+                  {po.totalDiscount > 0 && <PrintRow label="Total Discount" value={`(৳ ${fmtAmt(po.totalDiscount)})`} />}
+                  {po.totalTax > 0      && <PrintRow label="Total Tax / VAT" value={`+ ৳ ${fmtAmt(po.totalTax)}`} />}
+                  {po.shippingCost > 0  && <PrintRow label="Shipping Cost"  value={`৳ ${fmtAmt(po.shippingCost)}`} />}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0 2px", fontSize: 12, borderTop: "2px solid #16a34a", marginTop: 4 }}>
+                    <span style={{ fontWeight: 700, color: "#374151" }}>Grand Total ({po.currency})</span>
+                    <span style={{ fontWeight: 700, color: "#16a34a" }}>৳ {fmtAmt(po.grandTotal)}</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: "#6b7280", marginTop: 4, textAlign: "right" }}>
+                    {po.items.length} line item{po.items.length !== 1 ? "s" : ""}
+                  </div>
+                </PrintSection>
+              </div>
+            </div>
+
+          </PurchasePrintLayout>
         </div>
       </div>
     </motion.div>

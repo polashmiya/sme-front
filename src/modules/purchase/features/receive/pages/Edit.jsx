@@ -409,7 +409,7 @@ export default function PurchaseReceiveEdit() {
             <table className="w-full text-xs border-collapse" style={{ minWidth: isOrderBased ? 800 : 900 }}>
               <thead>
                 <tr style={{ background: "var(--bg-elevated)" }}>
-                  {isOrderBased
+                  {(isOrderBased
                     ? [
                         { label: "#", align: "center" }, { label: "Item", align: "left" }, { label: "UOM", align: "center" },
                         { label: "PO Qty", align: "right" }, { label: "Prev. Received", align: "right" },
@@ -423,7 +423,7 @@ export default function PurchaseReceiveEdit() {
                         { label: "Total Cost", align: "right" }, { label: "Batch No.", align: "left" },
                         { label: "Remarks", align: "left" }, { label: "", align: "center" },
                       ]
-                  }.map((col) => (
+                  ).map((col) => (
                     <th
                       key={col.label}
                       className="px-2.5 py-2.5 font-semibold whitespace-nowrap"

@@ -17,20 +17,41 @@ const SUPPLIERS = [
   "Gamma Electronics Ltd.",
   "Delta Logistics Inc.",
   "Epsilon Office Solutions",
+  "Zeta Industrial Corp.",
+  "Sigma Business Equipment",
+  "Omega IT Solutions Ltd.",
+  "Prime Hardware & Tools",
+  "Vertex Supply Chain Co.",
+];
+const CREATED_BY = [
+  "Md. Rafiqul Islam", "Fatema Begum", "Karim Ahmed",
+  "Nasrin Akhter", "Jahanara Sultana", "Rahim Uddin",
+  "Salma Khatun", "Anisur Rahman",
 ];
 
+// Deterministic pseudo-random helper
+const hash = (n) => ((n * 2654435761) >>> 0) % 100000;
+
 const ALL_ROWS = Object.freeze(
-  Array.from({ length: 1000 }, (_, i) => ({
-    id:           i + 1,
-    poNo:         "PO-" + String(1000 + i),
-    supplier:     SUPPLIERS[i % SUPPLIERS.length],
-    poDate:       new Date(2025, i % 12, (i % 28) + 1),
-    expectedDate: new Date(2025, (i % 12) + 1, (i % 28) + 1),
-    totalAmount:  Math.floor(((i * 7919) % 40000) + 5000),
-    status:       STATUSES[i % STATUSES.length],
-    createdBy:    "User " + ((i % 5) + 1),
-    createdDate:  new Date(2025, i % 12, (i % 28) + 1, 10, i % 55),
-  }))
+  Array.from({ length: 120 }, (_, i) => {
+    const n   = i + 1;
+    // spread dates across Jan 2024 – May 2026
+    const daysOffset = Math.floor(hash(n * 3) / 100000 * 880);
+    const base = new Date(2024, 0, 1 + daysOffset);
+    const exp  = new Date(base.getTime() + (15 + (hash(n) % 45)) * 86400000);
+    const amt  = 5000 + Math.floor(hash(n * 7) / 100000 * 495000);
+    return {
+      id:           n,
+      poNo:         "PO-" + String(1000 + i),
+      supplier:     SUPPLIERS[i % SUPPLIERS.length],
+      poDate:       base,
+      expectedDate: exp,
+      totalAmount:  n === 1 ? 4_250_000 : amt,   // PO-1000 is the 105-item bulk order
+      status:       STATUSES[i % STATUSES.length],
+      createdBy:    CREATED_BY[i % CREATED_BY.length],
+      createdDate:  new Date(base.getTime() + (hash(n * 11) % 55) * 60000),
+    };
+  })
 );
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -51,10 +72,19 @@ export default function PurchaseOrderLanding() {
   const [page,     setPage]     = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
+  // ── deleted ids
+  const [deletedIds, setDeletedIds] = useState(new Set());
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this Purchase Order?")) {
+      setDeletedIds((prev) => new Set([...prev, id]));
+    }
+  };
+
   // ── filtered rows
   const filtered = useMemo(() => {
     const sl = search.toLowerCase();
     return ALL_ROWS.filter((r) => {
+      if (deletedIds.has(r.id)) return false;
       if (sl && !r.poNo.toLowerCase().includes(sl) && !r.supplier.toLowerCase().includes(sl)) return false;
       if (supplier && r.supplier !== supplier) return false;
       if (status   && r.status   !== status)   return false;
@@ -64,7 +94,7 @@ export default function PurchaseOrderLanding() {
       if (maxAmt   && r.totalAmount > Number(maxAmt))   return false;
       return true;
     });
-  }, [search, supplier, status, fromDate, toDate, minAmt, maxAmt]);
+  }, [search, supplier, status, fromDate, toDate, minAmt, maxAmt, deletedIds]);
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
@@ -212,8 +242,8 @@ export default function PurchaseOrderLanding() {
         <div className="flex items-center justify-center gap-1">
           <PView  onClick={() => navigate(`/purchase/order/${row.id}`)} />
           <PEdit  onClick={() => navigate(`/purchase/order/edit/${row.id}`)} />
-          <PPrint onClick={() => {}} />
-          <PDelete onClick={() => {}} />
+          <PPrint onClick={() => navigate(`/purchase/order/${row.id}?autoprint=1`)} />
+          <PDelete onClick={() => handleDelete(row.id)} />
         </div>
       ),
     },

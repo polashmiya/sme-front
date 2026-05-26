@@ -64,10 +64,17 @@ export default function PurchaseReturnLanding() {
   const [toDate,      setToDate]      = useState("");
   const [page,        setPage]        = useState(1);
   const [pageSize,    setPageSize]    = useState(20);
+  const [deletedIds,  setDeletedIds]  = useState(new Set());
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this Purchase Return?")) {
+      setDeletedIds((prev) => new Set([...prev, id]));
+    }
+  };
 
   const filtered = useMemo(() => {
     const sl = search.toLowerCase();
     return ALL_ROWS.filter((r) => {
+      if (deletedIds.has(r.id)) return false;
       if (sl && !r.prNo.toLowerCase().includes(sl) && !r.grnRef.toLowerCase().includes(sl) && !r.supplier.toLowerCase().includes(sl)) return false;
       if (supplier   && r.supplier   !== supplier)   return false;
       if (status     && r.status     !== status)     return false;
@@ -76,7 +83,7 @@ export default function PurchaseReturnLanding() {
       if (toDate     && r.returnDate > new Date(toDate))   return false;
       return true;
     });
-  }, [search, supplier, status, returnType, fromDate, toDate]);
+  }, [search, supplier, status, returnType, fromDate, toDate, deletedIds]);
 
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
@@ -162,8 +169,8 @@ export default function PurchaseReturnLanding() {
         <div className="flex items-center justify-center gap-1">
           <PView   onClick={() => navigate(`/purchase/return/${row.id}`)} />
           <PEdit   onClick={() => navigate(`/purchase/return/edit/${row.id}`)} />
-          <PPrint  onClick={() => {}} />
-          <PDelete onClick={() => {}} />
+          <PPrint  onClick={() => navigate(`/purchase/return/${row.id}?autoprint=1`)} />
+          <PDelete onClick={() => handleDelete(row.id)} />
         </div>
       ),
     },
